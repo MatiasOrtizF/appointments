@@ -1,0 +1,197 @@
+import React, { useState } from "react";
+import { KeyboardAvoidingView, Platform, View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from "react-native";
+import { colors } from "../../theme/Colors";
+import { MaterialIcons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
+
+type LoginScreenProps = {
+    onLogin?: (email: string, password: string) => void;
+};
+
+export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [secure, setSecure] = useState(true)
+
+    const handleLogin = () => {
+        if (!email || !password) {
+            console.log("Campos vacíos");
+            return;
+        }
+
+        onLogin?.(email, password);
+        console.log("Login:", email, password);
+    };
+
+
+    return (
+        <KeyboardAvoidingView
+            style={{ flex: 1 }}
+            behavior={Platform.OS === "ios" ? "padding" : undefined}
+        >
+            <View style={styles.header}>
+                <Image
+                    source={require('../../../assets/img_header_login.jpg')}
+                    style={styles.image}
+                    resizeMode="cover"
+                    blurRadius={1}
+                />
+
+                <LinearGradient
+                    colors={['transparent', '#f4f6fa']}
+                    style={styles.gradient}
+                />
+
+            </View>
+
+            <View style={styles.content}>
+
+                <Text style={styles.title}>Find Your Glow</Text>
+
+                <Text style={styles.subTitle}>Book your next look with ease.</Text>
+
+                <View style={styles.inputContainer}>
+                    <MaterialIcons name="email" size={20} color={colors.secondary} />
+
+                    <TextInput
+                        placeholder="Email"
+                        placeholderTextColor={colors.secondary}
+                        value={email}
+                        onChangeText={setEmail}
+                        autoCapitalize="none"
+                        keyboardType="email-address"
+                        style={styles.input}
+                    />
+                </View>
+
+                <View style={styles.inputContainer}>
+                    {/* Icono candado izquierda */}
+                    <MaterialIcons name="lock" size={20} color={colors.secondary} />
+
+                    <TextInput
+                        placeholder="Password"
+                        placeholderTextColor={colors.secondary}
+                        value={password}
+                        onChangeText={setPassword}
+                        secureTextEntry={secure}
+                        style={styles.input}
+                    />
+
+                    {/* Ojo derecha */}
+                    <TouchableOpacity onPress={() => setSecure(!secure)}>
+                        <MaterialIcons
+                            name={secure ? 'visibility-off' : 'visibility'}
+                            size={20}
+                            color={colors.secondary}
+                        />
+                    </TouchableOpacity>
+                </View>
+
+                <View style={styles.linkContainer}>
+                    <TouchableOpacity onPress={() => console.log("ir al recovery password")}>
+                        <Text style={styles.linkForgoPassword}>Forgot Password?</Text>
+                    </TouchableOpacity>
+                </View>
+
+                <TouchableOpacity style={styles.button} onPress={handleLogin}>
+                    <Text style={styles.buttonText}>Entrar</Text>
+                </TouchableOpacity>
+
+                <View style={{ flexDirection: 'row' }}>
+                    <Text style={styles.linkRegister}>¿No tenés cuenta? </Text>
+                    <TouchableOpacity onPress={() => console.log("ir al signup")}>
+                        <Text style={[styles.linkRegister, { fontWeight: "600" }]}>Registrate</Text>
+                    </TouchableOpacity>
+                </View>
+
+            </View>
+        </KeyboardAvoidingView>
+    )
+}
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: "#f4f6fa",
+        justifyContent: "center",
+        alignItems: 'center',
+        padding: 24,
+    },
+    header: {
+        position: 'absolute', // 🔑 saca la imagen del layout
+        top: 0,
+        width: '100%',
+        height: '30%',
+    },
+
+    image: {
+        width: '100%',
+        height: '100%',
+    },
+    gradient: {
+        position: 'absolute',
+        bottom: 0,
+        width: '100%',
+        height: 120,
+    },
+    content: {
+        flex: 1,                  // ocupa toda la pantalla
+        justifyContent: 'center', // centro vertical REAL
+        alignItems: 'center',     // centro horizontal
+        padding: 24,
+    },
+
+    title: {
+        fontSize: 33,
+        fontWeight: "700",
+        marginBottom: 10
+    },
+    subTitle: {
+        color: colors.textSecondary,
+        fontSize: 17,
+        marginBottom: 24,
+    },
+    input: {
+        flex: 1,
+        marginLeft: 8,
+        color: colors.textPrimary,
+        fontSize: 16,
+    },
+    inputContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: colors.secondary,
+        borderRadius: 50,
+        paddingHorizontal: 12,
+        height: 50,
+        marginTop: 20,
+    },
+    button: {
+        width: '100%',
+        backgroundColor: colors.primary,
+        height: 50,
+        borderRadius: 50,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    buttonText: {
+        color: colors.textPrimary,
+        fontWeight: "600",
+        fontSize: 16,
+    },
+    linkContainer: {
+        width: '100%',
+        alignItems: 'flex-end',
+    },
+    linkForgoPassword: {
+        color: colors.secondary,
+        marginVertical: 20,
+        fontWeight: 600
+    },
+    linkRegister: {
+        color: colors.textPrimary,
+        marginTop: 16,
+        fontSize: 14,
+    },
+});
