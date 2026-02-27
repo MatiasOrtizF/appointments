@@ -5,7 +5,7 @@ export const colors = {
   surface: '#F9FAFB',
 
   textPrimary: '#111827',
-  textSecondary: '#646464',
+  textSecondary: '#838282',
 
   error: '#EF4444',
   success: '#16A34A',
