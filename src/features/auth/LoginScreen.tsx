@@ -3,25 +3,33 @@ import { KeyboardAvoidingView, Platform, View, Text, TextInput, TouchableOpacity
 import { colors } from "../../theme/Colors";
 import { MaterialIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { AuthStackParamList } from "../../navigation/types";
+import { useNavigation } from "@react-navigation/native";
+import { useLogin } from "./UseLogin";
 
 type LoginScreenProps = {
     onLogin?: (email: string, password: string) => void;
 };
 
+type NavigationProp = NativeStackNavigationProp<AuthStackParamList, "Login">
+
 export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+    
+
     const [secure, setSecure] = useState(true)
 
-    const handleLogin = () => {
-        if (!email || !password) {
-            console.log("Campos vacíos");
-            return;
-        }
+    const navigation = useNavigation<NavigationProp>()
 
-        onLogin?.(email, password);
-        console.log("Login:", email, password);
-    };
+      const {
+    email,
+    password,
+    setEmail,
+    setPassword,
+    login,
+    loading,
+    error
+  } = useLogin();
 
 
     return (
@@ -93,13 +101,15 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                     </TouchableOpacity>
                 </View>
 
-                <TouchableOpacity style={styles.button} onPress={handleLogin}>
-                    <Text style={styles.buttonText}>Entrar</Text>
+                      {error && <Text>{error}</Text>}
+
+                <TouchableOpacity style={styles.button} onPress={login}>
+                    <Text style={styles.buttonText}> {loading ? "Cargando...": "Entrar"}</Text>
                 </TouchableOpacity>
 
                 <View style={{ flexDirection: 'row' }}>
                     <Text style={styles.linkRegister}>¿No tenés cuenta? </Text>
-                    <TouchableOpacity onPress={() => console.log("ir al signup")}>
+                    <TouchableOpacity onPress={() => navigation.navigate("Register")}>
                         <Text style={[styles.linkRegister, { fontWeight: "600" }]}>Registrate</Text>
                     </TouchableOpacity>
                 </View>

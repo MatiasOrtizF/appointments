@@ -57,17 +57,7 @@ export const HomeScreen=() => {
             <Text style={styles.title}>Book your next</Text>
             <Text style={styles.subTitle}>appointment</Text>
 
-            {services.map(service => (
-                <ServiceCard
-                    key={service.id}
-                    image={service.image}
-                    name={service.name}
-                    price={service.price}
-                    description={service.description}
-                    duration={service.duration}
-                    onBook={() => console.log("Book:", service.name)}
-                />
-            ))}
+    
         </ScrollView>
       </SafeAreaView>
     )

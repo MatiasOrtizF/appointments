@@ -8,27 +8,22 @@ import {
 } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import { colors } from '../../theme/Colors'
+import { Service } from '../../domain/models/Service'
 
 type Props = {
-  image: any
-  name: string
-  price: number
-  description: string
-  duration: number
-  onBook: () => void
+  service: Service
+  onBook: (service: Service) => void
 }
 
 export const ServiceCard: React.FC<Props> = ({
-  image,
-  name,
-  price,
-  description,
-  duration,
+  service,
   onBook,
 }) => {
+    const { name, price, description, duration_min, img } = service
+
   return (
     <View style={styles.card}>
-      <Image source={{uri: image}} style={styles.image} />
+      <Image source={{uri: img}} style={styles.image} />
 
       {/* Nombre + Precio */}
       <View style={styles.rowBetween}>
@@ -43,10 +38,10 @@ export const ServiceCard: React.FC<Props> = ({
       <View style={styles.rowBetween}>
         <View style={styles.duration}>
           <Ionicons name="time-outline" size={16} color="#666" />
-          <Text style={styles.durationText}>{duration + " min"}</Text>
+          <Text style={styles.durationText}>{duration_min + " min"}</Text>
         </View>
 
-        <TouchableOpacity style={styles.button} onPress={onBook}>
+        <TouchableOpacity style={styles.button} onPress={()=> onBook(service)}>
           <Text style={styles.buttonText}>Book</Text>
         </TouchableOpacity>
       </View>

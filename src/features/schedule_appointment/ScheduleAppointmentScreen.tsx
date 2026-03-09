@@ -1,3 +1,4 @@
+import { RouteProp, useRoute } from "@react-navigation/native";
 import React, { useCallback, useMemo, useState } from "react";
 import {
     View,
@@ -8,6 +9,7 @@ import {
 } from "react-native";
 import { Calendar } from "react-native-calendars";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { MainStackParamList } from "../../navigation/types";
 
 /* ======================
    TYPES & CONSTANTS
@@ -38,7 +40,16 @@ const isWeekendOrWednesday = (dateString: string) => {
 /* ======================
    SCREEN
 ====================== */
+
+type ScheduleRouteProp = RouteProp<
+  MainStackParamList,
+  "ScheduleAppointment"
+>;
+
 export const ScheduleAppointmentScreen: React.FC = () => {
+  const route = useRoute<ScheduleRouteProp>();
+  const { serviceName } = route.params;
+
   const today = new Date();
   const todayString = today.toISOString().split("T")[0];
 
@@ -46,7 +57,7 @@ export const ScheduleAppointmentScreen: React.FC = () => {
   const [selectedTime, setSelectedTime] = useState<Hour | null>(null);
 
   const handleContinue  = () => {
-    console.log(selectedDate + "-" + selectedTime)
+    console.log(serviceName +  selectedDate + "-" + selectedTime)
 };
 
   /* ===== LIMITES DE NAVEGACIÓN ===== */
