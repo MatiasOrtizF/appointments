@@ -15,21 +15,21 @@ type LoginScreenProps = {
 type NavigationProp = NativeStackNavigationProp<AuthStackParamList, "Login">
 
 export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
-    
+
 
     const [secure, setSecure] = useState(true)
 
     const navigation = useNavigation<NavigationProp>()
 
-      const {
-    email,
-    password,
-    setEmail,
-    setPassword,
-    login,
-    loading,
-    error
-  } = useLogin();
+    const {
+        email,
+        password,
+        setEmail,
+        setPassword,
+        login,
+        loading,
+        error
+    } = useLogin();
 
 
     return (
@@ -82,6 +82,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                         value={password}
                         onChangeText={setPassword}
                         secureTextEntry={secure}
+                        autoCapitalize="none"
                         style={styles.input}
                     />
 
@@ -101,10 +102,10 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                     </TouchableOpacity>
                 </View>
 
-                      {error && <Text>{error}</Text>}
+                {error && <Text>{error}</Text>}
 
                 <TouchableOpacity style={styles.button} onPress={login}>
-                    <Text style={styles.buttonText}> {loading ? "Cargando...": "Entrar"}</Text>
+                    <Text style={styles.buttonText}> {loading ? "Cargando..." : "Entrar"}</Text>
                 </TouchableOpacity>
 
                 <View style={{ flexDirection: 'row' }}>

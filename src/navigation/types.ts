@@ -5,7 +5,7 @@ export type AuthStackParamList = {
 
 export type MainStackParamList = {
   Tabs: undefined;
-  ScheduleAppointment: { serviceName?: string };
+  ScheduleAppointment: { serviceName: string };
 }
 
 export type MainTabParamList = {

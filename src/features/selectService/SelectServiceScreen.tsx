@@ -1,7 +1,7 @@
 
 import { Text, FlatList, ListRenderItem, View, StyleSheet } from "react-native";
 import { useServices } from "./useSelectService";
-import { ServiceCard } from "../home/ServiceCard";
+import { ServiceCard } from "./ServiceCard";
 import { Service } from "../../domain/models/Service";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { colors } from "../../theme/Colors";
@@ -24,9 +24,9 @@ export default function SelectServiceScreen() {
   const navigation = useNavigation<NavigationProp>();
 
   const renderItem: ListRenderItem<Service> = ({ item }) => (
-    <ServiceCard
+    <ServiceCard  
       service={item}
-      onBook={(service) => navigation.navigate("ScheduleAppointment", { serviceName: service.name })}
+      onBook={(serviceName) => navigation.navigate("ScheduleAppointment", { serviceName })}
     />
   );
 

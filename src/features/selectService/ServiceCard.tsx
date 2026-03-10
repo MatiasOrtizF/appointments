@@ -12,18 +12,18 @@ import { Service } from '../../domain/models/Service'
 
 type Props = {
   service: Service
-  onBook: (service: Service) => void
+  onBook: (serviceName: string) => void
 }
 
 export const ServiceCard: React.FC<Props> = ({
   service,
   onBook,
 }) => {
-    const { name, price, description, duration_min, img } = service
+  const { name, price, description, duration_min, img } = service
 
   return (
     <View style={styles.card}>
-      <Image source={{uri: img}} style={styles.image} />
+      <Image source={{ uri: img }} style={styles.image} />
 
       {/* Nombre + Precio */}
       <View style={styles.rowBetween}>
@@ -41,7 +41,7 @@ export const ServiceCard: React.FC<Props> = ({
           <Text style={styles.durationText}>{duration_min + " min"}</Text>
         </View>
 
-        <TouchableOpacity style={styles.button} onPress={()=> onBook(service)}>
+        <TouchableOpacity style={styles.button} onPress={() => onBook(service.name)}>
           <Text style={styles.buttonText}>Book</Text>
         </TouchableOpacity>
       </View>

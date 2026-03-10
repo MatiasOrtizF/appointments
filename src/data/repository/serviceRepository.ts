@@ -3,6 +3,7 @@ import { Service } from "../../domain/models/Service"
 import { db } from "../../config/Firebase"
 import { ServiceResponse, toDomain } from "../remote/response/serviceResponse"
 import { withTimeout } from "../../utils/withTimeOut"
+
 export const getServices = async (): Promise<Service[]> => {
   try {
 
