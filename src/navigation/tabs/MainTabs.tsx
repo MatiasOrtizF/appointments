@@ -2,15 +2,38 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import SelectServiceScreen from '../../features/selectService/SelectServiceScreen'
 import ProfileScreen from '../../features/profile/profileScreen'
 import BookingScreen from '../../features/booking/BookingScreen'
+import { Ionicons } from '@expo/vector-icons'
 
 const Tab = createBottomTabNavigator()
 
 export default function MainTabs() {
   return (
-    <Tab.Navigator screenOptions={{ headerShown: false }}>
-      <Tab.Screen name="SelectService" component={SelectServiceScreen}/>
-      <Tab.Screen name="Booking" component={BookingScreen}/>
-      <Tab.Screen name="Profile" component={ProfileScreen}/>
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        headerShown: false,
+           tabBarActiveTintColor: "#111",
+        tabBarInactiveTintColor: "#9ca3af",
+        
+        tabBarIcon: ({ color, size }) => {
+
+          let iconName: React.ComponentProps<typeof Ionicons>["name"] = "cut-outline"
+
+
+          if (route.name === "SelectService") {
+            iconName = "cut-outline"
+          } else if (route.name === "Booking") {
+            iconName = "calendar-outline"
+          } else if (route.name === "Profile") {
+            iconName = "person-outline"
+          }
+
+          return <Ionicons name={iconName} size={size} color={color} />
+        }
+      })}
+    >
+      <Tab.Screen name="SelectService" component={SelectServiceScreen} />
+      <Tab.Screen name="Booking" component={BookingScreen} />
+      <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
   )
 }
