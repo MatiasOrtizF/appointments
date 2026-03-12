@@ -1,6 +1,7 @@
 export const colors = {
-  primary: '#fbff00',        // violeta / azul
-  secondary: 'rgb(117, 108, 29)',      // verde
+  primary: '#fbff00',
+  primaryLight: '#f7f6bc',
+  secondary: 'rgb(117, 108, 29)',     
   background: '#FFFFFF',
   surface: '#F9FAFB',
 

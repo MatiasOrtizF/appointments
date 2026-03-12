@@ -1,11 +1,10 @@
 import { FlatList, Text, View, StyleSheet, ListRenderItem, Pressable } from "react-native";
-import { useBooking } from "./UseBooking";
 import { PastBookingCard } from "./PastBookingCard";
 import { Appointment } from "../../domain/models/Appointment";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { colors } from "../../theme/Colors";
 import { useState } from "react";
 import { UpcomingBookingCard } from "./UpcomingBookingCard";
+import { useBooking } from "./useBooking";
 
 export default function BookingScreen() {
     const [tab, setTab] = useState<"upcoming" | "past">("upcoming");

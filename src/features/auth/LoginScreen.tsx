@@ -7,6 +7,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { AuthStackParamList } from "../../navigation/types";
 import { useNavigation } from "@react-navigation/native";
 import { useLogin } from "./UseLogin";
+import { globalStyles } from "../../theme/globalStyles";
 
 type LoginScreenProps = {
     onLogin?: (email: string, password: string) => void;
@@ -104,8 +105,8 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
 
                 {error && <Text>{error}</Text>}
 
-                <TouchableOpacity style={styles.button} onPress={login}>
-                    <Text style={styles.buttonText}> {loading ? "Cargando..." : "Entrar"}</Text>
+                <TouchableOpacity style={[globalStyles.primaryButton, styles.button]} onPress={login}>
+                    <Text style={globalStyles.primaryButtonText}> {loading ? "Cargando..." : "Entrar"}</Text>
                 </TouchableOpacity>
 
                 <View style={{ flexDirection: 'row' }}>
@@ -179,17 +180,7 @@ const styles = StyleSheet.create({
         marginTop: 20,
     },
     button: {
-        width: '100%',
-        backgroundColor: colors.primary,
-        height: 50,
-        borderRadius: 50,
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    buttonText: {
-        color: colors.textPrimary,
-        fontWeight: "600",
-        fontSize: 16,
+        width: "100%"
     },
     linkContainer: {
         width: '100%',

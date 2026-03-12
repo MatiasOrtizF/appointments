@@ -1,14 +1,15 @@
 import { Appointment } from "../../../domain/models/Appointment"
 
 export interface AppointmentResponse {
-    date: string
-    service: string
-    time: string
-    uid: string
-    serviceImg: string
-    status: string,
-    price: number,
-    employeeName: string
+  date: string
+  service: string
+  time: string
+  uid: string
+  serviceImg: string
+  status: string,
+  price: number,
+  employeeName: string,
+  clientName: string
 }
 
 export const toDomain = (
@@ -24,6 +25,7 @@ export const toDomain = (
     serviceImg: response.serviceImg,
     status: response.status,
     price: response.price,
-    employeeName: response.employeeName
-}
+    employeeName: response.employeeName,
+    clientName: response.clientName
+  }
 }
