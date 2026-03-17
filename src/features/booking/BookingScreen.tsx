@@ -5,6 +5,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useState } from "react";
 import { UpcomingBookingCard } from "./UpcomingBookingCard";
 import { useBooking } from "./useBooking";
+import { colors } from "../../theme/colors";
+import { globalStyles } from "../../theme/globalStyles";
 
 export default function BookingScreen() {
     const [tab, setTab] = useState<"upcoming" | "past">("upcoming");
@@ -49,7 +51,7 @@ export default function BookingScreen() {
                             <Text
                                 style={[
                                     styles.tabText,
-                                    tab === "upcoming" && styles.activeTabText
+                                    tab === "upcoming" && globalStyles.primaryButtonText
                                 ]}
                             >
                                 Upcoming
@@ -66,7 +68,7 @@ export default function BookingScreen() {
                             <Text
                                 style={[
                                     styles.tabText,
-                                    tab === "past" && styles.activeTabText
+                                    tab === "past" && globalStyles.primaryButtonText
                                 ]}
                             >
                                 Past
@@ -98,16 +100,12 @@ const styles = StyleSheet.create({
     },
 
     activeTab: {
-        backgroundColor: "yellow"
+        backgroundColor: colors.primary
     },
 
     tabText: {
         color: "#777",
-        fontWeight: "500"
+        fontWeight: "500",
+        fontSize: 16,
     },
-
-    activeTabText: {
-        color: "#000",
-        fontWeight: "600"
-    }
 })

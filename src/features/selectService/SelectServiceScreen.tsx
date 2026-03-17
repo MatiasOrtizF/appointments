@@ -4,7 +4,7 @@ import { useServices } from "./useSelectService";
 import { ServiceCard } from "./ServiceCard";
 import { Service } from "../../domain/models/Service";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { colors } from "../../theme/Colors";
+import { colors } from "../../theme/colors";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { MainStackParamList } from "../../navigation/types";

@@ -1,13 +1,12 @@
-import { FlatList, ListRenderItem, Text, StyleSheet, View, Pressable, ScrollView } from "react-native";
+import { Text, StyleSheet, View, Pressable, ScrollView } from "react-native";
 import { useAdmin } from "./useAdmin";
-import { Appointment } from "../../domain/models/Appointment";
 import { AdminCard } from "./AdminCard";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { MainStackParamList } from "../../navigation/types";
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { Ionicons } from "@expo/vector-icons";
-import { colors } from "../../theme/Colors";
+import { colors } from "../../theme/colors";
 import { globalStyles } from "../../theme/globalStyles";
 
 export default function AdminScreen() {
@@ -127,25 +126,6 @@ export default function AdminScreen() {
 
 }
 
-/*const AdminHeader = () => {
-    type NavigationProp = NativeStackNavigationProp<
-        MainStackParamList,
-        "AdminAppointments"
-    >;
-
-    const navigation = useNavigation<NavigationProp>();
-
-    return (
-        <View style={styles.header}>
-            <Text style={styles.title}>Upcoming Schedule</Text>
-
-            <Pressable onPress={() => navigation.navigate("AdminAppointments")}>
-                <Text>See all</Text>
-            </Pressable>
-        </View>
-    )
-}*/
-
 export const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -153,7 +133,7 @@ export const styles = StyleSheet.create({
     },
 
     dashboardSection: {
-        paddingTop: 20,
+        paddingTop: 30,
         paddingHorizontal: 20,
     },
 

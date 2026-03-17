@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { KeyboardAvoidingView, Platform, View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from "react-native";
-import { colors } from "../../theme/Colors";
+import { colors } from "../../../theme/colors";
 import { MaterialIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { AuthStackParamList } from "../../navigation/types";
+import { AuthStackParamList } from "../../../navigation/types";
 import { useNavigation } from "@react-navigation/native";
-import { useLogin } from "./UseLogin";
-import { globalStyles } from "../../theme/globalStyles";
+import { useLogin } from "./useLogin";
+import { globalStyles } from "../../../theme/globalStyles";
 
 type LoginScreenProps = {
     onLogin?: (email: string, password: string) => void;
@@ -15,7 +15,7 @@ type LoginScreenProps = {
 
 type NavigationProp = NativeStackNavigationProp<AuthStackParamList, "Login">
 
-export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
+export const LoginScreen: React.FC<LoginScreenProps> = () => {
 
 
     const [secure, setSecure] = useState(true)
@@ -40,7 +40,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
         >
             <View style={styles.header}>
                 <Image
-                    source={require('../../../assets/img_header_login.jpg')}
+                    source={require('../../../../assets/img_header_login.jpg')}
                     style={styles.image}
                     resizeMode="cover"
                     blurRadius={1}

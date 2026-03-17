@@ -1,7 +1,7 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import MainTabs from './tabs/MainTabs';
 import { ScheduleAppointmentScreen } from '../features/schedule_appointment/ScheduleAppointmentScreen';
-import AppointmentScreen from '../features/Appointments/AppointmentScreen';
+import AppointmentScreen from '../features/appointments/AppointmentScreen';
 
 export type MainStackParamList = {
   Tabs: undefined;

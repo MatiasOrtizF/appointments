@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../config/Firebase";
+import { authRepository } from "../../../data/repository/AuthRepository";
 
 export const useLogin = () => {
 
@@ -10,27 +9,17 @@ export const useLogin = () => {
   const [error,setError] = useState<string | null>(null);
 
   const login = async () => {
-
     try {
-
       setLoading(true);
       setError(null);
 
-      await signInWithEmailAndPassword(auth, email, password);
+      await authRepository.login(email, password);
 
-      console.log("entro")
-    } catch(e:any) {
-
-    
-        console.log(e.message)
+    } catch (e: any) {
       setError(e.message);
-
     } finally {
-
       setLoading(false);
-
     }
-
   };
 
   return {
@@ -42,5 +31,4 @@ export const useLogin = () => {
     loading,
     error
   };
-
 };

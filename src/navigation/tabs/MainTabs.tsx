@@ -3,6 +3,7 @@ import SelectServiceScreen from '../../features/selectService/SelectServiceScree
 import BookingScreen from '../../features/booking/BookingScreen'
 import { Ionicons } from '@expo/vector-icons'
 import AdminScreen from '../../features/profile/AdminScreen'
+import { SettingsScreen } from '../../features/setting/SettingScreen'
 
 const Tab = createBottomTabNavigator()
 
@@ -18,13 +19,14 @@ export default function MainTabs() {
 
           let iconName: React.ComponentProps<typeof Ionicons>["name"] = "cut-outline"
 
-
           if (route.name === "SelectService") {
             iconName = "cut-outline"
           } else if (route.name === "Booking") {
             iconName = "calendar-outline"
           } else if (route.name === "Admin") {
             iconName = "person-outline"
+          } else if (route.name === "Setting") {
+            iconName = "settings-outline"
           }
 
           return <Ionicons name={iconName} size={size} color={color} />
@@ -34,6 +36,7 @@ export default function MainTabs() {
       <Tab.Screen name="SelectService" component={SelectServiceScreen} />
       <Tab.Screen name="Booking" component={BookingScreen} />
       <Tab.Screen name="Admin" component={AdminScreen} />
+      <Tab.Screen name="Setting" component={SettingsScreen} />
     </Tab.Navigator>
   )
 }
