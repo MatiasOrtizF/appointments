@@ -16,8 +16,6 @@ type LoginScreenProps = {
 type NavigationProp = NativeStackNavigationProp<AuthStackParamList, "Login">
 
 export const LoginScreen: React.FC<LoginScreenProps> = () => {
-
-
     const [secure, setSecure] = useState(true)
 
     const navigation = useNavigation<NavigationProp>()
@@ -55,11 +53,10 @@ export const LoginScreen: React.FC<LoginScreenProps> = () => {
 
             <View style={styles.content}>
 
-                <Text style={styles.title}>Find Your Glow</Text>
+                <Text style={[globalStyles.title, { marginBottom: 10 }]}>Find Your Glow</Text>
+                <Text style={[globalStyles.subTitle, { marginBottom: 24 }]}>Book your next look with ease.</Text>
 
-                <Text style={styles.subTitle}>Book your next look with ease.</Text>
-
-                <View style={styles.inputContainer}>
+                <View style={globalStyles.inputContainer}>
                     <MaterialIcons name="email" size={20} color={colors.secondary} />
 
                     <TextInput
@@ -69,12 +66,11 @@ export const LoginScreen: React.FC<LoginScreenProps> = () => {
                         onChangeText={setEmail}
                         autoCapitalize="none"
                         keyboardType="email-address"
-                        style={styles.input}
+                        style={globalStyles.input}
                     />
                 </View>
 
-                <View style={styles.inputContainer}>
-                    {/* Icono candado izquierda */}
+                <View style={globalStyles.inputContainer}>
                     <MaterialIcons name="lock" size={20} color={colors.secondary} />
 
                     <TextInput
@@ -84,7 +80,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = () => {
                         onChangeText={setPassword}
                         secureTextEntry={secure}
                         autoCapitalize="none"
-                        style={styles.input}
+                        style={globalStyles.input}
                     />
 
                     {/* Ojo derecha */}
@@ -98,7 +94,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = () => {
                 </View>
 
                 <View style={styles.linkContainer}>
-                    <TouchableOpacity onPress={() => console.log("ir al recovery password")}>
+                    <TouchableOpacity onPress={() => navigation.navigate("RecoveryPasswordScreen")}>
                         <Text style={styles.linkForgoPassword}>Forgot Password?</Text>
                     </TouchableOpacity>
                 </View>
@@ -130,10 +126,10 @@ const styles = StyleSheet.create({
         padding: 24,
     },
     header: {
-        position: 'absolute', // 🔑 saca la imagen del layout
+        position: 'absolute',
         top: 0,
         width: '100%',
-        height: '30%',
+        height: '31%',
     },
 
     image: {
@@ -147,38 +143,12 @@ const styles = StyleSheet.create({
         height: 120,
     },
     content: {
-        flex: 1,                  // ocupa toda la pantalla
-        justifyContent: 'center', // centro vertical REAL
-        alignItems: 'center',     // centro horizontal
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
         padding: 24,
     },
 
-    title: {
-        fontSize: 33,
-        fontWeight: "700",
-        marginBottom: 10
-    },
-    subTitle: {
-        color: colors.textSecondary,
-        fontSize: 17,
-        marginBottom: 24,
-    },
-    input: {
-        flex: 1,
-        marginLeft: 8,
-        color: colors.textPrimary,
-        fontSize: 16,
-    },
-    inputContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        borderWidth: 1,
-        borderColor: colors.secondary,
-        borderRadius: 50,
-        paddingHorizontal: 12,
-        height: 50,
-        marginTop: 20,
-    },
     button: {
         width: "100%"
     },
@@ -188,12 +158,12 @@ const styles = StyleSheet.create({
     },
     linkForgoPassword: {
         color: colors.secondary,
-        marginVertical: 20,
+        marginVertical: 15,
         fontWeight: 600
     },
     linkRegister: {
         color: colors.textPrimary,
-        marginTop: 16,
+        marginTop: 24,
         fontSize: 14,
     },
 });

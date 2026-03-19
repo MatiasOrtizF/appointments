@@ -1,6 +1,7 @@
 export type AuthStackParamList = {
   Login: undefined
   Register: undefined
+  RecoveryPasswordScreen: undefined
 }
 
 export type MainStackParamList = {
