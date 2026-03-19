@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { KeyboardAvoidingView, Platform, View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from "react-native";
+import React, { useEffect, useState } from "react";
+import { KeyboardAvoidingView, Platform, View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Keyboard } from "react-native";
 import { colors } from "../../../theme/colors";
 import { MaterialIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
@@ -8,6 +8,7 @@ import { AuthStackParamList } from "../../../navigation/types";
 import { useNavigation } from "@react-navigation/native";
 import { useLogin } from "./useLogin";
 import { globalStyles } from "../../../theme/globalStyles";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 type LoginScreenProps = {
     onLogin?: (email: string, password: string) => void;
@@ -16,6 +17,7 @@ type LoginScreenProps = {
 type NavigationProp = NativeStackNavigationProp<AuthStackParamList, "Login">
 
 export const LoginScreen: React.FC<LoginScreenProps> = () => {
+    const [keyboardVisible, setKeyboardVisible] = useState(false)
     const [secure, setSecure] = useState(true)
 
     const navigation = useNavigation<NavigationProp>()
@@ -30,13 +32,36 @@ export const LoginScreen: React.FC<LoginScreenProps> = () => {
         error
     } = useLogin();
 
+    useEffect(() => {
+
+        const show = Keyboard.addListener("keyboardDidShow", () => {
+            setKeyboardVisible(true)
+        })
+
+        const hide = Keyboard.addListener("keyboardDidHide", () => {
+            setKeyboardVisible(false)
+        })
+
+        return () => {
+            show.remove()
+            hide.remove()
+        }
+
+    }, [])
+
 
     return (
+        <SafeAreaView style={{flex: 1}}>
         <KeyboardAvoidingView
             style={{ flex: 1 }}
-            behavior={Platform.OS === "ios" ? "padding" : undefined}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
-            <View style={styles.header}>
+            <View
+                style={[
+                    styles.header,
+                    { height: keyboardVisible ? "20%" : "30%" },
+                ]}
+            >
                 <Image
                     source={require('../../../../assets/img_header_login.jpg')}
                     style={styles.image}
@@ -114,6 +139,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = () => {
 
             </View>
         </KeyboardAvoidingView>
+        </SafeAreaView>
     )
 }
 
@@ -129,7 +155,6 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 0,
         width: '100%',
-        height: '31%',
     },
 
     image: {

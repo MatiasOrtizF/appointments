@@ -2,12 +2,13 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useState } from "react";
-import { KeyboardAvoidingView, Text, View, Image, TextInput, TouchableOpacity, StyleSheet, Platform, Keyboard } from "react-native";
+import { KeyboardAvoidingView, Text, View, Image, TextInput, TouchableOpacity, StyleSheet, Platform, Keyboard, ScrollView } from "react-native";
 import { useRegister } from "./useRegister";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { AuthStackParamList } from "../../../navigation/types";
 import { colors } from "../../../theme/colors";
 import { globalStyles } from "../../../theme/globalStyles";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 type RegisterScreenProps = {
     onRegister?: (email: string, password: string) => void;
@@ -55,131 +56,144 @@ export default function RegisterScreen() {
 
 
     return (
-        <KeyboardAvoidingView
-            style={{ flex: 1 }}
-            behavior={Platform.OS === "ios" ? "padding" : undefined}
-        >
-            <View style={[styles.header, { height: keyboardVisible ? "15%" : "25%" }
-            ]}>
-                <Image
-                    source={require('../../../../assets/img_header_login.jpg')}
-                    style={styles.image}
-                    resizeMode="cover"
-                    blurRadius={1}
-                />
+        <SafeAreaView style={{flex: 1}}>
+            <KeyboardAvoidingView
+                style={{ flex: 1 }}
+                behavior={Platform.OS === "ios" ? "padding" : "height"}
+                keyboardVerticalOffset={Platform.OS === 'ios' ? 604 : 0} // Ajusta según tu header
 
-                <LinearGradient
-                    colors={['transparent', '#f4f6fa']}
-                    style={styles.gradient}
-                />
+            >
+                <ScrollView
+                    contentContainerStyle={{
+                        flexGrow: 1,
 
-            </View>
-
-            <View style={styles.content}>
-
-                <Text style={styles.title}>Create your account</Text>
-
-                {!keyboardVisible ?
-                    <Text style={styles.subTitle}>Join our beauty community to book your next glow-up instantly.</Text>
-                    :
-                    null
-                }
-
-                {/* Fullname */}
-                <View style={styles.inputContainer}>
-                    <MaterialIcons name="person" size={20} color={colors.secondary} />
-
-                    <TextInput
-                        placeholder="Full Name"
-                        placeholderTextColor={colors.secondary}
-                        value={fullName}
-                        onChangeText={setFullName}
-                        keyboardType="default"
-                        style={styles.input}
-                    />
-                </View>
-
-
-                {/* Email */}
-                <View style={styles.inputContainer}>
-                    <MaterialIcons name="email" size={20} color={colors.secondary} />
-
-                    <TextInput
-                        placeholder="Email"
-                        placeholderTextColor={colors.secondary}
-                        value={email}
-                        onChangeText={setEmail}
-                        autoCapitalize="none"
-                        keyboardType="email-address"
-                        style={styles.input}
-                    />
-                </View>
-
-                {/* Password */}
-                <View style={styles.inputContainer}>
-                    {/* Icono */}
-                    <MaterialIcons name="lock" size={20} color={colors.secondary} />
-
-                    <TextInput
-                        placeholder="Password"
-                        placeholderTextColor={colors.secondary}
-                        value={password}
-                        onChangeText={setPassword}
-                        secureTextEntry={secure}
-                        autoCapitalize="none"
-                        style={styles.input}
-                    />
-
-                    {/* Ocultar/ Revelar */}
-                    <TouchableOpacity onPress={() => setSecure(!secure)}>
-                        <MaterialIcons
-                            name={secure ? 'visibility-off' : 'visibility'}
-                            size={20}
-                            color={colors.secondary}
+                    }}
+                    keyboardShouldPersistTaps="handled"
+                    showsVerticalScrollIndicator={false}
+                >
+                    <View style={styles.header}>
+                        <Image
+                            source={require('../../../../assets/img_header_login.jpg')}
+                            style={styles.image}
+                            resizeMode="cover"
+                            blurRadius={1}
                         />
-                    </TouchableOpacity>
-                </View>
 
-                {/* Confirm Password */}
-                <View style={styles.inputContainer}>
-                    {/* Icono */}
-                    <MaterialIcons name="lock" size={20} color={colors.secondary} />
-
-                    <TextInput
-                        placeholder="Confirm Password"
-                        placeholderTextColor={colors.secondary}
-                        value={confirmPassword}
-                        onChangeText={setConfirmPassword}
-                        secureTextEntry={secure}
-                        autoCapitalize="none"
-                        style={styles.input}
-                    />
-
-                    {/* Ocultar/ Revelar */}
-                    <TouchableOpacity onPress={() => setSecure(!secure)}>
-                        <MaterialIcons
-                            name={secure ? 'visibility-off' : 'visibility'}
-                            size={20}
-                            color={colors.secondary}
+                        <LinearGradient
+                            colors={['transparent', '#f4f6fa']}
+                            style={styles.gradient}
                         />
-                    </TouchableOpacity>
-                </View>
 
-                {error && <Text style={styles.errorText}>❌ {error}</Text>}
+                    </View>
 
-                <TouchableOpacity style={[globalStyles.primaryButton, styles.button]} onPress={register}>
-                    <Text style={globalStyles.primaryButtonText}> {loading ? "Cargando..." : "Crear Cuenta"}</Text>
-                </TouchableOpacity>
+                    <View style={styles.content}>
 
-                <View style={{ flexDirection: 'row' }}>
-                    <Text style={styles.linkRegister}>¿Ya tenés cuenta? </Text>
-                    <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-                        <Text style={[styles.linkRegister, { fontWeight: "600" }]}>Inicia sesion</Text>
-                    </TouchableOpacity>
-                </View>
+                        <Text style={styles.title}>Create your account</Text>
 
-            </View>
-        </KeyboardAvoidingView>
+                        {!keyboardVisible ?
+                            <Text style={styles.subTitle}>Join our beauty community to book your next glow-up instantly.</Text>
+                            :
+                            null
+                        }
+
+                        {/* Fullname */}
+                        <View style={styles.inputContainer}>
+                            <MaterialIcons name="person" size={20} color={colors.secondary} />
+
+                            <TextInput
+                                placeholder="Full Name"
+                                placeholderTextColor={colors.secondary}
+                                value={fullName}
+                                onChangeText={setFullName}
+                                keyboardType="default"
+                                style={styles.input}
+                            />
+                        </View>
+
+
+                        {/* Email */}
+                        <View style={styles.inputContainer}>
+                            <MaterialIcons name="email" size={20} color={colors.secondary} />
+
+                            <TextInput
+                                placeholder="Email"
+                                placeholderTextColor={colors.secondary}
+                                value={email}
+                                onChangeText={setEmail}
+                                autoCapitalize="none"
+                                keyboardType="email-address"
+                                style={styles.input}
+                            />
+                        </View>
+
+                        {/* Password */}
+                        <View style={styles.inputContainer}>
+                            {/* Icono */}
+                            <MaterialIcons name="lock" size={20} color={colors.secondary} />
+
+                            <TextInput
+                                placeholder="Password"
+                                placeholderTextColor={colors.secondary}
+                                value={password}
+                                onChangeText={setPassword}
+                                secureTextEntry={secure}
+                                autoCapitalize="none"
+                                style={styles.input}
+                            />
+
+                            {/* Ocultar/ Revelar */}
+                            <TouchableOpacity onPress={() => setSecure(!secure)}>
+                                <MaterialIcons
+                                    name={secure ? 'visibility-off' : 'visibility'}
+                                    size={20}
+                                    color={colors.secondary}
+                                />
+                            </TouchableOpacity>
+                        </View>
+
+                        {/* Confirm Password */}
+                        <View style={styles.inputContainer}>
+                            {/* Icono */}
+                            <MaterialIcons name="lock" size={20} color={colors.secondary} />
+
+                            <TextInput
+                                placeholder="Confirm Password"
+                                placeholderTextColor={colors.secondary}
+                                value={confirmPassword}
+                                onChangeText={setConfirmPassword}
+                                secureTextEntry={secure}
+                                autoCapitalize="none"
+                                style={styles.input}
+                            />
+
+                            {/* Ocultar/ Revelar */}
+                            <TouchableOpacity onPress={() => setSecure(!secure)}>
+                                <MaterialIcons
+                                    name={secure ? 'visibility-off' : 'visibility'}
+                                    size={20}
+                                    color={colors.secondary}
+                                />
+                            </TouchableOpacity>
+                        </View>
+
+                        {error && <Text style={styles.errorText}>❌ {error}</Text>}
+
+                        <TouchableOpacity style={[globalStyles.primaryButton, styles.button]} onPress={register}>
+                            <Text style={globalStyles.primaryButtonText}> {loading ? "Cargando..." : "Crear Cuenta"}</Text>
+                        </TouchableOpacity>
+
+                        <View style={{ flexDirection: 'row' }}>
+                            <Text style={styles.linkRegister}>¿Ya tenés cuenta? </Text>
+                            <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+                                <Text style={[styles.linkRegister, { fontWeight: "600" }]}>Inicia sesion</Text>
+                            </TouchableOpacity>
+                        </View>
+
+                    </View>
+
+                </ScrollView>
+            </KeyboardAvoidingView>
+        </SafeAreaView>
     )
 }
 
@@ -195,6 +209,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 0,
         width: '100%',
+        height: "20%"
     },
 
     image: {
