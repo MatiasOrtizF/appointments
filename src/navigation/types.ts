@@ -15,3 +15,8 @@ export type MainTabParamList = {
   Booking: undefined
   Profile: undefined
 }
+
+export type SettingsStackParamList = {
+  SettingsHome: undefined
+  ChangePassword: undefined
+}

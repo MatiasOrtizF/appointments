@@ -3,7 +3,7 @@ import SelectServiceScreen from '../../features/selectService/SelectServiceScree
 import BookingScreen from '../../features/booking/BookingScreen'
 import { Ionicons } from '@expo/vector-icons'
 import AdminScreen from '../../features/profile/AdminScreen'
-import { SettingsScreen } from '../../features/setting/SettingScreen'
+import SettingNavigation from '../SettingNavigation'
 
 const Tab = createBottomTabNavigator()
 
@@ -14,6 +14,7 @@ export default function MainTabs() {
         headerShown: false,
         tabBarActiveTintColor: "#111",
         tabBarInactiveTintColor: "#9ca3af",
+        tabBarHideOnKeyboard: true,
 
         tabBarIcon: ({ color, size }) => {
 
@@ -25,7 +26,7 @@ export default function MainTabs() {
             iconName = "calendar-outline"
           } else if (route.name === "Admin") {
             iconName = "person-outline"
-          } else if (route.name === "Setting") {
+          } else if (route.name === "Settings") {
             iconName = "settings-outline"
           }
 
@@ -36,7 +37,7 @@ export default function MainTabs() {
       <Tab.Screen name="SelectService" component={SelectServiceScreen} />
       <Tab.Screen name="Booking" component={BookingScreen} />
       <Tab.Screen name="Admin" component={AdminScreen} />
-      <Tab.Screen name="Setting" component={SettingsScreen} />
+      <Tab.Screen name="Settings" component={SettingNavigation} />
     </Tab.Navigator>
   )
 }

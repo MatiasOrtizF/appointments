@@ -41,6 +41,6 @@ export const globalStyles = StyleSheet.create({
         borderRadius: 50,
         paddingHorizontal: 12,
         height: 50,
-        marginTop: 20,
+        marginBottom: 20,
     },
 })

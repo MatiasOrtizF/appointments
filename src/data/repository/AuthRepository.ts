@@ -5,7 +5,10 @@ import {
   sendPasswordResetEmail,
   signOut,
   reload,
-  User
+  User,
+  EmailAuthProvider,
+  reauthenticateWithCredential,
+  updatePassword
 } from "firebase/auth"
 
 import { auth } from "../../config/Firebase"
@@ -112,6 +115,65 @@ export class AuthRepository {
       throw new Error("No se pudo enviar el correo de recuperación. Intenta más tarde.")
     }
   }
+
+
+  async updatePassword(
+    currentPassword: string,
+    newPassword: string
+  ): Promise<boolean | null> {
+    console.log("actualizando contraseña")
+    try {
+      const user = auth.currentUser;
+
+      if (!user) {
+        throw new Error("No hay usuario autenticado");
+      }
+
+      const email = user.email;
+
+      if (!email) {
+        throw new Error("El email del usuario es nulo");
+      }
+
+      // ⏱️ Timeout de 10 segundos
+      const timeoutPromise = new Promise<null>((resolve) =>
+        setTimeout(() => resolve(null), 10000)
+      );
+
+      const updatePromise = (async (): Promise<boolean> => {
+        const credential = EmailAuthProvider.credential(email, currentPassword);
+
+        // 🔐 Reautenticación
+        await reauthenticateWithCredential(user, credential);
+
+        // 🔑 Actualizar contraseña (IMPORTANTE: alias)
+        await updatePassword(user, newPassword);
+
+        return true;
+      })();
+
+      const result = await Promise.race([updatePromise, timeoutPromise]);
+
+      return result;
+    } catch (error: any) {
+
+      if (error.code === "auth/invalid-credential") {
+        throw new Error("La contraseña actual que ingresaste no es correcta");
+      }
+
+      if (error.code === "auth/wrong-password") {
+        throw new Error("La contraseña actual es incorrecta.");
+      }
+
+      if (error.code === "auth/weak-password") {
+        throw new Error("La nueva contraseña es demasiado débil.");
+      }
+
+      console.log(error)
+      throw new Error("No se pudo actualizar la contraseña. Intenta más tarde.");
+    }
+  }
+
 }
 
 export const authRepository = new AuthRepository();

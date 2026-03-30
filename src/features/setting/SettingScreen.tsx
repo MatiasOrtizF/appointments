@@ -2,11 +2,20 @@ import { View, Text, StyleSheet, TouchableOpacity, Switch, ScrollView } from "re
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 import { useSetting } from "./useSetting";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { SettingsStackParamList } from "../../navigation/types";
+import { useNavigation } from "@react-navigation/native";
+
+type NavigationProp = NativeStackNavigationProp<
+  SettingsStackParamList,
+  "SettingsHome"
+>
 
 export const SettingsScreen = () => {
-
   const [darkMode, setDarkMode] = useState(false)
   const [notifications, setNotifications] = useState(true)
+
+  const navigation = useNavigation<NavigationProp>()
 
   const {
     logOut,
@@ -54,7 +63,7 @@ export const SettingsScreen = () => {
       <SettingItem
         icon="lock-closed-outline"
         title="Change password"
-        onPress={() => { }}
+        onPress={() => {navigation.navigate("ChangePassword") }}
       />
 
 
