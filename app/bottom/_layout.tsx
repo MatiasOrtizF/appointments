@@ -22,7 +22,6 @@ export default function BottomLayout() {
       <Tabs.Screen
         name="booking"
         options={{
-          headerShown: true,
           title: "Booking",
           tabBarIcon: ({ color, size }) => (
             <MaterialIcons name="event" size={size} color={color} />

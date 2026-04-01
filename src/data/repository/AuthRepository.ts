@@ -90,6 +90,10 @@ export class AuthRepository {
     }
   }
 
+  async onAuthStateChanged(callback: (user: User | null) => void) {
+    return auth.onAuthStateChanged(callback);
+  }
+
   async getCurrentUser(): Promise<User | null> {
     return auth.currentUser
   }

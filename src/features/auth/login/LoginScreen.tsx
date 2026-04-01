@@ -20,25 +20,9 @@ export const LoginScreen = () => {
         setEmail,
         setPassword,
         login,
-        user,
         loading,
         error
     } = useLogin();
-
-    /*useEffect(() => {
-        if (user != null) {
-            router.replace('/bottom'); // o '/verify-email' si corresponde
-        }
-    }, [user]);*/
-
-    useEffect(() => {
-        if (user != null) {
-            if (!user.emailVerified) router.replace('/verify-email');
-            else {
-                router.replace('/bottom');
-            }
-        }
-    }, [user]);
 
     useEffect(() => {
 
