@@ -1,19 +1,24 @@
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
 import { Text, View, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator } from "react-native";
-import { colors } from "../../../theme/colors";
-import { globalStyles } from "../../../theme/globalStyles";
+import { lightColors, darkColors } from "../../../theme/colors";
+import { createGlobalStyles } from "../../../theme/globalStyles";
 import { useChangePassword } from "./useChangePassword";
 import { useKeyboard } from "../../../hooks/useKeyboard";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useNavigation } from "@react-navigation/native";
 import { ALERT_TYPE, Dialog } from "react-native-alert-notification";
+import { useTheme } from "../../../data/provider/ThemeProvider";
 
 export default function ChangePasswordScreen() {
 
     const [currentPasswordSecure, setCurrentPasswordSecure] = useState(true)
     const [newPasswordsecure, setNewPasswordSecure] = useState(true)
     const [confirmNewPasswordSecure, setConfirmNewPasswordSecure] = useState(true)
+
+        const { isDarkMode } = useTheme();
+        const globalStyles = createGlobalStyles(isDarkMode)
+        const colors = isDarkMode ? darkColors : lightColors
 
     const navigation = useNavigation()
 
@@ -226,7 +231,7 @@ const styles = StyleSheet.create({
     label: {
         fontSize: 16,
         fontWeight: "500",
-        color: colors.textPrimary,
+        //color: colors.textPrimary,
         marginBottom: 6,
         marginLeft: 4
     },

@@ -6,12 +6,16 @@ import { MainStackParamList } from "../../navigation/types";
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { Ionicons } from "@expo/vector-icons";
-import { colors } from "../../theme/colors";
-import { globalStyles } from "../../theme/globalStyles";
+import { lightColors, darkColors } from "../../theme/colors";
+import { createGlobalStyles } from "../../theme/globalStyles";
+import { useTheme } from "../../data/provider/ThemeProvider";
 
 export default function AdminScreen() {
 
     const { upcommingAppointments, loading } = useAdmin()
+        const { isDarkMode } = useTheme();
+        const globalStyles = createGlobalStyles(isDarkMode)
+        const colors = isDarkMode ? darkColors : lightColors
 
     if (loading) {
         return <Text>Loading...</Text>
@@ -186,7 +190,7 @@ export const styles = StyleSheet.create({
     },
 
     statIcon: {
-        backgroundColor: colors.primaryLight,
+        //backgroundColor: colors.primaryLight,
         padding: 10,
         borderRadius: 50,
         alignSelf: "flex-start",

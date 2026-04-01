@@ -2,23 +2,17 @@ import { View, Text, StyleSheet, TouchableOpacity, Switch, ScrollView } from "re
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 import { useSetting } from "./useSetting";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { SettingsStackParamList } from "../../navigation/types";
-import { useNavigation } from "@react-navigation/native";
 import { useTheme } from "../../data/provider/ThemeProvider";
 import { useRouter } from "expo-router";
-
-type NavigationProp = NativeStackNavigationProp<
-  SettingsStackParamList,
-  "SettingsHome"
->
+import { createGlobalStyles } from "../../theme/globalStyles";
 
 export const SettingsScreen = () => {
-    const router = useRouter();
+  const router = useRouter();
   const [notifications, setNotifications] = useState(true)
 
   const { isDarkMode, toggleTheme } = useTheme();
-  
+  const globalStyles = createGlobalStyles(isDarkMode)
+
   const {
     logOut,
     loading,
@@ -52,7 +46,7 @@ export const SettingsScreen = () => {
 
   return (
 
-    <ScrollView style={styles.container}>
+    <ScrollView style={ globalStyles.container }>
 
       <Text style={styles.sectionTitle}>Profile</Text>
 
@@ -139,12 +133,6 @@ export const SettingsScreen = () => {
 }
 
 const styles = StyleSheet.create({
-
-  container: {
-    flex: 1,
-    backgroundColor: "#F7F7F7",
-    padding: 20
-  },
 
   sectionTitle: {
     fontSize: 14,

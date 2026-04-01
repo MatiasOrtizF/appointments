@@ -3,15 +3,19 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useState } from "react";
 import { KeyboardAvoidingView, Text, View, Image, TextInput, TouchableOpacity, StyleSheet, Platform, Keyboard, ScrollView } from "react-native";
 import { useRegister } from "./useRegister";
-import { colors } from "../../../theme/colors";
-import { globalStyles } from "../../../theme/globalStyles";
+import { lightColors, darkColors } from "../../../theme/colors";
+import { createGlobalStyles } from "../../../theme/globalStyles";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
+import { useTheme } from "../../../data/provider/ThemeProvider";
 
 export default function RegisterScreen() {
 
     const [keyboardVisible, setKeyboardVisible] = useState(false)
     const [secure, setSecure] = useState(true)
+    const { isDarkMode } = useTheme();
+    const globalStyles = createGlobalStyles(isDarkMode)
+    const colors = isDarkMode ? darkColors : lightColors
 
     const {
         fullName,
@@ -26,6 +30,7 @@ export default function RegisterScreen() {
         loading,
         error
     } = useRegister();
+
 
     useEffect(() => {
 
@@ -46,7 +51,7 @@ export default function RegisterScreen() {
 
 
     return (
-        <SafeAreaView style={{flex: 1}}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
             <KeyboardAvoidingView
                 style={{ flex: 1 }}
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -70,7 +75,7 @@ export default function RegisterScreen() {
                         />
 
                         <LinearGradient
-                            colors={['transparent', '#f4f6fa']}
+                            colors={['transparent', colors.background]}
                             style={styles.gradient}
                         />
 
@@ -78,16 +83,16 @@ export default function RegisterScreen() {
 
                     <View style={styles.content}>
 
-                        <Text style={styles.title}>Create your account</Text>
+                        <Text style={[globalStyles.title, { marginBottom: 10 }]}>Create your account</Text>
 
                         {!keyboardVisible ?
-                            <Text style={styles.subTitle}>Join our beauty community to book your next glow-up instantly.</Text>
+                            <Text style={[globalStyles.subTitle, { marginBottom: 25, textAlign: 'center' }]}>Join our beauty community to book your next glow-up instantly.</Text>
                             :
                             null
                         }
 
                         {/* Fullname */}
-                        <View style={styles.inputContainer}>
+                        <View style={globalStyles.inputContainer}>
                             <MaterialIcons name="person" size={20} color={colors.secondary} />
 
                             <TextInput
@@ -96,13 +101,13 @@ export default function RegisterScreen() {
                                 value={fullName}
                                 onChangeText={setFullName}
                                 keyboardType="default"
-                                style={styles.input}
+                                style={globalStyles.input}
                             />
                         </View>
 
 
                         {/* Email */}
-                        <View style={styles.inputContainer}>
+                        <View style={globalStyles.inputContainer}>
                             <MaterialIcons name="email" size={20} color={colors.secondary} />
 
                             <TextInput
@@ -112,12 +117,12 @@ export default function RegisterScreen() {
                                 onChangeText={setEmail}
                                 autoCapitalize="none"
                                 keyboardType="email-address"
-                                style={styles.input}
+                                style={globalStyles.input}
                             />
                         </View>
 
                         {/* Password */}
-                        <View style={styles.inputContainer}>
+                        <View style={globalStyles.inputContainer}>
                             {/* Icono */}
                             <MaterialIcons name="lock" size={20} color={colors.secondary} />
 
@@ -128,7 +133,7 @@ export default function RegisterScreen() {
                                 onChangeText={setPassword}
                                 secureTextEntry={secure}
                                 autoCapitalize="none"
-                                style={styles.input}
+                                style={globalStyles.input}
                             />
 
                             {/* Ocultar/ Revelar */}
@@ -142,7 +147,7 @@ export default function RegisterScreen() {
                         </View>
 
                         {/* Confirm Password */}
-                        <View style={styles.inputContainer}>
+                        <View style={globalStyles.inputContainer}>
                             {/* Icono */}
                             <MaterialIcons name="lock" size={20} color={colors.secondary} />
 
@@ -153,7 +158,7 @@ export default function RegisterScreen() {
                                 onChangeText={setConfirmPassword}
                                 secureTextEntry={secure}
                                 autoCapitalize="none"
-                                style={styles.input}
+                                style={globalStyles.input}
                             />
 
                             {/* Ocultar/ Revelar */}
@@ -173,9 +178,9 @@ export default function RegisterScreen() {
                         </TouchableOpacity>
 
                         <View style={{ flexDirection: 'row' }}>
-                            <Text style={styles.linkRegister}>¿Ya tenés cuenta? </Text>
-                            <TouchableOpacity onPress={() => router.push('/auth/login')}>
-                                <Text style={[styles.linkRegister, { fontWeight: "600" }]}>Inicia sesion</Text>
+                            <Text style={[styles.linkLogin, { color: colors.textPrimary }]}>¿Ya tenés cuenta? </Text>
+                            <TouchableOpacity onPress={() => router.replace('/auth/login')}>
+                                <Text style={[styles.linkLogin, { fontWeight: "600", color: colors.textPrimary }]}>Inicia sesion</Text>
                             </TouchableOpacity>
                         </View>
 
@@ -188,13 +193,6 @@ export default function RegisterScreen() {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#f4f6fa",
-        justifyContent: "center",
-        alignItems: 'center',
-        padding: 24,
-    },
     header: {
         position: 'absolute',
         top: 0,
@@ -218,40 +216,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         padding: 24,
     },
-
-    title: {
-        fontSize: 33,
-        fontWeight: "700",
-        marginBottom: 10
-    },
-    subTitle: {
-        color: colors.textSecondary,
-        fontSize: 17,
-        marginBottom: 25,
-        textAlign: "center"
-    },
-    input: {
-        flex: 1,
-        marginLeft: 8,
-        color: colors.textPrimary,
-        fontSize: 16,
-    },
-    inputContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        borderWidth: 1,
-        borderColor: colors.secondary,
-        borderRadius: 50,
-        paddingHorizontal: 12,
-        height: 50,
-        marginTop: 20,
-    },
     button: {
         width: "100%",
         marginVertical: 25
     },
-    linkRegister: {
-        color: colors.textPrimary,
+    linkLogin: {
         marginTop: 10,
         fontSize: 14,
     },

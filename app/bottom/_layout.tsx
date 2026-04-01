@@ -1,5 +1,5 @@
 import { Tabs } from "expo-router";
-import { colors } from "../../src/theme/colors";
+import { lightColors } from "../../src/theme/colors";
 import { MaterialIcons } from "@expo/vector-icons";
 
 export default function BottomLayout() {
@@ -7,7 +7,7 @@ export default function BottomLayout() {
   return (
     <Tabs screenOptions={{
       headerShown: false,
-      tabBarActiveTintColor: colors.secondary,   // color cuando está seleccionado
+      tabBarActiveTintColor: lightColors.secondary,   // color cuando está seleccionado
       tabBarInactiveTintColor: '#000000',
     }}>
       <Tabs.Screen

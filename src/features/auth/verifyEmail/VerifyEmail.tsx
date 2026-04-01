@@ -1,10 +1,14 @@
 import { Text, View, StyleSheet, ActivityIndicator, Pressable } from "react-native"
 import { useVerifyEmail } from "./useVerifyEmail";
-import { colors } from "../../../theme/colors";
+import { lightColors, darkColors } from "../../../theme/colors";
 import { useState } from "react";
+import { useTheme } from "../../../data/provider/ThemeProvider";
 
 export default function VerifyEmailScreen() {
   const [seconds, setSeconds] = useState(0);
+
+  const { isDarkMode } = useTheme();
+  const colors = isDarkMode ? darkColors : lightColors
 
   const {
     sendEmailVerification,
@@ -103,7 +107,7 @@ const styles = StyleSheet.create({
   },
 
   primaryButton: {
-    backgroundColor: colors.secondary,
+    //backgroundColor: colors.secondary,
     paddingVertical: 14,
     paddingHorizontal: 30,
     borderRadius: 10,
@@ -119,7 +123,7 @@ const styles = StyleSheet.create({
 
   secondaryButton: {
     borderWidth: 1,
-    borderColor: colors.secondary,
+    //borderColor: colors.secondary,
     paddingVertical: 14,
     borderRadius: 10,
     marginBottom: 15,

@@ -4,7 +4,7 @@ import { useServices } from "./useSelectService";
 import { ServiceCard } from "./ServiceCard";
 import { Service } from "../../domain/models/Service";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { colors } from "../../theme/colors";
+import { lightColors, darkColors } from "../../theme/colors";
 import { router } from "expo-router";
 
 export default function SelectServiceScreen() {
@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
   subTitle: {
-    color: colors.textSecondary,
+    //color: colors.textSecondary,
     fontSize: 29,
     fontWeight: "700",
     marginBottom: 24,

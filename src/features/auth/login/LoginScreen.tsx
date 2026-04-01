@@ -1,18 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { KeyboardAvoidingView, Platform, View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Keyboard } from "react-native";
-import { colors } from "../../../theme/colors";
+import { lightColors, darkColors } from "../../../theme/colors";
 import { MaterialIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLogin } from "./useLogin";
-import { globalStyles } from "../../../theme/globalStyles";
+import { createGlobalStyles } from "../../../theme/globalStyles";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
+import { useTheme } from "../../../data/provider/ThemeProvider";
 
 
 export const LoginScreen = () => {
     const router = useRouter();
     const [keyboardVisible, setKeyboardVisible] = useState(false)
     const [secure, setSecure] = useState(true)
+
+    const { isDarkMode } = useTheme();
+    const globalStyles = createGlobalStyles(isDarkMode)
+    const colors = isDarkMode ? darkColors: lightColors;
 
     const {
         email,
@@ -43,7 +48,7 @@ export const LoginScreen = () => {
 
 
     return (
-        <SafeAreaView style={{ flex: 1 }}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
             <KeyboardAvoidingView
                 style={{ flex: 1 }}
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -62,7 +67,7 @@ export const LoginScreen = () => {
                     />
 
                     <LinearGradient
-                        colors={['transparent', '#f4f6fa']}
+                        colors={['transparent', colors.background]}
                         style={styles.gradient}
                     />
 
@@ -111,8 +116,8 @@ export const LoginScreen = () => {
                     </View>
 
                     <View style={styles.linkContainer}>
-                        <TouchableOpacity onPress={() => router.push('/auth/recovery-password')}>
-                            <Text style={styles.linkForgoPassword}>Forgot Password?</Text>
+                        <TouchableOpacity onPress={() => router.replace('/auth/recovery-password')}>
+                            <Text style={[styles.linkForgoPassword, { color: colors.secondary}]}>Forgot Password?</Text>
                         </TouchableOpacity>
                     </View>
 
@@ -123,9 +128,9 @@ export const LoginScreen = () => {
                     </TouchableOpacity>
 
                     <View style={{ flexDirection: 'row' }}>
-                        <Text style={styles.linkRegister}>¿No tenés cuenta? </Text>
-                        <TouchableOpacity onPress={() => router.push('/auth/register')}>
-                            <Text style={[styles.linkRegister, { fontWeight: "600" }]}>Registrate</Text>
+                        <Text style={[styles.linkRegister, { color: colors.textPrimary }]}>¿No tenés cuenta? </Text>
+                        <TouchableOpacity onPress={() => router.replace('/auth/register')}>
+                            <Text style={[styles.linkRegister, { fontWeight: "600", color: colors.textPrimary }]}>Registrate</Text>
                         </TouchableOpacity>
                     </View>
 
@@ -136,13 +141,6 @@ export const LoginScreen = () => {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#f4f6fa",
-        justifyContent: "center",
-        alignItems: 'center',
-        padding: 24,
-    },
     header: {
         position: 'absolute',
         top: 0,
@@ -163,7 +161,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        padding: 24,
+        padding: 24
     },
 
     button: {
@@ -174,12 +172,10 @@ const styles = StyleSheet.create({
         alignItems: 'flex-end',
     },
     linkForgoPassword: {
-        color: colors.secondary,
         marginVertical: 15,
-        fontWeight: 600
+        fontWeight: "600"
     },
     linkRegister: {
-        color: colors.textPrimary,
         marginTop: 24,
         fontSize: 14,
     },

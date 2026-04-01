@@ -1,12 +1,16 @@
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator, Alert, KeyboardAvoidingView, ScrollView, Platform } from "react-native";
 import { useRecoveryPassword } from "./useRecoveryPassword";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
-import { colors } from "../../../theme/colors";
-import { globalStyles } from "../../../theme/globalStyles";
+import { lightColors, darkColors } from "../../../theme/colors";
+import { createGlobalStyles } from "../../../theme/globalStyles";
 import React, { useEffect } from "react";
 import { router } from "expo-router";
+import { useTheme } from "../../../data/provider/ThemeProvider";
 
 export default function RecoveryPasswordScreen() {
+    const { isDarkMode } = useTheme();
+    const globalStyles = createGlobalStyles(isDarkMode)
+    const colors = isDarkMode ? darkColors : lightColors
 
     const {
         email,
@@ -42,7 +46,7 @@ export default function RecoveryPasswordScreen() {
 
     return (
         <KeyboardAvoidingView
-            style={{ flex: 1 }}
+            style={{ flex: 1, backgroundColor: colors.background }}
             behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
             <ScrollView
@@ -50,11 +54,11 @@ export default function RecoveryPasswordScreen() {
                 keyboardShouldPersistTaps="handled"
                 showsVerticalScrollIndicator={false}
             >
-                <View style={styles.container}>
+                <View style={[globalStyles.container, { justifyContent: "center", alignItems: "center" }]}>
                     <View style={styles.header}>
                         <Ionicons name="lock-closed" size={100} color={colors.secondary} />
-                        <Text style={styles.title}>Recuperar contraseña</Text>
-                        <Text style={styles.subTitle}>
+                        <Text style={[globalStyles.title, { marginVertical: 10 }]}>Recuperar contraseña</Text>
+                        <Text style={[globalStyles.subTitle, { textAlign: 'center' }]}>
                             Ingresa tu email y te enviaremos un enlace para restablecer tu contraseña
                         </Text>
                     </View>
@@ -88,9 +92,9 @@ export default function RecoveryPasswordScreen() {
                     </View>
 
                     <View style={styles.footer}>
-                        <Text style={styles.linkRegister}>¿Recordaste tu contraseña? </Text>
-                        <TouchableOpacity onPress={() => router.push('/auth/login')}>
-                            <Text style={[styles.linkRegister, { fontWeight: "600" }]}>Vuelve al login</Text>
+                        <Text style={[styles.linkLogin, { color: colors.textPrimary }]}>¿Recordaste tu contraseña? </Text>
+                        <TouchableOpacity onPress={() => router.replace('/auth/login')}>
+                            <Text style={[styles.linkLogin, { fontWeight: "600", color: colors.textPrimary }]}>Vuelve al login</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -100,27 +104,8 @@ export default function RecoveryPasswordScreen() {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#f4f6fa",
-        justifyContent: "center",
-        alignItems: "center",
-        padding: 24,
-    },
-
     header: {
         alignItems: "center"
-    },
-
-    title: {
-        fontSize: 33,
-        fontWeight: "700",
-        marginVertical: 10
-    },
-    subTitle: {
-        color: colors.textSecondary,
-        fontSize: 17,
-        textAlign: "center"
     },
 
     content: {
@@ -135,8 +120,7 @@ const styles = StyleSheet.create({
     footer: {
         flexDirection: 'row',
     },
-    linkRegister: {
-        color: colors.textPrimary,
+    linkLogin: {
         marginTop: 16,
         fontSize: 14,
     },

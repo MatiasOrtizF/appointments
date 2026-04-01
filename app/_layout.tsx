@@ -4,16 +4,16 @@ import { ActivityIndicator, StatusBar, View } from 'react-native'
 
 import { AlertNotificationRoot } from 'react-native-alert-notification'
 import { ThemeProvider } from '../src/data/provider/ThemeProvider'
-import { AuthProvider } from '../src/data/provider/AuthProvider'
-import { Activity, useEffect, useState } from 'react'
-import { onAuthStateChanged, User } from 'firebase/auth'
+import { useEffect, useState } from 'react'
+import { User } from 'firebase/auth'
 import { auth } from '../src/config/Firebase'
 
 export default function RootLayout() {
-  const [initializing, setInitializing] = useState(true);
-  const [user, setUser] = useState<User | null>();
   const router = useRouter();
   const segments = useSegments();
+
+  const [initializing, setInitializing] = useState(true);
+  const [user, setUser] = useState<User | null>(null);
 
   const onAuthStateChanged = (user: User | null) => {
     console.log("onAuthChanged", user)
@@ -29,12 +29,16 @@ export default function RootLayout() {
 
 
   useEffect(() => {
-    if(initializing) return;
+   if (initializing) return;
 
-    if(user) {
-      router.replace('/bottom')
+    const inAuthGroup = segments[0] === 'auth';
+
+     if (user && inAuthGroup) {
+      router.replace('/bottom'); // ya logeado, salir de auth
+    } else if (!user && !inAuthGroup) {
+      router.replace('/auth/login'); // no logeado, forzar auth
     }
-  }, [user, initializing])
+  }, [user, initializing, segments])
 
   if (initializing)
     return (
@@ -51,10 +55,8 @@ export default function RootLayout() {
     <SafeAreaProvider>
       <AlertNotificationRoot>
         <ThemeProvider>
-          <AuthProvider>
-            <StatusBar barStyle="dark-content" backgroundColor="#fff" />
-            <Slot />
-          </AuthProvider>
+          <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+          <Slot />
         </ThemeProvider>
       </AlertNotificationRoot>
     </SafeAreaProvider>

@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
 } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
-import { colors } from '../../theme/colors'
+import { lightColors, darkColors } from '../../theme/colors'
 import { Service } from '../../domain/models/Service'
 
 type Props = {
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
 
   price: {
     fontWeight: '700',
-    color: colors.textPrimary,
+    //color: colors.textPrimary,
     backgroundColor: '#e4e4e4',
     paddingVertical: 5,
     paddingHorizontal: 10,
@@ -119,14 +119,14 @@ const styles = StyleSheet.create({
   },
 
   button: {
-    backgroundColor: colors.primary,
+    //backgroundColor: colors.primary,
     paddingHorizontal: 20,
     paddingVertical: 8,
     borderRadius: 50,
   },
 
   buttonText: {
-    color: colors.textPrimary,
+    //color: colors.textPrimary,
     fontWeight: '600',
   },
 })

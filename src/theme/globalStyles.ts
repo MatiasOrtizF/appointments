@@ -1,7 +1,15 @@
 import { StyleSheet } from "react-native";
-import { colors } from "./colors";
+import { lightColors, darkColors } from "./colors";
 
-export const globalStyles = StyleSheet.create({
+export const createGlobalStyles = (isDarkMode: boolean) => {
+    const colors = isDarkMode ? darkColors: lightColors;
+    return StyleSheet.create({
+
+    container: {
+        flex: 1,
+        backgroundColor: colors.background,
+        padding: 24
+    },
     primaryButton: {
         backgroundColor: colors.primary,
         height: 50,
@@ -11,7 +19,7 @@ export const globalStyles = StyleSheet.create({
     },
 
     primaryButtonText: {
-        color: colors.textPrimary,
+        color: "#1E1E1E",
         fontSize: 16,
         fontWeight: "600",
     },
@@ -19,6 +27,7 @@ export const globalStyles = StyleSheet.create({
     title: {
         fontSize: 33,
         fontWeight: "700",
+        color: colors.textPrimary
     },
 
     subTitle: {
@@ -43,4 +52,5 @@ export const globalStyles = StyleSheet.create({
         height: 50,
         marginBottom: 20,
     },
-})
+});
+};
