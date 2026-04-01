@@ -5,6 +5,8 @@ import { useSetting } from "./useSetting";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { SettingsStackParamList } from "../../navigation/types";
 import { useNavigation } from "@react-navigation/native";
+import { useTheme } from "../../data/provider/ThemeProvider";
+import { useRouter } from "expo-router";
 
 type NavigationProp = NativeStackNavigationProp<
   SettingsStackParamList,
@@ -12,11 +14,11 @@ type NavigationProp = NativeStackNavigationProp<
 >
 
 export const SettingsScreen = () => {
-  const [darkMode, setDarkMode] = useState(false)
+    const router = useRouter();
   const [notifications, setNotifications] = useState(true)
 
-  const navigation = useNavigation<NavigationProp>()
-
+  const { isDarkMode, toggleTheme } = useTheme();
+  
   const {
     logOut,
     loading,
@@ -63,7 +65,7 @@ export const SettingsScreen = () => {
       <SettingItem
         icon="lock-closed-outline"
         title="Change password"
-        onPress={() => {navigation.navigate("ChangePassword") }}
+        onPress={() => { router.push("/bottom/settings/change-password") }}
       />
 
 
@@ -75,8 +77,8 @@ export const SettingsScreen = () => {
         title="Dark mode"
         rightComponent={
           <Switch
-            value={darkMode}
-            onValueChange={setDarkMode}
+            value={isDarkMode}
+            onValueChange={toggleTheme}
           />
         }
       />

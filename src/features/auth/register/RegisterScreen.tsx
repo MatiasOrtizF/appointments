@@ -1,27 +1,17 @@
 import { MaterialIcons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useState } from "react";
 import { KeyboardAvoidingView, Text, View, Image, TextInput, TouchableOpacity, StyleSheet, Platform, Keyboard, ScrollView } from "react-native";
 import { useRegister } from "./useRegister";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { AuthStackParamList } from "../../../navigation/types";
 import { colors } from "../../../theme/colors";
 import { globalStyles } from "../../../theme/globalStyles";
 import { SafeAreaView } from "react-native-safe-area-context";
-
-type RegisterScreenProps = {
-    onRegister?: (email: string, password: string) => void;
-};
-
-type NavigationProp = NativeStackNavigationProp<AuthStackParamList, "Register">
+import { router } from "expo-router";
 
 export default function RegisterScreen() {
 
     const [keyboardVisible, setKeyboardVisible] = useState(false)
     const [secure, setSecure] = useState(true)
-
-    const navigation = useNavigation<NavigationProp>()
 
     const {
         fullName,
@@ -184,7 +174,7 @@ export default function RegisterScreen() {
 
                         <View style={{ flexDirection: 'row' }}>
                             <Text style={styles.linkRegister}>¿Ya tenés cuenta? </Text>
-                            <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+                            <TouchableOpacity onPress={() => router.push('/auth/login')}>
                                 <Text style={[styles.linkRegister, { fontWeight: "600" }]}>Inicia sesion</Text>
                             </TouchableOpacity>
                         </View>

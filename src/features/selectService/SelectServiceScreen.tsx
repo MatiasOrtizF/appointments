@@ -5,9 +5,7 @@ import { ServiceCard } from "./ServiceCard";
 import { Service } from "../../domain/models/Service";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { colors } from "../../theme/colors";
-import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { MainStackParamList } from "../../navigation/types";
+import { router } from "expo-router";
 
 export default function SelectServiceScreen() {
   const { services, loading } = useServices()
@@ -16,17 +14,13 @@ export default function SelectServiceScreen() {
     return <Text>Loading...</Text>
   }
 
-  type NavigationProp = NativeStackNavigationProp<
-    MainStackParamList,
-    "ScheduleAppointment"
-  >;
-
-  const navigation = useNavigation<NavigationProp>();
-
   const renderItem: ListRenderItem<Service> = ({ item }) => (
-    <ServiceCard  
+    <ServiceCard
       service={item}
-      onBook={(serviceName) => navigation.navigate("ScheduleAppointment", { serviceName })}
+      onBook={(serviceName) => router.push({
+        pathname: '/bottom/select-service/schedule-appointment',
+        params: { serviceName }
+      })}
     />
   );
 

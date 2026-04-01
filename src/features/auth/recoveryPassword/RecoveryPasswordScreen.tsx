@@ -1,17 +1,12 @@
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator, Alert, KeyboardAvoidingView, ScrollView, Platform } from "react-native";
 import { useRecoveryPassword } from "./useRecoveryPassword";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { AuthStackParamList } from "../../../navigation/types";
-import { CommonActions, useNavigation } from "@react-navigation/native";
 import { colors } from "../../../theme/colors";
 import { globalStyles } from "../../../theme/globalStyles";
 import React, { useEffect } from "react";
+import { router } from "expo-router";
 
 export default function RecoveryPasswordScreen() {
-    type NavigationProp = NativeStackNavigationProp<AuthStackParamList, "Login">
-
-    const navigation = useNavigation<NavigationProp>()
 
     const {
         email,
@@ -31,12 +26,7 @@ export default function RecoveryPasswordScreen() {
                     {
                         text: "OK",
                         onPress: () => {
-                            navigation.dispatch(
-                                CommonActions.reset({
-                                    index: 0,
-                                    routes: [{ name: "Login" }],
-                                })
-                            );
+                            router.back()
                         },
                     }
                 ]
@@ -99,7 +89,7 @@ export default function RecoveryPasswordScreen() {
 
                     <View style={styles.footer}>
                         <Text style={styles.linkRegister}>¿Recordaste tu contraseña? </Text>
-                        <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+                        <TouchableOpacity onPress={() => router.push('/auth/login')}>
                             <Text style={[styles.linkRegister, { fontWeight: "600" }]}>Vuelve al login</Text>
                         </TouchableOpacity>
                     </View>

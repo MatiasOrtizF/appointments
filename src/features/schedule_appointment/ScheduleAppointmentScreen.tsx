@@ -10,6 +10,7 @@ import {
 import { Calendar } from "react-native-calendars";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MainStackParamList } from "../../navigation/types";
+import { useLocalSearchParams } from "expo-router";
 
 /* ======================
    TYPES & CONSTANTS
@@ -48,7 +49,7 @@ type ScheduleRouteProp = RouteProp<
 
 export const ScheduleAppointmentScreen: React.FC = () => {
   const route = useRoute<ScheduleRouteProp>();
-  const { serviceName } = route.params;
+  const { serviceName } = useLocalSearchParams<{ serviceName?: string }>()
 
   const today = new Date();
   const todayString = today.toISOString().split("T")[0];
