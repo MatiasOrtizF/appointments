@@ -1,20 +1,42 @@
-import { View, Image, Text, TouchableOpacity, StyleSheet, Pressable } from "react-native";
+import { View, Image, Text, StyleSheet, Pressable, Alert } from "react-native";
 import { Appointment } from "../../domain/models/Appointment"
 import { Ionicons } from "@expo/vector-icons";
 import { STATUS_STYLES } from "../../constants/statusStyles";
+import { useTheme } from "../../data/provider/ThemeProvider";
+import { darkColors, lightColors } from "../../theme/colors";
+import { useBooking } from "./useBooking";
 
 type Props = {
     appointment: Appointment
-    onCancel: (bookingId: string) => void
 }
 
-export const UpcomingBookingCard: React.FC<Props> = ({
-    appointment,
-    onCancel
-}) => {
+const handleCancel = (onCancel: (bookingId: string) => void, bookingId: string) => {
+  Alert.alert(
+    "Cancelar turno",
+    "¿Estás seguro de que querés cancelar este turno?",
+    [
+      {
+        text: "No",
+        style: "cancel",
+      },
+      {
+        text: "Cancelar",
+        style: "destructive",
+        onPress: () => onCancel(bookingId),
+      },
+    ]
+  );
+};
+
+
+export const UpcomingBookingCard = ({ appointment }: Props) => {
     const { id, serviceImg, status, service, date, time, price, employeeName } = appointment
+    const { isDarkMode } = useTheme();
+    const colors = isDarkMode ? darkColors : lightColors;
     const statusStyle =
         STATUS_STYLES[status.toLowerCase() as keyof typeof STATUS_STYLES];
+
+    const { cancelAppointment } = useBooking()
 
     return (
         <View style={styles.card}>
@@ -47,29 +69,29 @@ export const UpcomingBookingCard: React.FC<Props> = ({
 
 
             {/* INFO ROW */}
-            <View style={styles.infoRow}>
+            <View style={[styles.infoRow, {backgroundColor: colors.bgCard}]}>
 
                 <View style={styles.dateContainer}>
-                    <Ionicons name="calendar-outline" size={18} color="#555" />
+                    <Ionicons name="calendar-outline" size={18} color={colors.textSecondary} />
 
                     <View>
-                        <Text style={styles.label}>Date & Time</Text>
-                        <Text style={styles.date}>{date} {time}</Text>
+                        <Text style={[styles.label, {color: colors.textSecondary}]}>Date & Time</Text>
+                        <Text style={[styles.date, {color: colors.textPrimary}]}>{date} {time}</Text>
                     </View>
                 </View>
 
                 <View style={styles.priceContainer}>
-                    <Text style={styles.label}>Price</Text>
-                    <Text style={styles.price}>${price}</Text>
+                    <Text style={[styles.label, {color: colors.textSecondary}]}>Price</Text>
+                    <Text style={[styles.price, {color: colors.textPrimary}]}>${price}</Text>
                 </View>
 
             </View>
 
             {/* DIVIDER */}
-            <View style={styles.divider} />
+            <View style={{ height: 1, backgroundColor: colors.divider}} />
 
             {/* CANCEL BUTTON */}
-            <Pressable style={styles.cancelButton} onPress={() => onCancel(id)}>
+            <Pressable style={[styles.cancelButton, {backgroundColor: colors.bgCard}]} onPress={() => handleCancel(cancelAppointment, id)}>
                 <Text style={styles.cancelText}>Cancel</Text>
             </Pressable>
 
@@ -79,7 +101,6 @@ export const UpcomingBookingCard: React.FC<Props> = ({
 
 const styles = StyleSheet.create({
     card: {
-        backgroundColor: "white",
         borderRadius: 16,
         overflow: "hidden",
         marginBottom: 20,
@@ -143,7 +164,6 @@ const styles = StyleSheet.create({
 
     label: {
         fontSize: 11,
-        color: "#777"
     },
 
     date: {
@@ -158,11 +178,6 @@ const styles = StyleSheet.create({
     price: {
         fontSize: 16,
         fontWeight: "600"
-    },
-
-    divider: {
-        height: 1,
-        backgroundColor: "#eee"
     },
 
     cancelButton: {

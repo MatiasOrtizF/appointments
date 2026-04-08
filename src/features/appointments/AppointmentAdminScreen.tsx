@@ -1,6 +1,6 @@
 import { Text } from "react-native";
 
-export default function AppointmentScreen() {
+export default function AppointmentAdminScreen() {
     return(
         <Text>Todos los turnos</Text>
     )

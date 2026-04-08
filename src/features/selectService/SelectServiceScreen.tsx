@@ -6,9 +6,15 @@ import { Service } from "../../domain/models/Service";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { lightColors, darkColors } from "../../theme/colors";
 import { router } from "expo-router";
+import { useTheme } from "../../data/provider/ThemeProvider";
+import { createGlobalStyles } from "../../theme/globalStyles";
 
 export default function SelectServiceScreen() {
   const { services, loading } = useServices()
+
+  const { isDarkMode } = useTheme();
+  const globalStyles = createGlobalStyles(isDarkMode)
+  const colors = isDarkMode ? darkColors : lightColors;
 
   if (loading) {
     return <Text>Loading...</Text>
@@ -25,7 +31,7 @@ export default function SelectServiceScreen() {
   );
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{flex: 1, backgroundColor: colors.background}}>
       <FlatList<Service>
         data={services}
         keyExtractor={(item) => item.id}
@@ -34,8 +40,8 @@ export default function SelectServiceScreen() {
 
         ListHeaderComponent={
           <View style={{ marginBottom: 20 }}>
-            <Text style={styles.title}>Book your next</Text>
-            <Text style={styles.subTitle}>appointment</Text>
+            <Text style={globalStyles.title}>Book your next</Text>
+            <Text style={[styles.subTitle, { color: colors.textSecondary }]}>appointment</Text>
           </View>
         }
 
@@ -46,12 +52,7 @@ export default function SelectServiceScreen() {
 }
 
 const styles = StyleSheet.create({
-  title: {
-    fontSize: 33,
-    fontWeight: "700",
-  },
   subTitle: {
-    //color: colors.textSecondary,
     fontSize: 29,
     fontWeight: "700",
     marginBottom: 24,

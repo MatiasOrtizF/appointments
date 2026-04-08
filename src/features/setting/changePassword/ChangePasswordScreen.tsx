@@ -11,14 +11,13 @@ import { ALERT_TYPE, Dialog } from "react-native-alert-notification";
 import { useTheme } from "../../../data/provider/ThemeProvider";
 
 export default function ChangePasswordScreen() {
-
     const [currentPasswordSecure, setCurrentPasswordSecure] = useState(true)
     const [newPasswordsecure, setNewPasswordSecure] = useState(true)
     const [confirmNewPasswordSecure, setConfirmNewPasswordSecure] = useState(true)
 
-        const { isDarkMode } = useTheme();
-        const globalStyles = createGlobalStyles(isDarkMode)
-        const colors = isDarkMode ? darkColors : lightColors
+    const { isDarkMode } = useTheme();
+    const globalStyles = createGlobalStyles(isDarkMode)
+    const colors = isDarkMode ? darkColors : lightColors
 
     const navigation = useNavigation()
 
@@ -65,7 +64,7 @@ export default function ChangePasswordScreen() {
 
     return (
         <KeyboardAwareScrollView
-            style={{ flex: 1 }}
+            style={{ flex: 1, backgroundColor: colors.background }}
             contentContainerStyle={{ paddingBottom: 20 }}
             enableOnAndroid={true}
             extraScrollHeight={20}
@@ -85,8 +84,8 @@ export default function ChangePasswordScreen() {
                     null
                 }
 
-                <Text style={styles.label}>Contraseña actual</Text>
                 {/* Current Password */}
+                <Text style={[styles.label, {color: colors.textPrimary}]}>Contraseña actual</Text>
                 <View style={globalStyles.inputContainer}>
                     {/* Icono */}
                     <MaterialIcons name="lock" size={20} color={colors.secondary} />
@@ -111,8 +110,8 @@ export default function ChangePasswordScreen() {
                     </TouchableOpacity>
                 </View>
 
-                <Text style={styles.label}>Nueva contraseña</Text>
                 {/* New Password */}
+                <Text style={[styles.label, {color: colors.textPrimary}]}>Nueva contraseña</Text>
                 <View style={globalStyles.inputContainer}>
                     {/* Icono */}
                     <MaterialIcons name="lock" size={20} color={colors.secondary} />
@@ -139,8 +138,8 @@ export default function ChangePasswordScreen() {
                     </TouchableOpacity>
                 </View>
 
-                <Text style={styles.label}>Confirmar nueva contraseña</Text>
-                {/* Confirm New Password */}
+              {/* Confirm New Password */}
+                <Text style={[styles.label, {color: colors.textPrimary}]}>Confirmar nueva contraseña</Text>
                 <View style={globalStyles.inputContainer}>
                     {/* Icono */}
                     <MaterialIcons name="lock" size={20} color={colors.secondary} />
@@ -177,13 +176,13 @@ export default function ChangePasswordScreen() {
                             <Ionicons
                                 name={isValid ? "checkmark-circle" : "close-circle"}
                                 size={20}
-                                color={isValid ? "green" : "red"}
+                                color={isValid ? colors.success : colors.error}
                             />
 
                             <Text
                                 style={{
                                     textDecorationLine: isValid ? "line-through" : "none",
-                                    color: isValid ? "gray" : "red"
+                                    color: isValid ? colors.success : colors.error
                                 }}
                             >
                                 {rule.label}
@@ -231,7 +230,6 @@ const styles = StyleSheet.create({
     label: {
         fontSize: 16,
         fontWeight: "500",
-        //color: colors.textPrimary,
         marginBottom: 6,
         marginLeft: 4
     },

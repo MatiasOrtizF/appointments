@@ -3,7 +3,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { ActivityIndicator, StatusBar, View } from 'react-native'
 
 import { AlertNotificationRoot } from 'react-native-alert-notification'
-import { ThemeProvider } from '../src/data/provider/ThemeProvider'
+import { ThemeProvider, useTheme } from '../src/data/provider/ThemeProvider'
 import { useEffect, useState } from 'react'
 import { User } from 'firebase/auth'
 import { auth } from '../src/config/Firebase'
@@ -29,11 +29,11 @@ export default function RootLayout() {
 
 
   useEffect(() => {
-   if (initializing) return;
+    if (initializing) return;
 
     const inAuthGroup = segments[0] === 'auth';
 
-     if (user && inAuthGroup) {
+    if (user && inAuthGroup) {
       router.replace('/bottom'); // ya logeado, salir de auth
     } else if (!user && !inAuthGroup) {
       router.replace('/auth/login'); // no logeado, forzar auth
@@ -55,10 +55,23 @@ export default function RootLayout() {
     <SafeAreaProvider>
       <AlertNotificationRoot>
         <ThemeProvider>
-          <StatusBar barStyle="dark-content" backgroundColor="#fff" />
-          <Slot />
+          <AppContent/>
         </ThemeProvider>
       </AlertNotificationRoot>
     </SafeAreaProvider>
   )
+}
+
+const AppContent = () => {
+  const { isDarkMode } = useTheme();
+
+  return (
+    <>
+      <StatusBar
+        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
+        backgroundColor={isDarkMode ? '#1f1f1f' : '#f5f6fa'}
+      />
+      <Slot />
+    </>
+  );
 }

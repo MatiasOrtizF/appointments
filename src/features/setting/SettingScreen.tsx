@@ -1,10 +1,11 @@
-import { View, Text, StyleSheet, TouchableOpacity, Switch, ScrollView } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Switch, ScrollView, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 import { useSetting } from "./useSetting";
 import { useTheme } from "../../data/provider/ThemeProvider";
 import { useRouter } from "expo-router";
 import { createGlobalStyles } from "../../theme/globalStyles";
+import { darkColors, lightColors } from "../../theme/colors";
 
 export const SettingsScreen = () => {
   const router = useRouter();
@@ -12,6 +13,7 @@ export const SettingsScreen = () => {
 
   const { isDarkMode, toggleTheme } = useTheme();
   const globalStyles = createGlobalStyles(isDarkMode)
+   const colors = isDarkMode ? darkColors : lightColors;
 
   const {
     logOut,
@@ -27,11 +29,11 @@ export const SettingsScreen = () => {
   }: any) => {
 
     return (
-      <TouchableOpacity style={styles.item} onPress={onPress} activeOpacity={0.7}>
+      <TouchableOpacity style={[styles.item, {backgroundColor: colors.bgCard}]} onPress={onPress} activeOpacity={0.7}>
 
         <View style={styles.leftSection}>
-          <Ionicons name={icon} size={22} color="#333" />
-          <Text style={styles.itemText}>{title}</Text>
+          <Ionicons name={icon} size={22} color={colors.textSecondary} />
+          <Text style={[styles.itemText, {color: colors.textPrimary}]}>{title}</Text>
         </View>
 
         {rightComponent ? (
@@ -48,7 +50,7 @@ export const SettingsScreen = () => {
 
     <ScrollView style={ globalStyles.container }>
 
-      <Text style={styles.sectionTitle}>Profile</Text>
+      <Text style={[styles.sectionTitle, {color: colors.textSecondary}]}>Profile</Text>
 
       <SettingItem
         icon="person-outline"
@@ -59,12 +61,12 @@ export const SettingsScreen = () => {
       <SettingItem
         icon="lock-closed-outline"
         title="Change password"
-        onPress={() => { router.push("/bottom/settings/change-password") }}
+        onPress={() => router.push("/bottom/settings/change-password")}
       />
 
 
 
-      <Text style={styles.sectionTitle}>Appearance</Text>
+      <Text style={[styles.sectionTitle, {color: colors.textSecondary}]}>Appearance</Text>
 
       <SettingItem
         icon="moon-outline"
@@ -79,7 +81,7 @@ export const SettingsScreen = () => {
 
 
 
-      <Text style={styles.sectionTitle}>Notifications</Text>
+      <Text style={[styles.sectionTitle, {color: colors.textSecondary}]}>Notifications</Text>
 
       <SettingItem
         icon="notifications-outline"
@@ -92,52 +94,42 @@ export const SettingsScreen = () => {
         }
       />
 
-
-
-      <Text style={styles.sectionTitle}>Business</Text>
-
-      <SettingItem
-        icon="time-outline"
-        title="Working hours"
-        onPress={() => { }}
-      />
-
-      <SettingItem
-        icon="calendar-outline"
-        title="Appointment duration"
-        onPress={() => { }}
-      />
-
-
-
-      <Text style={styles.sectionTitle}>About</Text>
-
-      <SettingItem
-        icon="information-circle-outline"
-        title="App version"
-        onPress={() => { }}
-      />
-
-
-
-      <Text style={styles.sectionTitle}>Account</Text>
+      <Text style={[styles.sectionTitle, {color: colors.textSecondary}]}>Account</Text>
 
       <SettingItem
         icon="log-out-outline"
         title="Logout"
-        onPress={logOut}
+        onPress={()=> handleLogOut(logOut)}
       />
 
     </ScrollView>
   )
 }
 
+const handleLogOut = (onLogOut: () => void) => {
+  Alert.alert(
+    "Cerrar sesión",
+    "¿Estás seguro de que querés cerrar sesión?",
+    [
+      {
+        text: "Cancelar",
+        style: "cancel",
+      },
+      {
+        text: "Cerrar sesión",
+        style: "destructive",
+        onPress: () => onLogOut(),
+      },
+    ]
+  );
+};
+
+
 const styles = StyleSheet.create({
 
   sectionTitle: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#888",
     marginTop: 25,
     marginBottom: 10
   },
@@ -146,11 +138,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-
-    backgroundColor: "white",
     padding: 16,
     borderRadius: 12,
-    marginBottom: 10
+    marginBottom: 10,
+    height: 70
   },
 
   leftSection: {

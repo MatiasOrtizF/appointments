@@ -1,40 +1,41 @@
 import { Text, StyleSheet, View, Pressable, ScrollView } from "react-native";
 import { useAdmin } from "./useAdmin";
 import { AdminCard } from "./AdminCard";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { MainStackParamList } from "../../navigation/types";
-import { useNavigation } from "@react-navigation/native";
-import React from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { lightColors, darkColors } from "../../theme/colors";
 import { createGlobalStyles } from "../../theme/globalStyles";
 import { useTheme } from "../../data/provider/ThemeProvider";
+import LoadingScreen from "../../shared/LoadingScreen";
+import { useRouter } from "expo-router";
+import { Colors } from "../../theme/types";
+
+type Props = {
+    iconName: keyof typeof Ionicons.glyphMap;
+    title: string;
+    isCurrency?: boolean;
+    value: number;
+    change: number;
+    colors: Colors;
+};
 
 export default function AdminScreen() {
-
     const { upcommingAppointments, loading } = useAdmin()
-        const { isDarkMode } = useTheme();
-        const globalStyles = createGlobalStyles(isDarkMode)
-        const colors = isDarkMode ? darkColors : lightColors
+    const { isDarkMode } = useTheme();
+    const globalStyles = createGlobalStyles(isDarkMode)
+    const colors = isDarkMode ? darkColors : lightColors
+    const router = useRouter();
 
     if (loading) {
-        return <Text>Loading...</Text>
+        <LoadingScreen/>
     }
 
-    type NavigationProp = NativeStackNavigationProp<
-        MainStackParamList,
-        "AdminAppointments"
-    >;
-
-    const navigation = useNavigation<NavigationProp>();
-
     return (
-        <ScrollView style={styles.container} contentContainerStyle={{ flexGrow: 1 }}
+        <ScrollView style={{flex: 1, backgroundColor: colors.background}} contentContainerStyle={{ flexGrow: 1 }}
         >
 
             <View style={styles.dashboardSection}>
                 {/* Empresa */}
-                <Text style={styles.companyName}>
+                <Text style={[styles.companyName, {color: colors.textPrimary}]}>
                     Barber Studio
                 </Text>
 
@@ -45,10 +46,10 @@ export default function AdminScreen() {
 
                 {/* Greeting */}
                 <View style={styles.greetingRow}>
-                    <Text style={styles.greeting}>
+                    <Text style={[styles.greeting, {color: colors.textPrimary}]}>
                         Good Morning,
                     </Text>
-                    <Text style={styles.adminName}>
+                    <Text style={[styles.adminName, {color: colors.textPrimary}]}>
                         Admin
                     </Text>
                     <Ionicons name="sunny" size={20} color="orange" />
@@ -57,28 +58,23 @@ export default function AdminScreen() {
                 {/* Stats */}
                 <View style={styles.statsRow}>
 
-                    <View style={styles.statCard}>
-                        <View style={styles.statIcon}>
-                            <Ionicons name="calendar-outline" size={22} color={colors.secondary} />
-                        </View>
-                        <Text>Bookings</Text>
-                        <View style={styles.statValueRow}>
-                            <Text style={styles.statValue}>8</Text>
-                            <Text style={styles.statChange}>+10%</Text>
-                        </View>
+                    <StatCard 
+                        iconName = {"calendar-outline"}
+                        title = {"Bookings"}
+                        isCurrency = {false}
+                        value = {8}
+                        change = {10}
+                        colors = {colors}
+                    />
 
-                    </View>
-
-                    <View style={styles.statCard}>
-                        <View style={styles.statIcon}>
-                            <Ionicons name="cash-outline" size={22} color={colors.secondary} />
-                        </View>
-                        <Text>Revenue</Text>
-                        <View style={styles.statValueRow}>
-                            <Text style={styles.statValue}>$320</Text>
-                            <Text style={styles.statChange}>+5%</Text>
-                        </View>
-                    </View>
+                    <StatCard 
+                        iconName = {"cash-outline"}
+                        title = {"Revenue"}
+                        isCurrency = {true}
+                        value = {320}
+                        change = {5}
+                        colors = {colors}
+                    />
 
                 </View>
 
@@ -90,12 +86,12 @@ export default function AdminScreen() {
                         <Text style={globalStyles.primaryButtonText}>New Booking</Text>
                     </Pressable>
 
-                    <Pressable style={styles.iconButton} onPress={() => console.log("editar")}>
-                        <Ionicons name="pencil-outline" size={22} />
+                    <Pressable style={[styles.iconButton, {backgroundColor: colors.bgCard}]} onPress={() => console.log("editar")}>
+                        <Ionicons name="pencil-outline" size={22} color={colors.textPrimary} />
                     </Pressable>
 
-                    <Pressable style={styles.iconButton} onPress={() => console.log("admins")}>
-                        <Ionicons name="people-outline" size={22} />
+                    <Pressable style={[styles.iconButton, {backgroundColor: colors.bgCard}]} onPress={() => console.log("admins")}>
+                        <Ionicons name="people-outline" size={22} color={colors.textPrimary} />
                     </Pressable>
 
                 </View>
@@ -103,14 +99,14 @@ export default function AdminScreen() {
             </View>
 
             {/* Turnos cercanos */}
-            <View style={styles.upcomingSection}>
-                <View style={styles.upcomingRow}>
-                    <Text style={styles.subTitle}>
+            <View style={[styles.upcomingSection, {backgroundColor: colors.bgSection}]}>
+                <View style={[styles.upcomingRow]}>
+                    <Text style={[styles.subTitle, {color: colors.textPrimary}]}>
                         Upcoming schedule
                     </Text>
 
-                    <Pressable onPress={() => navigation.navigate("AdminAppointments")}>
-                        <Text>See all</Text>
+                    <Pressable onPress={() => router.push("/bottom/admin/appointment-admin")}>
+                        <Text style={{color: colors.textSecondary}}>See all</Text>
                     </Pressable>
                 </View>
 
@@ -130,11 +126,25 @@ export default function AdminScreen() {
 
 }
 
+const StatCard: React.FC<Props> = ({iconName, title, isCurrency, value, change, colors}) => {
+    const formattedValue = isCurrency ? `$${value}` : value;
+
+    return(
+        <View style={[styles.statCard, { backgroundColor: colors.bgCard }]}>
+            <View style={styles.statIcon}>
+                <Ionicons name={iconName} size={22} color={colors.secondary} />
+            </View>
+            <Text style={{ color: colors.textPrimary }}>{title}</Text>
+            <View style={styles.statValueRow}>
+                <Text style={[styles.statValue, { color: colors.textPrimary }]}>{formattedValue}</Text>
+                <Text style={styles.statChange}>+{change}%</Text>
+            </View>
+
+        </View>
+    )
+}
+
 export const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#f5f6fa",
-    },
 
     dashboardSection: {
         paddingTop: 30,
@@ -178,7 +188,6 @@ export const styles = StyleSheet.create({
 
     statCard: {
         flex: 1,
-        backgroundColor: "white",
         borderRadius: 16,
         padding: 16,
         marginHorizontal: 4,
@@ -227,7 +236,6 @@ export const styles = StyleSheet.create({
     },
 
     iconButton: {
-        backgroundColor: "white",
         height: 50,
         width: 50,
         alignItems: "center",
@@ -243,9 +251,9 @@ export const styles = StyleSheet.create({
 
     upcomingSection: {
         flex: 1,
-        backgroundColor: "#fff",
         padding: 20,
-        borderRadius: 30,
+        borderTopLeftRadius: 30,
+        borderTopRightRadius: 30,
     },
 
     upcomingRow: {

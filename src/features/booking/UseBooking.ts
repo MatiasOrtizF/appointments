@@ -7,6 +7,10 @@ export const useBooking = () => {
   const [upcommingAppointments, setUpcommingAppointments] = useState<Appointment[]>([])
   const [loading, setLoading] = useState(false)
 
+  const cancelAppointment = async (appointmentId: String) => {
+    console.log("cancelar" + appointmentId)
+  }
+
   const fetchUserAppointments = async () => {
     setLoading(true)
     const data = await getUserAppointments("TvKF3YzLImSGlC4QHuesD6pH5dp1")
@@ -22,6 +26,7 @@ export const useBooking = () => {
     pastAppointments,
     upcommingAppointments,
     loading,
+    cancelAppointment,
     fetchUserAppointments
   }
 }

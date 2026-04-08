@@ -1,14 +1,26 @@
 import { Tabs } from "expo-router";
-import { lightColors } from "../../src/theme/colors";
+import { darkColors, lightColors } from "../../src/theme/colors";
 import { MaterialIcons } from "@expo/vector-icons";
+import { useTheme } from "../../src/data/provider/ThemeProvider";
 
 export default function BottomLayout() {
+  const { isDarkMode } = useTheme();
+  const colors = isDarkMode ? darkColors : lightColors;
 
   return (
     <Tabs screenOptions={{
       headerShown: false,
-      tabBarActiveTintColor: lightColors.secondary,   // color cuando está seleccionado
-      tabBarInactiveTintColor: '#000000',
+      tabBarActiveTintColor: colors.secondary,   // color cuando está seleccionado
+      tabBarInactiveTintColor: isDarkMode ? '#c9c9c9' : '#000000',
+
+      tabBarStyle: {
+        backgroundColor: isDarkMode ? '#121212' : '#eee',
+        borderTopWidth: 0,
+        elevation: 0,
+        height: 70,
+        paddingBottom: 10,
+        paddingTop: 10,
+      },
     }}>
       <Tabs.Screen
         name="select-service"

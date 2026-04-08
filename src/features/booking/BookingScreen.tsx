@@ -8,35 +8,42 @@ import { useBooking } from "./useBooking";
 import { lightColors, darkColors } from "../../theme/colors";
 import { createGlobalStyles } from "../../theme/globalStyles";
 import { useTheme } from "../../data/provider/ThemeProvider";
+import { Colors } from "../../theme/types";
+import LoadingScreen from "../../shared/LoadingScreen";
+
+type Props = {
+    tab: "upcoming" | "past";
+    setTab: React.Dispatch<React.SetStateAction<"upcoming" | "past">>;
+    globalStyles: ReturnType<typeof createGlobalStyles>;
+    colors: Colors;
+};
 
 export default function BookingScreen() {
     const [tab, setTab] = useState<"upcoming" | "past">("upcoming");
-        const { isDarkMode } = useTheme();
-        const globalStyles = createGlobalStyles(isDarkMode)
-        const colors = isDarkMode ? darkColors : lightColors
+    const { isDarkMode } = useTheme();
+    const globalStyles: ReturnType<typeof createGlobalStyles> = createGlobalStyles(isDarkMode)
+    const colors = isDarkMode ? darkColors : lightColors
 
     const { pastAppointments, upcommingAppointments, loading } = useBooking()
 
     if (loading) {
-        return <Text>Loading...</Text>
+        return <LoadingScreen/>
     }
 
     const renderItem: ListRenderItem<Appointment> = ({ item }) => (
         tab === "upcoming" ? (
             <UpcomingBookingCard
                 appointment={item}
-                onCancel={(appointmentId) => console.log("borrar " + appointmentId)}
             />
         ) : (
             <PastBookingCard
                 appointment={item}
-                onCancel={(appointmentId) => console.log("borrar " + appointmentId)}
             />
         )
     );
 
     return (
-        <SafeAreaView>
+        <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
             <FlatList<Appointment>
                 data={pastAppointments}
                 keyExtractor={(item) => item.id}
@@ -44,53 +51,62 @@ export default function BookingScreen() {
                 contentContainerStyle={{ padding: 24, paddingBottom: 16 }}
 
                 ListHeaderComponent={
-                    <View style={styles.tabsContainer}>
-                        <Pressable
-                            style={[
-                                styles.tab,
-                                tab === "upcoming" && styles.activeTab
-                            ]}
-                            onPress={() => setTab("upcoming")}
-                        >
-                            <Text
-                                style={[
-                                    styles.tabText,
-                                    tab === "upcoming" && globalStyles.primaryButtonText
-                                ]}
-                            >
-                                Upcoming
-                            </Text>
-                        </Pressable>
-
-                        <Pressable
-                            style={[
-                                styles.tab,
-                                tab === "past" && styles.activeTab
-                            ]}
-                            onPress={() => setTab("past")}
-                        >
-                            <Text
-                                style={[
-                                    styles.tabText,
-                                    tab === "past" && globalStyles.primaryButtonText
-                                ]}
-                            >
-                                Past
-                            </Text>
-                        </Pressable>
-                    </View>
+                    <BookingHeader 
+                        tab={tab}
+                        setTab={setTab}
+                        globalStyles={globalStyles}
+                        colors={colors}
+                    />
                 }
-
                 renderItem={renderItem}
             />
         </SafeAreaView>
     )
 }
 
+const BookingHeader = ({ tab, setTab, globalStyles, colors }: Props) => {
+    return (
+        <View style={[styles.tabsContainer, { backgroundColor: colors.bgCard }]}>
+            <Pressable
+                style={[
+                    styles.tab,
+                    tab === "upcoming" && { backgroundColor: colors.primary }
+                ]}
+                onPress={() => setTab("upcoming")}
+            >
+                <Text
+                    style={[
+                        styles.tabText, { color: colors.textPrimary },
+                        tab === "upcoming" && globalStyles.primaryButtonText
+                    ]}
+                >
+                    Upcoming
+                </Text>
+            </Pressable>
+
+            <Pressable
+                style={[
+                    styles.tab,
+                    tab === "past" && { backgroundColor: colors.primary }
+                ]}
+                onPress={() => setTab("past")}
+            >
+                <Text
+                    style={[
+                        styles.tabText, { color: colors.textPrimary },
+                        tab === "past" && globalStyles.primaryButtonText
+                    ]}
+                >
+                    Past
+                </Text>
+            </Pressable>
+        </View>
+    )
+}
+
 const styles = StyleSheet.create({
     tabsContainer: {
         flexDirection: "row",
-        backgroundColor: "#fff",
         borderRadius: 50,
         padding: 5,
         marginBottom: 25
@@ -103,12 +119,7 @@ const styles = StyleSheet.create({
         borderRadius: 50
     },
 
-    activeTab: {
-        //backgroundColor: colors.primary
-    },
-
     tabText: {
-        color: "#777",
         fontWeight: "500",
         fontSize: 16,
     },

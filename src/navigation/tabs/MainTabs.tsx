@@ -2,7 +2,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import SelectServiceScreen from '../../features/selectService/SelectServiceScreen'
 import BookingScreen from '../../features/booking/BookingScreen'
 import { Ionicons } from '@expo/vector-icons'
-import AdminScreen from '../../features/profile/AdminScreen'
+import AdminScreen from '../../features/admin/AdminScreen'
 import SettingNavigation from '../SettingNavigation'
 
 const Tab = createBottomTabNavigator()

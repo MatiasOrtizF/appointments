@@ -1,4 +1,4 @@
-import AdminScreen from "../../src/features/profile/AdminScreen";
+import AdminScreen from "../../../src/features/admin/AdminScreen";
 
 export default function Admin() {
     return(

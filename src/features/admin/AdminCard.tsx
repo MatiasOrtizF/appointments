@@ -1,6 +1,8 @@
 import { View, Text, StyleSheet } from "react-native"
 import { STATUS_STYLES } from "../../constants/statusStyles"
 import { Appointment } from "../../domain/models/Appointment"
+import { darkColors, lightColors } from "../../theme/colors"
+import { useTheme } from "../../data/provider/ThemeProvider"
 
 type Props = {
     appointment: Appointment
@@ -14,19 +16,21 @@ export const AdminCard: React.FC<Props> = ({
     const { time, clientName, service, employeeName, status } = appointment
     const statusStyle =
         STATUS_STYLES[status.toLowerCase() as keyof typeof STATUS_STYLES];
+    const { isDarkMode } = useTheme();
+    const colors = isDarkMode ? darkColors : lightColors
 
     return (
-        <View style={styles.card}>
+        <View style={[styles.card, {backgroundColor: colors.bgCard}]}>
 
             {/* Hora */}
             <View style={styles.timeContainer}>
-                <Text style={styles.time}>{time}</Text>
+                <Text style={[styles.time, {color: colors.textPrimary}]}>{time}</Text>
             </View>
 
             {/* Información */}
             <View style={styles.infoContainer}>
-                <Text style={styles.client}>{clientName}</Text>
-                <Text style={styles.service}>{service}</Text>
+                <Text style={[styles.client, {color: colors.textPrimary}]}>{clientName}</Text>
+                <Text style={[styles.service, {color: colors.textSecondary}]}>{service}</Text>
                 <Text style={styles.professional}>Con {employeeName}</Text>
             </View>
 
@@ -54,7 +58,6 @@ export const AdminCard: React.FC<Props> = ({
 const styles = StyleSheet.create({
     card: {
         flexDirection: "row",
-        backgroundColor: "#fff",
         borderRadius: 16,
         padding: 16,
         marginVertical: 8,

@@ -9,6 +9,7 @@ import {
 import { Ionicons } from '@expo/vector-icons'
 import { lightColors, darkColors } from '../../theme/colors'
 import { Service } from '../../domain/models/Service'
+import { useTheme } from '../../data/provider/ThemeProvider'
 
 type Props = {
   service: Service
@@ -21,27 +22,30 @@ export const ServiceCard: React.FC<Props> = ({
 }) => {
   const { name, price, description, duration_min, img } = service
 
+  const { isDarkMode } = useTheme();
+  const colors = isDarkMode ? darkColors : lightColors;
+
   return (
-    <View style={styles.card}>
+    <View style={[styles.card, { backgroundColor: colors.bgCard }]}>
       <Image source={{ uri: img }} style={styles.image} />
 
       {/* Nombre + Precio */}
       <View style={styles.rowBetween}>
-        <Text style={styles.name}>{name}</Text>
-        <Text style={styles.price}>{"$" + price}</Text>
+        <Text style={[styles.name, { color: colors.textPrimary }]}>{name}</Text>
+        <Text style={[styles.price, { color: colors.textPrimary, backgroundColor: colors.bgSecondary }]}>{"$" + price}</Text>
       </View>
 
       {/* Descripción */}
-      <Text style={styles.description}>{description}</Text>
+      <Text style={[styles.description, { color: colors.textSecondary }]}>{description}</Text>
 
       {/* Duración + Botón */}
       <View style={styles.rowBetween}>
-        <View style={styles.duration}>
-          <Ionicons name="time-outline" size={16} color="#666" />
-          <Text style={styles.durationText}>{duration_min + " min"}</Text>
+        <View style={[{backgroundColor: colors.bgSecondary }, styles.duration]}>
+          <Ionicons name="time-outline" size={16} color={colors.textSecondary} />
+          <Text style={[styles.durationText, { color: colors.textSecondary }]}>{duration_min + " min"}</Text>
         </View>
 
-        <TouchableOpacity style={styles.button} onPress={() => onBook(service.name)}>
+        <TouchableOpacity style={[styles.button, { backgroundColor: colors.primary }]} onPress={() => onBook(service.name)}>
           <Text style={styles.buttonText}>Book</Text>
         </TouchableOpacity>
       </View>
@@ -51,7 +55,6 @@ export const ServiceCard: React.FC<Props> = ({
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#fff',
     borderRadius: 16,
     padding: 16,
     marginBottom: 24,
@@ -88,8 +91,6 @@ const styles = StyleSheet.create({
 
   price: {
     fontWeight: '700',
-    //color: colors.textPrimary,
-    backgroundColor: '#e4e4e4',
     paddingVertical: 5,
     paddingHorizontal: 10,
     borderRadius: 50,
@@ -98,14 +99,12 @@ const styles = StyleSheet.create({
   description: {
     marginTop: 5,
     marginBottom: 10,
-    color: '#666',
     fontSize: 14,
   },
 
   duration: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#e4e4e4',
     paddingVertical: 5,
     paddingHorizontal: 10,
     borderRadius: 50,
@@ -113,20 +112,17 @@ const styles = StyleSheet.create({
 
   durationText: {
     marginLeft: 3,
-    color: '#666',
     fontSize: 13,
     fontWeight: '600',
   },
 
   button: {
-    //backgroundColor: colors.primary,
     paddingHorizontal: 20,
     paddingVertical: 8,
     borderRadius: 50,
   },
 
   buttonText: {
-    //color: colors.textPrimary,
     fontWeight: '600',
   },
 })
