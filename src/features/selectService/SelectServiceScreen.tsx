@@ -8,6 +8,7 @@ import { lightColors, darkColors } from "../../theme/colors";
 import { router } from "expo-router";
 import { useTheme } from "../../data/provider/ThemeProvider";
 import { createGlobalStyles } from "../../theme/globalStyles";
+import LoadingScreen from "../../shared/LoadingScreen";
 
 export default function SelectServiceScreen() {
   const { services, loading } = useServices()
@@ -17,7 +18,7 @@ export default function SelectServiceScreen() {
   const colors = isDarkMode ? darkColors : lightColors;
 
   if (loading) {
-    return <Text>Loading...</Text>
+    return <LoadingScreen/>
   }
 
   const renderItem: ListRenderItem<Service> = ({ item }) => (
