@@ -1,9 +1,14 @@
 import { doc, setDoc, deleteDoc, getDoc, updateDoc } from "firebase/firestore"
 import { db } from "../../config/Firebase"
-import { User } from "../../domain/models/User"
+import { AuthUser } from "../../domain/models/AuthUser"
 import { UserSignUp } from "../../domain/models/UserSignUp"
+import { AuthUserResponse } from "../remote/response/AuthUserResponse"
+import { toDomain } from "../remote/response/AuthUserResponse"
+import { Result } from "../../shared/types/result"
+import { UserError } from "../../errors/UserError"
+import { FirebaseError } from "firebase/app"
 
-const COLLECTION_USERS = "users"
+const COLLECTION_USER = "user"
 
 export class UserRepository {
 
@@ -18,7 +23,7 @@ export class UserRepository {
         try {
 
             await setDoc(
-                doc(db, COLLECTION_USERS, uid),
+                doc(db, COLLECTION_USER, uid),
                 user
             )
 
@@ -34,7 +39,7 @@ export class UserRepository {
         try {
 
             await deleteDoc(
-                doc(db, COLLECTION_USERS, uid)
+                doc(db, COLLECTION_USER, uid)
             )
 
             return true
@@ -44,23 +49,41 @@ export class UserRepository {
         }
     }
 
-    async getUser(uid: string): Promise<User | null> {
-
+    async getUser(uid: string): Promise<Result<AuthUser, UserError>> {
         try {
 
             const userDoc = await getDoc(
-                doc(db, COLLECTION_USERS, uid)
+                doc(db, COLLECTION_USER, uid)
             )
 
-            if (userDoc.exists()) {
-                const data = userDoc.data()
-                return data as User
+            console.log("document: "+userDoc.data())
+
+            if (!userDoc.exists()) {
+                return { ok: false, error: "not-found" };
             }
 
-            return null
+            const data = userDoc.data() as AuthUserResponse;
 
-        } catch {
-            return null
+            return {
+                ok: true,
+                data: toDomain(userDoc.id, data),
+            };
+
+        } catch (error) {
+            if (error instanceof FirebaseError) {
+                switch (error.code) {
+                    case "permission-denied":
+                        return { ok: false, error: "permission" };
+
+                    case "unavailable":
+                        return { ok: false, error: "network" };
+
+                    default:
+                        return { ok: false, error: "unknown" };
+                }
+            }
+
+            return { ok: false, error: "unknown" };
         }
     }
 
@@ -73,7 +96,7 @@ export class UserRepository {
         try {
 
             await updateDoc(
-                doc(db, COLLECTION_USERS, uid),
+                doc(db, COLLECTION_USER, uid),
                 {
                     name: newName,
                     lastName: newLastName
@@ -88,3 +111,5 @@ export class UserRepository {
     }
 
 }
+
+export const userRepository = new UserRepository();

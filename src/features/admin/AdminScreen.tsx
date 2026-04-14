@@ -19,23 +19,31 @@ type Props = {
 };
 
 export default function AdminScreen() {
-    const { upcommingAppointments, loading } = useAdmin()
+    const { upcommingAdminAppointments, isAdmin, loading } = useAdmin()
     const { isDarkMode } = useTheme();
     const globalStyles = createGlobalStyles(isDarkMode)
     const colors = isDarkMode ? darkColors : lightColors
     const router = useRouter();
 
     if (loading) {
-        <LoadingScreen/>
+        <LoadingScreen />
+    }
+
+    if (!isAdmin) {
+        return (
+            <View style={{ flex: 1, backgroundColor: colors.background, justifyContent: "center", alignItems: "center", padding: 20}}>
+                <Text style={{color: colors.textPrimary, textAlign: "center"}}>Solamente los admins pueden acceder a esta informacion</Text>
+            </View>
+        )
     }
 
     return (
-        <ScrollView style={{flex: 1, backgroundColor: colors.background}} contentContainerStyle={{ flexGrow: 1 }}
+        <ScrollView style={{ flex: 1, backgroundColor: colors.background }} contentContainerStyle={{ flexGrow: 1 }}
         >
 
             <View style={styles.dashboardSection}>
                 {/* Empresa */}
-                <Text style={[styles.companyName, {color: colors.textPrimary}]}>
+                <Text style={[styles.companyName, { color: colors.textPrimary }]}>
                     Barber Studio
                 </Text>
 
@@ -46,10 +54,10 @@ export default function AdminScreen() {
 
                 {/* Greeting */}
                 <View style={styles.greetingRow}>
-                    <Text style={[styles.greeting, {color: colors.textPrimary}]}>
+                    <Text style={[styles.greeting, { color: colors.textPrimary }]}>
                         Good Morning,
                     </Text>
-                    <Text style={[styles.adminName, {color: colors.textPrimary}]}>
+                    <Text style={[styles.adminName, { color: colors.textPrimary }]}>
                         Admin
                     </Text>
                     <Ionicons name="sunny" size={20} color="orange" />
@@ -58,22 +66,22 @@ export default function AdminScreen() {
                 {/* Stats */}
                 <View style={styles.statsRow}>
 
-                    <StatCard 
-                        iconName = {"calendar-outline"}
-                        title = {"Bookings"}
-                        isCurrency = {false}
-                        value = {8}
-                        change = {10}
-                        colors = {colors}
+                    <StatCard
+                        iconName={"calendar-outline"}
+                        title={"Bookings"}
+                        isCurrency={false}
+                        value={8}
+                        change={10}
+                        colors={colors}
                     />
 
-                    <StatCard 
-                        iconName = {"cash-outline"}
-                        title = {"Revenue"}
-                        isCurrency = {true}
-                        value = {320}
-                        change = {5}
-                        colors = {colors}
+                    <StatCard
+                        iconName={"cash-outline"}
+                        title={"Revenue"}
+                        isCurrency={true}
+                        value={320}
+                        change={5}
+                        colors={colors}
                     />
 
                 </View>
@@ -86,11 +94,11 @@ export default function AdminScreen() {
                         <Text style={globalStyles.primaryButtonText}>New Booking</Text>
                     </Pressable>
 
-                    <Pressable style={[styles.iconButton, {backgroundColor: colors.bgCard}]} onPress={() => console.log("editar")}>
+                    <Pressable style={[styles.iconButton, { backgroundColor: colors.bgCard }]} onPress={() => console.log("editar")}>
                         <Ionicons name="pencil-outline" size={22} color={colors.textPrimary} />
                     </Pressable>
 
-                    <Pressable style={[styles.iconButton, {backgroundColor: colors.bgCard}]} onPress={() => console.log("admins")}>
+                    <Pressable style={[styles.iconButton, { backgroundColor: colors.bgCard }]} onPress={() => console.log("admins")}>
                         <Ionicons name="people-outline" size={22} color={colors.textPrimary} />
                     </Pressable>
 
@@ -99,22 +107,21 @@ export default function AdminScreen() {
             </View>
 
             {/* Turnos cercanos */}
-            <View style={[styles.upcomingSection, {backgroundColor: colors.bgSection}]}>
+            <View style={[styles.upcomingSection, { backgroundColor: colors.bgSection }]}>
                 <View style={[styles.upcomingRow]}>
-                    <Text style={[styles.subTitle, {color: colors.textPrimary}]}>
+                    <Text style={[styles.subTitle, { color: colors.textPrimary }]}>
                         Upcoming schedule
                     </Text>
 
                     <Pressable onPress={() => router.push("/bottom/admin/appointment-admin")}>
-                        <Text style={{color: colors.textSecondary}}>See all</Text>
+                        <Text style={{ color: colors.textSecondary }}>See all</Text>
                     </Pressable>
                 </View>
 
-                {upcommingAppointments.map((appointment) => (
+                {upcommingAdminAppointments.map((appointment) => (
                     <AdminCard
                         key={appointment.id}
                         appointment={appointment}
-                        onCancel={() => { }}
                     />
                 ))}
 
@@ -126,10 +133,10 @@ export default function AdminScreen() {
 
 }
 
-const StatCard: React.FC<Props> = ({iconName, title, isCurrency, value, change, colors}) => {
+const StatCard: React.FC<Props> = ({ iconName, title, isCurrency, value, change, colors }) => {
     const formattedValue = isCurrency ? `$${value}` : value;
 
-    return(
+    return (
         <View style={[styles.statCard, { backgroundColor: colors.bgCard }]}>
             <View style={styles.statIcon}>
                 <Ionicons name={iconName} size={22} color={colors.secondary} />

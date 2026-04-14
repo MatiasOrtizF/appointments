@@ -27,8 +27,11 @@ export default function BookingScreen() {
     const { pastAppointments, upcommingAppointments, loading } = useBooking()
 
     if (loading) {
-        return <LoadingScreen/>
+        return <LoadingScreen />
     }
+
+    const data =
+        tab === "upcoming" ? upcommingAppointments : pastAppointments
 
     const renderItem: ListRenderItem<Appointment> = ({ item }) => (
         tab === "upcoming" ? (
@@ -42,22 +45,40 @@ export default function BookingScreen() {
         )
     );
 
+
+    const renderEmpty = () => {
+        const message =
+            tab === "upcoming"
+                ? "No tenés turnos próximos"
+                : "No tenés turnos anteriores"
+
+        return (
+            <View style={{ alignItems: "center", marginTop: 40 }}>
+                <Text style={{ color: colors.textPrimary, fontSize: 16 }}>
+                    {message}
+                </Text>
+            </View>
+        )
+    }
+
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
             <FlatList<Appointment>
-                data={pastAppointments}
+                data={tab === "upcoming" ? upcommingAppointments : pastAppointments}
                 keyExtractor={(item) => item.id}
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{ padding: 24, paddingBottom: 16 }}
 
                 ListHeaderComponent={
-                    <BookingHeader 
+                    <BookingHeader
                         tab={tab}
                         setTab={setTab}
                         globalStyles={globalStyles}
                         colors={colors}
                     />
                 }
+                
+                ListEmptyComponent={renderEmpty}
                 renderItem={renderItem}
             />
         </SafeAreaView>

@@ -1,32 +1,65 @@
 import { useEffect, useState } from "react"
-import { getUserAppointments } from "../../data/repository/appointmentRepository"
 import { Appointment } from "../../domain/models/Appointment"
+import { mapAppointmentErrorToMessage } from "../../errors/appointmentErrors"
+import { getUpcomingAppointmentsUsecase } from "../../domain/usecase/appointments/getUpcomingAppointmentsUsecase"
+import { getPastAppointmentsUsecase } from "../../domain/usecase/appointments/getPastAppointmentsUsecase"
 
 export const useBooking = () => {
   const [pastAppointments, setPastAppointments] = useState<Appointment[]>([])
   const [upcommingAppointments, setUpcommingAppointments] = useState<Appointment[]>([])
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null);
 
   const cancelAppointment = async (appointmentId: String) => {
     console.log("cancelar" + appointmentId)
   }
 
-  const fetchUserAppointments = async () => {
+  const fetchUpcomingAppointments = async () => {
     setLoading(true)
-    const data = await getUserAppointments("TvKF3YzLImSGlC4QHuesD6pH5dp1")
-    setPastAppointments(data)
-    setLoading(false)
+    setError(null)
+
+    try {
+      const result = await getUpcomingAppointmentsUsecase()
+
+      if (result.ok) {
+        setUpcommingAppointments(result.data)
+      } else {
+        setError(mapAppointmentErrorToMessage(result.error))
+      }
+
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const fetchPastAppointments = async () => {
+    setLoading(true)
+    setError(null)
+
+    try {
+      const result = await getPastAppointmentsUsecase()
+
+      if (result.ok) {
+        setPastAppointments(result.data)
+      } else {
+        setError(mapAppointmentErrorToMessage(result.error))
+      }
+
+    } finally {
+      setLoading(false)
+    }
   }
 
   useEffect(() => {
-    fetchUserAppointments()
+    fetchUpcomingAppointments()
+    fetchPastAppointments()
   }, [])
 
   return {
     pastAppointments,
     upcommingAppointments,
     loading,
+    error,
     cancelAppointment,
-    fetchUserAppointments
   }
 }

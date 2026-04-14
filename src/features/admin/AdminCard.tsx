@@ -6,12 +6,10 @@ import { useTheme } from "../../data/provider/ThemeProvider"
 
 type Props = {
     appointment: Appointment
-    onCancel: (bookingId: string) => void
 }
 
 export const AdminCard: React.FC<Props> = ({
-    appointment,
-    onCancel
+    appointment
 }) => {
     const { time, clientName, service, employeeName, status } = appointment
     const statusStyle =

@@ -1,9 +1,9 @@
+import { Timestamp } from "firebase/firestore"
 import { Appointment } from "../../../domain/models/Appointment"
 
 export interface AppointmentResponse {
-  date: string
+  dateTime: Timestamp,
   service: string
-  time: string
   uid: string
   serviceImg: string
   status: string,
@@ -16,11 +16,17 @@ export const toDomain = (
   id: string,
   response: AppointmentResponse
 ): Appointment => {
+  const dateObj = response.dateTime.toDate()
+
+  const date = dateObj.toISOString().split("T")[0] // "YYYY-MM-DD"
+
+  const time = dateObj.toTimeString().slice(0, 5) // "HH:mm"
+
   return {
     id,
-    date: response.date,
+    date: date,
     service: response.service,
-    time: response.time,
+    time: time,
     uid: response.uid,
     serviceImg: response.serviceImg,
     status: response.status,
