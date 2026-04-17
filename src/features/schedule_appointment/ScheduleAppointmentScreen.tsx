@@ -1,16 +1,18 @@
 import { RouteProp, useRoute } from "@react-navigation/native";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
-    View,
-    Text,
-    StyleSheet,
-    ScrollView,
-    TouchableOpacity,
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
 } from "react-native";
 import { Calendar } from "react-native-calendars";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MainStackParamList } from "../../navigation/types";
 import { useLocalSearchParams } from "expo-router";
+import { useScheduleAppointment } from "./useScheduleAppointment";
+import { CreateAppointmentInput } from "../../domain/models/CreateAppointmentInput";
 
 /* ======================
    TYPES & CONSTANTS
@@ -42,14 +44,11 @@ const isWeekendOrWednesday = (dateString: string) => {
    SCREEN
 ====================== */
 
-type ScheduleRouteProp = RouteProp<
-  MainStackParamList,
-  "ScheduleAppointment"
->;
-
 export const ScheduleAppointmentScreen: React.FC = () => {
-  const route = useRoute<ScheduleRouteProp>();
+  const { serviceId } = useLocalSearchParams<{ serviceId?: string }>()
+  const route = useRoute();
   const { serviceName } = useLocalSearchParams<{ serviceName?: string }>()
+  const { success, loading, error, fetchService, createApointment } = useScheduleAppointment()
 
   const today = new Date();
   const todayString = today.toISOString().split("T")[0];
@@ -57,9 +56,27 @@ export const ScheduleAppointmentScreen: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState(todayString);
   const [selectedTime, setSelectedTime] = useState<Hour | null>(null);
 
-  const handleContinue  = () => {
-    console.log(serviceName +  selectedDate + "-" + selectedTime)
-};
+
+  useEffect(() => {
+    if (serviceId) {
+      fetchService(serviceId)
+    }
+  }, [])
+
+  const handleContinue = () => {
+    const input: CreateAppointmentInput = {
+      clientName: "string",
+      dateTime: "string",
+      employeeImg: "string",
+      employeeName: "string",
+      price: 0,
+      service: "string",
+      serviceImg: "string",
+      status: "string",
+    }
+    createApointment(input)
+    //console.log(serviceName + selectedDate + "T" + selectedTime+":00")
+  };
 
   /* ===== LIMITES DE NAVEGACIÓN ===== */
   const minDate = useMemo(() => {
@@ -184,7 +201,7 @@ export const ScheduleAppointmentScreen: React.FC = () => {
         </View>
 
         <TouchableOpacity
-            onPress={handleContinue }
+          onPress={handleContinue}
           disabled={!selectedTime}
           style={[
             styles.continueButton,
@@ -199,93 +216,93 @@ export const ScheduleAppointmentScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-      selected: {
+  selected: {
     marginTop: 16,
     fontSize: 16,
   },
-    container: {
-        flex: 1,
-        backgroundColor: "#fff",
-    },
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+  },
   title: {
     fontSize: 18,
     fontWeight: "600",
     marginBottom: 12,
   },
-    calendar: {
-        padding: 16,
-        borderBottomWidth: 1,
-        borderColor: "#eee",
-    },
-    calendarTitle: {
-        fontSize: 16,
-        fontWeight: "600",
-    },
-    calendarDate: {
-        marginTop: 8,
-        fontSize: 18,
-        fontWeight: "700",
-    },
+  calendar: {
+    padding: 16,
+    borderBottomWidth: 1,
+    borderColor: "#eee",
+  },
+  calendarTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  calendarDate: {
+    marginTop: 8,
+    fontSize: 18,
+    fontWeight: "700",
+  },
 
-    sectionTitle: {
-        marginTop: 24,
-        marginHorizontal: 16,
-        fontSize: 16,
-        fontWeight: "600",
-    },
+  sectionTitle: {
+    marginTop: 24,
+    marginHorizontal: 16,
+    fontSize: 16,
+    fontWeight: "600",
+  },
 
-    hoursContainer: {
-        flexDirection: "row",
-        flexWrap: "wrap",
-        padding: 16,
-        gap: 12,
-    },
-    hourItem: {
-        paddingVertical: 10,
-        paddingHorizontal: 14,
-        borderRadius: 10,
-        borderWidth: 1,
-        borderColor: "#ddd",
-    },
-    hourSelected: {
-        backgroundColor: "#000",
-        borderColor: "#000",
-    },
-    hourText: {
-        fontSize: 14,
-    },
-    hourTextSelected: {
-        color: "#fff",
-    },
+  hoursContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    padding: 16,
+    gap: 12,
+  },
+  hourItem: {
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "#ddd",
+  },
+  hourSelected: {
+    backgroundColor: "#000",
+    borderColor: "#000",
+  },
+  hourText: {
+    fontSize: 14,
+  },
+  hourTextSelected: {
+    color: "#fff",
+  },
 
-    bottomBar: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        padding: 16,
-        borderTopWidth: 1,
-        borderColor: "#eee",
-    },
-    selectedLabel: {
-        fontSize: 12,
-        color: "#666",
-    },
-    selectedValue: {
-        fontSize: 14,
-        fontWeight: "600",
-    },
+  bottomBar: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: 16,
+    borderTopWidth: 1,
+    borderColor: "#eee",
+  },
+  selectedLabel: {
+    fontSize: 12,
+    color: "#666",
+  },
+  selectedValue: {
+    fontSize: 14,
+    fontWeight: "600",
+  },
 
-    continueButton: {
-        backgroundColor: "#000",
-        paddingVertical: 12,
-        paddingHorizontal: 20,
-        borderRadius: 12,
-    },
-    buttonDisabled: {
-        opacity: 0.5,
-    },
-    continueText: {
-        color: "#fff",
-        fontWeight: "600",
-    },
+  continueButton: {
+    backgroundColor: "#000",
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+  },
+  buttonDisabled: {
+    opacity: 0.5,
+  },
+  continueText: {
+    color: "#fff",
+    fontWeight: "600",
+  },
 });

@@ -2,5 +2,5 @@ export interface AuthUser {
     uid: string
     email: string,
     fullName: string,
-    role: string
+    role: "admin" | "client"
 }

@@ -1,5 +1,5 @@
 
-import { Text, FlatList, ListRenderItem, View, StyleSheet } from "react-native";
+import { Text, FlatList, ListRenderItem, View, StyleSheet, RefreshControl } from "react-native";
 import { useServices } from "./useSelectService";
 import { ServiceCard } from "./ServiceCard";
 import { Service } from "../../domain/models/Service";
@@ -11,28 +11,28 @@ import { createGlobalStyles } from "../../theme/globalStyles";
 import LoadingScreen from "../../shared/LoadingScreen";
 
 export default function SelectServiceScreen() {
-  const { services, loading } = useServices()
+  const { services, loading, refreshing, onRefresh } = useServices()
 
   const { isDarkMode } = useTheme();
   const globalStyles = createGlobalStyles(isDarkMode)
   const colors = isDarkMode ? darkColors : lightColors;
 
   if (loading) {
-    return <LoadingScreen/>
+    return <LoadingScreen />
   }
 
   const renderItem: ListRenderItem<Service> = ({ item }) => (
     <ServiceCard
       service={item}
-      onBook={(serviceName) => router.push({
-        pathname: '/bottom/select-service/schedule-appointment',
-        params: { serviceName }
+      onBook={(serviceId) => router.push({
+        pathname: '/bottom/select-service/service-detail',
+        params: { serviceId }
       })}
     />
   );
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: colors.background}}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
       <FlatList<Service>
         data={services}
         keyExtractor={(item) => item.id}
@@ -47,6 +47,13 @@ export default function SelectServiceScreen() {
         }
 
         renderItem={renderItem}
+
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+          />
+        }
       />
     </SafeAreaView>
   );

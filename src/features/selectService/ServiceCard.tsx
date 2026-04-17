@@ -13,7 +13,7 @@ import { useTheme } from '../../data/provider/ThemeProvider'
 
 type Props = {
   service: Service
-  onBook: (serviceName: string) => void
+  onBook: (serviceId: string) => void
 }
 
 export const ServiceCard: React.FC<Props> = ({
@@ -45,7 +45,7 @@ export const ServiceCard: React.FC<Props> = ({
           <Text style={[styles.durationText, { color: colors.textSecondary }]}>{duration_min + " min"}</Text>
         </View>
 
-        <TouchableOpacity style={[styles.button, { backgroundColor: colors.primary }]} onPress={() => onBook(service.name)}>
+        <TouchableOpacity style={[styles.button, { backgroundColor: colors.primary }]} onPress={() => onBook(service.id)}>
           <Text style={styles.buttonText}>Book</Text>
         </TouchableOpacity>
       </View>

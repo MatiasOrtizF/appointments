@@ -5,7 +5,7 @@ import { UserSignUp } from "../../domain/models/UserSignUp"
 import { AuthUserResponse } from "../remote/response/AuthUserResponse"
 import { toDomain } from "../remote/response/AuthUserResponse"
 import { Result } from "../../shared/types/result"
-import { UserError } from "../../errors/UserError"
+import { UserError } from "../../errors/userError"
 import { FirebaseError } from "firebase/app"
 
 const COLLECTION_USER = "user"

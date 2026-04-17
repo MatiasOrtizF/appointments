@@ -3,7 +3,7 @@ import { AuthUser } from "../../../domain/models/AuthUser"
 export interface AuthUserResponse {
     fullName: string
     email: string
-    role: string
+    role: "admin" | "client"
 }
 
 export const toDomain = (

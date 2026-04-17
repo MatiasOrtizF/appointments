@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react"
 import { Appointment } from "../../domain/models/Appointment"
-import { getUpcomingAdminAppointmentsUsecase } from "../../domain/usecase/admin/getUpcomingAdminAppointmentsUsecase"
 import { mapAppointmentErrorToMessage } from "../../errors/appointmentErrors"
 import { getUserInfoUsecase } from "../../domain/usecase/admin/getUserInfoUsecase"
 import { mapUserErrorToMessage } from "../../errors/userError"
+import { getAdminAppointmentsUsecase } from "../../domain/usecase/admin/getAdminAppointmentsUsecase"
 
-export const useAdmin = () => {
-  const [upcommingAdminAppointments, setUpcommingAdminAppointments] = useState<Appointment[]>([])
+export const useAppointmentAdmin = () => {
+  const [adminAppointments, setAdminAppointments] = useState<Appointment[] | null>(null)
   const [isAdmin, setIsAdmin] = useState(false)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null);
@@ -31,25 +31,26 @@ export const useAdmin = () => {
         const isAdmin = result.data.role === "admin"
         setIsAdmin(isAdmin)
         if (isAdmin) {
-          await fetchUpcomingAdminAppointments()
+          await fetchAdminAppointments()
         }
       } else {
         setError(mapUserErrorToMessage(result.error))
       }
 
     } finally {
-      null
+      setLoading(false)
     }
   }
 
-  const fetchUpcomingAdminAppointments = async () => {
+  const fetchAdminAppointments = async () => {
+    setLoading(true)
     setError(null)
 
     try {
-      const result = await getUpcomingAdminAppointmentsUsecase()
+      const result = await getAdminAppointmentsUsecase()
 
       if (result.ok) {
-        setUpcommingAdminAppointments(result.data)
+        setAdminAppointments(result.data)
       } else {
         setError(mapAppointmentErrorToMessage(result.error))
       }
@@ -59,17 +60,21 @@ export const useAdmin = () => {
     }
   }
 
+  const cancelAppointment = async (bookingId: string) => {
+    console.log("cancelar: "+bookingId)
+  }
+
   useEffect(() => {
     getUserInfo()
-    //fetchUpcomingAdminAppointments()
   }, [])
 
   return {
-    upcommingAdminAppointments,
+    adminAppointments,
     isAdmin,
     loading,
     error,
     refreshing,
-    onRefresh
+    onRefresh,
+    cancelAppointment
   }
 }

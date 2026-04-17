@@ -7,6 +7,16 @@ export const useServices = () => {
   const [services, setServices] = useState<Service[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+
+    await fetchServices();
+
+    setRefreshing(false);
+  };
+
 
   const fetchServices = async () => {
     setLoading(true)
@@ -25,7 +35,7 @@ export const useServices = () => {
       setLoading(false)
     }
   }
-  
+
   useEffect(() => {
     fetchServices()
   }, [])
@@ -33,6 +43,8 @@ export const useServices = () => {
   return {
     services,
     loading,
-    error
+    error,
+    refreshing,
+    onRefresh
   }
 }

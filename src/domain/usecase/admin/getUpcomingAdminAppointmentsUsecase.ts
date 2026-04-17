@@ -24,5 +24,5 @@ export const getUpcomingAdminAppointmentsUsecase = async (
     return { ok: false, error: "unauthenticated" };
   }
 
-  return adminRepository.getAdminAppointments(currentUser.uid);
+  return adminRepository.getUpcomingAdminAppointments(currentUser.uid);
 }

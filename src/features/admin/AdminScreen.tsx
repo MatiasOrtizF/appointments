@@ -1,4 +1,4 @@
-import { Text, StyleSheet, View, Pressable, ScrollView } from "react-native";
+import { Text, StyleSheet, View, Pressable, ScrollView, RefreshControl, ListRenderItem, FlatList } from "react-native";
 import { useAdmin } from "./useAdmin";
 import { AdminCard } from "./AdminCard";
 import { Ionicons } from "@expo/vector-icons";
@@ -8,6 +8,7 @@ import { useTheme } from "../../data/provider/ThemeProvider";
 import LoadingScreen from "../../shared/LoadingScreen";
 import { useRouter } from "expo-router";
 import { Colors } from "../../theme/types";
+import { Appointment } from "../../domain/models/Appointment";
 
 type Props = {
     iconName: keyof typeof Ionicons.glyphMap;
@@ -19,7 +20,7 @@ type Props = {
 };
 
 export default function AdminScreen() {
-    const { upcommingAdminAppointments, isAdmin, loading } = useAdmin()
+    const { upcommingAdminAppointments, isAdmin, loading, refreshing, onRefresh } = useAdmin()
     const { isDarkMode } = useTheme();
     const globalStyles = createGlobalStyles(isDarkMode)
     const colors = isDarkMode ? darkColors : lightColors
@@ -29,16 +30,24 @@ export default function AdminScreen() {
         <LoadingScreen />
     }
 
-    if (!isAdmin) {
+    if (!isAdmin && !loading) {
         return (
-            <View style={{ flex: 1, backgroundColor: colors.background, justifyContent: "center", alignItems: "center", padding: 20}}>
-                <Text style={{color: colors.textPrimary, textAlign: "center"}}>Solamente los admins pueden acceder a esta informacion</Text>
+            <View style={{ flex: 1, backgroundColor: colors.background, justifyContent: "center", alignItems: "center", padding: 20 }}>
+                <Text style={{ color: colors.textPrimary, textAlign: "center" }}>Solamente los admins pueden acceder a esta informacion</Text>
             </View>
         )
     }
 
     return (
-        <ScrollView style={{ flex: 1, backgroundColor: colors.background }} contentContainerStyle={{ flexGrow: 1 }}
+        <ScrollView
+            style={{ flex: 1, backgroundColor: colors.background }}
+            contentContainerStyle={{ flexGrow: 1 }}
+            refreshControl={
+                <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                />
+            }
         >
 
             <View style={styles.dashboardSection}>
@@ -118,12 +127,19 @@ export default function AdminScreen() {
                     </Pressable>
                 </View>
 
-                {upcommingAdminAppointments.map((appointment) => (
-                    <AdminCard
-                        key={appointment.id}
-                        appointment={appointment}
-                    />
-                ))}
+
+                {upcommingAdminAppointments.length > 0
+                    ? upcommingAdminAppointments.map((appointment) => (
+                        <AdminCard
+                            key={appointment.id}
+                            appointment={appointment}
+                        />
+                    ))
+                    :
+                    <View style={{flex: 1, justifyContent: "center", alignItems: "center"}}>
+                        <Text style={globalStyles.subTitle}>No hay turnos el dia de hoy</Text>
+                    </View>
+                }
 
             </View>
 
