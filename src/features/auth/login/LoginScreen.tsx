@@ -121,9 +121,9 @@ export const LoginScreen = () => {
                         </TouchableOpacity>
                     </View>
 
-                    {error && <Text>{error}</Text>}
+                    {error && <Text style={globalStyles.error}>❌ {error}</Text>}
 
-                    <TouchableOpacity style={[globalStyles.primaryButton, styles.button]} onPress={login}>
+                    <TouchableOpacity style={[globalStyles.primaryButton, styles.button]} onPress={login} disabled={loading}>
                         <Text style={globalStyles.primaryButtonText}> {loading ? "Cargando..." : "Entrar"}</Text>
                     </TouchableOpacity>
 

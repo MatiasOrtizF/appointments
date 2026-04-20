@@ -1,47 +1,55 @@
 import { useState } from "react";
 import { authRepository } from "../../../data/repository/AuthRepository";
+import { mapVerifyEmailErrorToMessage } from "../../../errors/auth/VerifyEmailError";
+import { mapSignOutErrorToMessage } from "../../../errors/auth/signOutError";
+import { mapVerificationEmailErrorToMessage } from "../../../errors/auth/verificationEmailError";
 
 export const useVerifyEmail = () => {
-
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const sendEmailVerification = async () => {
-    console.log("reenviar email")
-    try {
     setLoading(true);
-      setError(null);
+    setError(null);
 
-      await authRepository.sendVerificationEmail()
-    } catch (e: any) {
-      setError(e.message);
+    try {
+      const result = await authRepository.sendVerificationEmail()
+
+      if (!result.ok) {
+        setError(mapVerificationEmailErrorToMessage(result.error))
+      }
     } finally {
       setLoading(false);
     }
   }
 
   const verifyEmail = async () => {
-    try {
-      setLoading(true);
-      setError(null);
+    setLoading(true);
+    setError(null);
 
-      await authRepository.verifyEmailIsVerified()
-    } catch (e: any) {
-      setError(e.message);
+    try {
+      const result = await authRepository.verifyEmailIsVerified()
+
+      if (!result.ok) {
+        setError(mapVerifyEmailErrorToMessage(result.error))
+      }
+
     } finally {
       setLoading(false);
     }
   };
 
-    const logOut = async () => {
+  const logOut = async () => {
+    setLoading(true);
+    setError(null);
 
     try {
-      setLoading(true);
-      setError(null);
+      const result = await authRepository.signOut()
 
-      await authRepository.signOut()
-    } catch (e: any) {
-      setError(e.message);
+      if (!result.ok) {
+        setError(mapSignOutErrorToMessage(result.error))
+      }
+
     } finally {
       setLoading(false);
     }

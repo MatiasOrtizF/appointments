@@ -10,7 +10,6 @@ import { router } from "expo-router";
 import { useTheme } from "../../../data/provider/ThemeProvider";
 
 export default function RegisterScreen() {
-
     const [keyboardVisible, setKeyboardVisible] = useState(false)
     const [secure, setSecure] = useState(true)
     const { isDarkMode } = useTheme();
@@ -171,9 +170,9 @@ export default function RegisterScreen() {
                             </TouchableOpacity>
                         </View>
 
-                        {error && <Text style={styles.errorText}>❌ {error}</Text>}
+                        {error && <Text style={[styles.errorText, {color: colors.error}]}>❌ {error}</Text>}
 
-                        <TouchableOpacity style={[globalStyles.primaryButton, styles.button]} onPress={register}>
+                        <TouchableOpacity style={[globalStyles.primaryButton, styles.button]} onPress={register} disabled={loading}>
                             <Text style={globalStyles.primaryButtonText}> {loading ? "Cargando..." : "Crear Cuenta"}</Text>
                         </TouchableOpacity>
 
@@ -226,7 +225,7 @@ const styles = StyleSheet.create({
     },
 
     errorText: {
-        color: "#ff3b30",
+        fontWeight: "500",
         marginTop: 10,
         fontSize: 14,
     }

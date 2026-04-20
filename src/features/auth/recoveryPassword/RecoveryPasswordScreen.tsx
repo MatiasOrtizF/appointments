@@ -79,7 +79,7 @@ export default function RecoveryPasswordScreen() {
                             />
                         </View>
 
-                        {error && <Text>{error}</Text>}
+                        {error && <Text style={globalStyles.error}>❌ {error}</Text>}
 
                         <TouchableOpacity style={[globalStyles.primaryButton, styles.button]} onPress={recoveryPassword}>
                             {loading ? (

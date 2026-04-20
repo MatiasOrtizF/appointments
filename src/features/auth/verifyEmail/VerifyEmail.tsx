@@ -3,11 +3,13 @@ import { useVerifyEmail } from "./useVerifyEmail";
 import { lightColors, darkColors } from "../../../theme/colors";
 import { useState } from "react";
 import { useTheme } from "../../../data/provider/ThemeProvider";
+import { createGlobalStyles } from "../../../theme/globalStyles";
 
 export default function VerifyEmailScreen() {
   const [seconds, setSeconds] = useState(0);
 
   const { isDarkMode } = useTheme();
+  const globalStyles = createGlobalStyles(isDarkMode)
   const colors = isDarkMode ? darkColors : lightColors
 
   const {
@@ -39,19 +41,19 @@ export default function VerifyEmailScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[globalStyles.container, { justifyContent: "center", alignItems: "center" }]}>
 
-      <Text style={styles.title}>Verify your email</Text>
+      <Text style={[globalStyles.title, { textAlign: "center", marginBottom: 10 }]}>Verify your email</Text>
 
-      <Text style={styles.subtitle}>
+      <Text style={[globalStyles.subTitle, { textAlign: "center", marginBottom: 30 }]}>
         We sent you a verification link. Please check your inbox and verify your account to continue.
       </Text>
 
-      {error && <Text style={styles.error}>{error}</Text>}
+      <Text style={globalStyles.error}>❌ {error}</Text>
 
       {loading && <ActivityIndicator size="large" style={{ marginBottom: 20 }} />}
 
-      <Pressable style={[styles.primaryButton]} onPress={verifyEmail}>
+      <Pressable style={[styles.primaryButton, { backgroundColor: colors.secondary }]} onPress={verifyEmail}>
         <Text style={styles.primaryText}>I already verified my email</Text>
       </Pressable>
 
@@ -65,11 +67,11 @@ export default function VerifyEmailScreen() {
           }]}
         disabled={seconds > 0}
       >
-        <Text style={[styles.secondaryText, { color: seconds > 0 ? "white" : undefined }]}> {seconds > 0 ? `Resend email (${seconds}s)` : "Resend email verification"}</Text>
+        <Text style={[styles.secondaryText, { color: seconds > 0 ? "white" : colors.textPrimary }]}> {seconds > 0 ? `Resend email (${seconds}s)` : "Resend email verification"}</Text>
       </Pressable>
 
-      <Pressable style={styles.logoutButton} onPress={logOut}>
-        <Text style={styles.logoutText}>Logout</Text>
+      <Pressable style={{ marginTop: 10 }} onPress={logOut}>
+        <Text style={{ color: colors.error, fontWeight: "600" }}>Logout</Text>
       </Pressable>
 
     </View>
@@ -78,28 +80,6 @@ export default function VerifyEmailScreen() {
 
 const styles = StyleSheet.create({
 
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 30,
-    backgroundColor: "#fff"
-  },
-
-  title: {
-    fontSize: 28,
-    fontWeight: "700",
-    marginBottom: 10,
-    textAlign: "center"
-  },
-
-  subtitle: {
-    fontSize: 16,
-    textAlign: "center",
-    marginBottom: 30,
-    color: "#555"
-  },
-
   error: {
     color: "red",
     marginBottom: 15,
@@ -107,7 +87,6 @@ const styles = StyleSheet.create({
   },
 
   primaryButton: {
-    //backgroundColor: colors.secondary,
     paddingVertical: 14,
     paddingHorizontal: 30,
     borderRadius: 10,
@@ -123,7 +102,6 @@ const styles = StyleSheet.create({
 
   secondaryButton: {
     borderWidth: 1,
-    //borderColor: colors.secondary,
     paddingVertical: 14,
     borderRadius: 10,
     marginBottom: 15,
@@ -134,14 +112,5 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontWeight: "600"
   },
-
-  logoutButton: {
-    marginTop: 10
-  },
-
-  logoutText: {
-    color: "red",
-    fontWeight: "600"
-  }
 
 });

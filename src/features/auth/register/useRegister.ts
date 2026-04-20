@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { authRepository } from "../../../data/repository/AuthRepository";
+import { mapRegisterErrorToMessage } from "../../../errors/auth/registerError";
 
 export const useRegister = () => {
 
@@ -11,6 +12,8 @@ export const useRegister = () => {
   const [error, setError] = useState<string | null>(null);
 
   const register = async () => {
+    setLoading(true);
+    setError(null);
 
     const trimmedFullName = fullName.trim()
     const trimmedEmail = email.trim()
@@ -42,12 +45,13 @@ export const useRegister = () => {
     }
 
     try {
-      setLoading(true);
-      setError(null);
 
-      await authRepository.signUp(email, password)
-    } catch (e: any) {
-      setError(e.message);
+      const result = await authRepository.signUp(email, password)
+
+      if (!result.ok) {
+        setError(mapRegisterErrorToMessage(result.error))
+      }
+
     } finally {
       setLoading(false);
     }
