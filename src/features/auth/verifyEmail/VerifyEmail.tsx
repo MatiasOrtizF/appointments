@@ -4,6 +4,7 @@ import { lightColors, darkColors } from "../../../theme/colors";
 import { useState } from "react";
 import { useTheme } from "../../../data/provider/ThemeProvider";
 import { createGlobalStyles } from "../../../theme/globalStyles";
+import LoadingScreen from "../../../shared/LoadingScreen";
 
 export default function VerifyEmailScreen() {
   const [seconds, setSeconds] = useState(0);
@@ -40,6 +41,12 @@ export default function VerifyEmailScreen() {
     }, 1000);
   };
 
+  if (loading) {
+    return (
+      <LoadingScreen />
+    )
+  }
+
   return (
     <View style={[globalStyles.container, { justifyContent: "center", alignItems: "center" }]}>
 
@@ -50,8 +57,6 @@ export default function VerifyEmailScreen() {
       </Text>
 
       <Text style={globalStyles.error}>❌ {error}</Text>
-
-      {loading && <ActivityIndicator size="large" style={{ marginBottom: 20 }} />}
 
       <Pressable style={[styles.primaryButton, { backgroundColor: colors.secondary }]} onPress={verifyEmail}>
         <Text style={styles.primaryText}>I already verified my email</Text>

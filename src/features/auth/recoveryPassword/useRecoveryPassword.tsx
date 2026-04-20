@@ -14,6 +14,7 @@ export const useRecoveryPassword = () => {
 
         if (!email.trim()) {
             setError("Por favor ingresa un email");
+            setLoading(false);
             return;
         }
 

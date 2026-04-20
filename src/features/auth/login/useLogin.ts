@@ -12,11 +12,9 @@ export const useLogin = () => {
     setLoading(true);
     setError(null);
 
-    console.log("apretado")
-
-
     if (!email.trim()) {
       setError("Por favor ingresa un email");
+      setLoading(false);
       return;
     }
 

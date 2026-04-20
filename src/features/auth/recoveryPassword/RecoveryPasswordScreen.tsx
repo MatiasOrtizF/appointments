@@ -6,6 +6,7 @@ import { createGlobalStyles } from "../../../theme/globalStyles";
 import React, { useEffect } from "react";
 import { router } from "expo-router";
 import { useTheme } from "../../../data/provider/ThemeProvider";
+import LoadingButton from "../../../shared/LoadingButton";
 
 export default function RecoveryPasswordScreen() {
     const { isDarkMode } = useTheme();
@@ -81,9 +82,9 @@ export default function RecoveryPasswordScreen() {
 
                         {error && <Text style={globalStyles.error}>❌ {error}</Text>}
 
-                        <TouchableOpacity style={[globalStyles.primaryButton, styles.button]} onPress={recoveryPassword}>
+                        <TouchableOpacity style={[globalStyles.primaryButton, styles.button]} onPress={recoveryPassword} disabled={loading}>
                             {loading ? (
-                                <ActivityIndicator color="#fff" />
+                                <LoadingButton />
                             ) : (
                                 <Text style={globalStyles.primaryButtonText}>Enviar email</Text>
 

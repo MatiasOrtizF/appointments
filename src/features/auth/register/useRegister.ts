@@ -22,6 +22,7 @@ export const useRegister = () => {
 
     if (!trimmedFullName || !trimmedEmail || !trimmedPassword || !trimmedConfirmPassword) {
       setError("Todos los campos son obligatorios")
+      setLoading(false);
       return
     }
 
@@ -31,16 +32,19 @@ export const useRegister = () => {
 
     if (!emailRegex.test(trimmedEmail)) {
       setError("El email no es válido")
+      setLoading(false);
       return
     }
 
     if (trimmedPassword.length < 6) {
       setError("La contraseña debe tener al menos 6 caracteres")
+      setLoading(false);
       return
     }
 
     if (trimmedPassword !== trimmedConfirmPassword) {
       setError("Las contraseñas deben coincidir")
+      setLoading(false);
       return
     }
 

@@ -18,6 +18,7 @@ export const useVerifyEmail = () => {
       if (!result.ok) {
         setError(mapVerificationEmailErrorToMessage(result.error))
       }
+      
     } finally {
       setLoading(false);
     }

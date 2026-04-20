@@ -8,6 +8,7 @@ import { createGlobalStyles } from "../../../theme/globalStyles";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import { useTheme } from "../../../data/provider/ThemeProvider";
+import LoadingButton from "../../../shared/LoadingButton";
 
 export default function RegisterScreen() {
     const [keyboardVisible, setKeyboardVisible] = useState(false)
@@ -170,10 +171,15 @@ export default function RegisterScreen() {
                             </TouchableOpacity>
                         </View>
 
-                        {error && <Text style={[styles.errorText, {color: colors.error}]}>❌ {error}</Text>}
+                        {error && <Text style={[styles.errorText, { color: colors.error }]}>❌ {error}</Text>}
+
 
                         <TouchableOpacity style={[globalStyles.primaryButton, styles.button]} onPress={register} disabled={loading}>
-                            <Text style={globalStyles.primaryButtonText}> {loading ? "Cargando..." : "Crear Cuenta"}</Text>
+                            {loading ? (
+                                <LoadingButton />
+                            ) : (
+                                <Text style={globalStyles.primaryButtonText}>Crear Cuenta</Text>
+                            )}
                         </TouchableOpacity>
 
                         <View style={{ flexDirection: 'row' }}>

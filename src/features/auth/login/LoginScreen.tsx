@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { KeyboardAvoidingView, Platform, View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Keyboard } from "react-native";
+import { KeyboardAvoidingView, Platform, View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Keyboard, ActivityIndicator } from "react-native";
 import { lightColors, darkColors } from "../../../theme/colors";
 import { MaterialIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
@@ -8,6 +8,7 @@ import { createGlobalStyles } from "../../../theme/globalStyles";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { useTheme } from "../../../data/provider/ThemeProvider";
+import LoadingButton from "../../../shared/LoadingButton";
 
 
 export const LoginScreen = () => {
@@ -17,7 +18,7 @@ export const LoginScreen = () => {
 
     const { isDarkMode } = useTheme();
     const globalStyles = createGlobalStyles(isDarkMode)
-    const colors = isDarkMode ? darkColors: lightColors;
+    const colors = isDarkMode ? darkColors : lightColors;
 
     const {
         email,
@@ -117,14 +118,19 @@ export const LoginScreen = () => {
 
                     <View style={styles.linkContainer}>
                         <TouchableOpacity onPress={() => router.replace('/auth/recovery-password')}>
-                            <Text style={[styles.linkForgoPassword, { color: colors.secondary}]}>Forgot Password?</Text>
+                            <Text style={[styles.linkForgoPassword, { color: colors.secondary }]}>Forgot Password?</Text>
                         </TouchableOpacity>
                     </View>
 
                     {error && <Text style={globalStyles.error}>❌ {error}</Text>}
 
                     <TouchableOpacity style={[globalStyles.primaryButton, styles.button]} onPress={login} disabled={loading}>
-                        <Text style={globalStyles.primaryButtonText}> {loading ? "Cargando..." : "Entrar"}</Text>
+                        {loading ? (
+                            <LoadingButton/>
+                        ) : (
+                            <Text style={globalStyles.primaryButtonText}>Entrar</Text>
+                        )
+                        }
                     </TouchableOpacity>
 
                     <View style={{ flexDirection: 'row' }}>
