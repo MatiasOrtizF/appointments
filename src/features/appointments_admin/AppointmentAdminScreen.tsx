@@ -13,7 +13,9 @@ export default function AppointmentAdminScreen() {
     const colors = isDarkMode ? darkColors : lightColors
 
     if (loading) {
-        <LoadingScreen />
+        return (
+            <LoadingScreen />
+        )
     }
 
     if (!isAdmin && !loading) {

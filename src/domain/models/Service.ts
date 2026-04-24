@@ -6,6 +6,9 @@ export interface Service {
   duration_min: number
   img: string
   employees: Employee[]
+  days: string[]
+  hourStart: string
+  hourEnd: string
 }
 
 export interface Employee {

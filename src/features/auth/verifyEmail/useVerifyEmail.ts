@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { authRepository } from "../../../data/repository/AuthRepository";
-import { mapVerifyEmailErrorToMessage } from "../../../errors/auth/VerifyEmailError";
+import { mapVerifyEmailErrorToMessage } from "../../../errors/auth/verifyEmailError";
 import { mapSignOutErrorToMessage } from "../../../errors/auth/signOutError";
 import { mapVerificationEmailErrorToMessage } from "../../../errors/auth/verificationEmailError";
 

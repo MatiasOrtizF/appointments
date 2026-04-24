@@ -8,6 +8,9 @@ export interface ServiceResponse {
   duration_min: number
   img: string,
   employees: DocumentReference[]
+  days: string[]
+  hourStart: string
+  hourEnd: string
 }
 
 export const toDomain = (
@@ -23,6 +26,9 @@ export const toDomain = (
     price: response.price,
     duration_min: response.duration_min,
     img: response.img,
-    employees: employees
+    employees: employees,
+    days: response.days,
+    hourStart: response.hourStart,
+    hourEnd: response.hourEnd
   }
 }

@@ -8,7 +8,6 @@ import { useTheme } from "../../data/provider/ThemeProvider";
 import LoadingScreen from "../../shared/LoadingScreen";
 import { useRouter } from "expo-router";
 import { Colors } from "../../theme/types";
-import { Appointment } from "../../domain/models/Appointment";
 
 type Props = {
     iconName: keyof typeof Ionicons.glyphMap;
@@ -27,7 +26,9 @@ export default function AdminScreen() {
     const router = useRouter();
 
     if (loading) {
-        <LoadingScreen />
+        return (
+            <LoadingScreen />
+        )
     }
 
     if (!isAdmin && !loading) {
@@ -136,7 +137,7 @@ export default function AdminScreen() {
                         />
                     ))
                     :
-                    <View style={{flex: 1, justifyContent: "center", alignItems: "center"}}>
+                    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
                         <Text style={globalStyles.subTitle}>No hay turnos el dia de hoy</Text>
                     </View>
                 }

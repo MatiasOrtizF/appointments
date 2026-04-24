@@ -13,13 +13,14 @@ import { MainStackParamList } from "../../navigation/types";
 import { useLocalSearchParams } from "expo-router";
 import { useScheduleAppointment } from "./useScheduleAppointment";
 import { CreateAppointmentInput } from "../../domain/models/CreateAppointmentInput";
+import LoadingScreen from "../../shared/LoadingScreen";
 
 /* ======================
    TYPES & CONSTANTS
 ====================== */
 type Hour = string;
 
-const HOURS: Hour[] = [
+/*const HOURS: Hour[] = [
   "09:00",
   "10:00",
   "11:00",
@@ -30,14 +31,15 @@ const HOURS: Hour[] = [
   "16:00",
   "17:00",
   "18:00",
-];
+];*/
 
 /* ======================
    HELPERS (FUERA)
 ====================== */
-const isWeekendOrWednesday = (dateString: string) => {
-  const day = new Date(dateString).getDay();
-  return day === 0 || day === 3; // domingo o miércoles
+const isWeekendOrWednesday = (dateString: string, disabledDays: number[]) => {
+  const dayIndex = new Date(dateString).getDay();
+  return disabledDays.includes(dayIndex);
+  //return day === 0 || day === 3; // domingo o miércoles
 };
 
 /* ======================
@@ -48,7 +50,7 @@ export const ScheduleAppointmentScreen: React.FC = () => {
   const { serviceId } = useLocalSearchParams<{ serviceId?: string }>()
   const route = useRoute();
   const { serviceName } = useLocalSearchParams<{ serviceName?: string }>()
-  const { success, loading, error, fetchService, createApointment } = useScheduleAppointment()
+  const { service, hours, daysNotAvailable, success, loading, error, fetchService, createApointment } = useScheduleAppointment()
 
   const today = new Date();
   const todayString = today.toISOString().split("T")[0];
@@ -56,12 +58,6 @@ export const ScheduleAppointmentScreen: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState(todayString);
   const [selectedTime, setSelectedTime] = useState<Hour | null>(null);
 
-
-  useEffect(() => {
-    if (serviceId) {
-      fetchService(serviceId)
-    }
-  }, [])
 
   const handleContinue = () => {
     const input: CreateAppointmentInput = {
@@ -77,6 +73,12 @@ export const ScheduleAppointmentScreen: React.FC = () => {
     createApointment(input)
     //console.log(serviceName + selectedDate + "T" + selectedTime+":00")
   };
+
+  useEffect(() => {
+    if (serviceId) {
+      fetchService(serviceId)
+    }
+  }, [])
 
   /* ===== LIMITES DE NAVEGACIÓN ===== */
   const minDate = useMemo(() => {
@@ -98,19 +100,20 @@ export const ScheduleAppointmentScreen: React.FC = () => {
 
     while (d <= end) {
       const dateString = d.toISOString().split("T")[0];
-
-      if (isWeekendOrWednesday(dateString)) {
-        result[dateString] = {
-          disabled: true,
-          disableTouchEvent: true,
-        };
+      if (daysNotAvailable) {
+        if (isWeekendOrWednesday(dateString, daysNotAvailable)) {
+          result[dateString] = {
+            disabled: true,
+            disableTouchEvent: true,
+          };
+        }
       }
 
       d.setDate(d.getDate() + 1);
     }
 
     return result;
-  }, [minDate, maxDate]);
+  }, [minDate, maxDate, daysNotAvailable]);
 
   /* ===== MARKED DATES SIMPLE ===== */
   const markedDates = useMemo(() => {
@@ -125,15 +128,23 @@ export const ScheduleAppointmentScreen: React.FC = () => {
 
   /* ===== HANDLERS ===== */
   const onDayPress = useCallback((day: any) => {
-    if (isWeekendOrWednesday(day.dateString)) return;
+    if(daysNotAvailable) {
+      if (isWeekendOrWednesday(day.dateString, daysNotAvailable)) return;
+    }
 
     setSelectedDate(day.dateString);
     setSelectedTime(null); // reset hora al cambiar día
-  }, []);
+  }, [daysNotAvailable]);
 
   const onSelectHour = (hour: Hour) => {
     setSelectedTime(hour);
   };
+
+  if (loading || !daysNotAvailable) {
+    return (
+      <LoadingScreen />
+    )
+  }
 
   /* ======================
      RENDER
@@ -163,7 +174,7 @@ export const ScheduleAppointmentScreen: React.FC = () => {
         <Text style={styles.sectionTitle}>Horarios disponibles</Text>
 
         <View style={styles.hoursContainer}>
-          {HOURS.map((hour) => {
+          {hours?.map((hour) => {
             const selected = hour === selectedTime;
 
             return (
