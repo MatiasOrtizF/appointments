@@ -22,11 +22,12 @@ export const useLogin = () => {
       const result = await authRepository.login(email, password)
 
       if (!result.ok) {
+         setLoading(false);
         setError(mapLoginErrorToMessage(result.error))
       }
 
     } finally {
-      setLoading(false);
+   
     }
   };
 

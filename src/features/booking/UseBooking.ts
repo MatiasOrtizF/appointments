@@ -9,6 +9,19 @@ export const useBooking = () => {
   const [upcommingAppointments, setUpcommingAppointments] = useState<Appointment[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = async (tab: string) => {
+    setRefreshing(true);
+
+    if (tab === "upcoming") {
+      await fetchUpcomingAppointments()
+    } else {
+      await fetchPastAppointments()
+    }
+
+    setRefreshing(false);
+  };
 
   const cancelAppointment = async (appointmentId: String) => {
     console.log("cancelar" + appointmentId)
@@ -61,5 +74,7 @@ export const useBooking = () => {
     loading,
     error,
     cancelAppointment,
+    refreshing,
+    onRefresh
   }
 }

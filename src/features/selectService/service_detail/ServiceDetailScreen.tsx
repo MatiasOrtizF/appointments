@@ -1,16 +1,17 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { ScrollView, Text, View, Image, StyleSheet, TouchableOpacity } from "react-native";
+import { ScrollView, Text, View, Image, StyleSheet, TouchableOpacity, Pressable } from "react-native";
 import { useTheme } from "../../../data/provider/ThemeProvider";
 import { createGlobalStyles } from "../../../theme/globalStyles";
 import { darkColors, lightColors } from "../../../theme/colors";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useServiceDetail } from "./useServiceDetail";
 import LoadingScreen from "../../../shared/LoadingScreen";
 import { Ionicons } from "@expo/vector-icons";
+import { Employee } from "../../../domain/models/Service";
 
 export default function ServiceDetailScreen() {
     const { serviceId } = useLocalSearchParams<{ serviceId?: string }>()
-    const { service, loading, error, getService } = useServiceDetail()
+    const { service, selectedEmployee, setSelectedEmployee, loading, error, getService } = useServiceDetail()
 
     const { isDarkMode } = useTheme();
     const globalStyles = createGlobalStyles(isDarkMode)
@@ -30,12 +31,23 @@ export default function ServiceDetailScreen() {
     }
 
     const navigateToScheduleAppointment = () => {
+        const employeeImg = selectedEmployee?.img
+        const employeeName = selectedEmployee?.name
+        const employeeId = selectedEmployee?.id
+
         router.push({
             pathname: '/bottom/select-service/schedule-appointment',
-            params: { serviceId }
+            params: { serviceId, employeeImg, employeeName, employeeId }
         })
     }
 
+    const handleSelectEmployee = (employee: Employee) => {
+        if (employee.id === selectedEmployee?.id) {
+            setSelectedEmployee(null)
+        } else {
+            setSelectedEmployee(employee)
+        }
+    }
 
     return (
         <ScrollView style={{ flex: 1, backgroundColor: colors.background }}>
@@ -75,14 +87,22 @@ export default function ServiceDetailScreen() {
                 {/* DIVIDER */}
                 <View style={{ height: 1, backgroundColor: colors.divider }} />
 
-                <Text style={[globalStyles.subTitle, { color: colors.textPrimary, marginVertical: 10, fontWeight: 600 }]}>Estilistas</Text>
+                <Text style={[globalStyles.subTitle, { color: colors.textPrimary, marginVertical: 10, fontWeight: 600 }]}>Selecciona un empleado</Text>
                 <ScrollView horizontal style={{ marginVertical: 7 }}>
                     {service?.employees.map((employee) => (
-                        <View key={employee.id} style={{ marginHorizontal: 10, alignItems: "center" }}>
+                        <Pressable
+                            key={employee.id}
+                            style={{
+                                marginHorizontal: 10, alignItems: "center", padding: 6, borderRadius: 12,
+                                borderWidth: selectedEmployee?.id === employee.id ? 2 : 0,
+                                borderColor: selectedEmployee?.id === employee.id ? colors.secondary : "transparent",
+                                backgroundColor: selectedEmployee?.id === employee.id ? colors.secondary + "20" : "transparent"
+                            }}
+                            onPress={() => handleSelectEmployee(employee)}>
                             <Image style={styles.imageEmployee} source={{ uri: employee.img }} />
 
                             <Text style={{ color: colors.textPrimary, marginTop: 3 }}>{employee.name}</Text>
-                        </View>
+                        </Pressable>
                     ))}
                 </ScrollView>
                 <Text style={[globalStyles.subTitle, { color: colors.textPrimary, fontWeight: 600 }]}>Acerca de este servicio</Text>
@@ -92,7 +112,13 @@ export default function ServiceDetailScreen() {
                         <Text style={{ color: colors.textSecondary }}>TOTAL PRICE</Text>
                         <Text style={[styles.price, { color: colors.textPrimary }]}>${service?.price}</Text>
                     </View>
-                    <TouchableOpacity style={[globalStyles.primaryButton, { flex: 1 }]} onPress={() => navigateToScheduleAppointment()}>
+                    <TouchableOpacity
+                        style={[
+                            globalStyles.primaryButton,
+                            !selectedEmployee && styles.buttonDisabled,
+                            { flex: 1 }]}
+                        disabled={selectedEmployee == null}
+                        onPress={() => navigateToScheduleAppointment()}>
                         <Text style={globalStyles.primaryButtonText}>Book Appointment</Text>
                     </TouchableOpacity>
                 </View>
@@ -138,5 +164,8 @@ const styles = StyleSheet.create({
     price: {
         fontWeight: "700",
         fontSize: 20
-    }
+    },
+    buttonDisabled: {
+        opacity: 0.5,
+    },
 })

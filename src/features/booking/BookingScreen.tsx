@@ -1,4 +1,4 @@
-import { FlatList, Text, View, StyleSheet, ListRenderItem, Pressable } from "react-native";
+import { FlatList, Text, View, StyleSheet, ListRenderItem, Pressable, RefreshControl } from "react-native";
 import { PastBookingCard } from "./PastBookingCard";
 import { Appointment } from "../../domain/models/Appointment";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -24,7 +24,7 @@ export default function BookingScreen() {
     const globalStyles: ReturnType<typeof createGlobalStyles> = createGlobalStyles(isDarkMode)
     const colors = isDarkMode ? darkColors : lightColors
 
-    const { pastAppointments, upcommingAppointments, loading } = useBooking()
+    const { pastAppointments, upcommingAppointments, loading, refreshing, onRefresh } = useBooking()
 
     if (loading) {
         return <LoadingScreen />
@@ -77,9 +77,16 @@ export default function BookingScreen() {
                         colors={colors}
                     />
                 }
-                
+
                 ListEmptyComponent={renderEmpty}
                 renderItem={renderItem}
+
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={()=> onRefresh(tab)}
+                    />
+                }
             />
         </SafeAreaView>
     )

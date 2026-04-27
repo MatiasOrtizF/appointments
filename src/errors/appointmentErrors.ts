@@ -7,6 +7,7 @@ export type AppointmentError =
     | "permission"
     | "network"
     | "unauthenticated"
+    | "slot_taken"
     | "unknown"
 
 export type AppointmentResult = Result<Service[], AppointmentError>
@@ -21,6 +22,8 @@ export const mapAppointmentErrorToMessage = (error: AppointmentError): string =>
             return "La solicitud tardó demasiado"
         case "unauthenticated":
             return "Tenés que iniciar sesión"
+        case "slot_taken":
+            return "Ese horario ya fue reservado. Por favor, seleccioná otro turno."
         default:
             return "Error al cargar servicios"
     }

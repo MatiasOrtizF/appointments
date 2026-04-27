@@ -3,6 +3,7 @@ import { Appointment } from "../../domain/models/Appointment"
 import { STATUS_STYLES } from "../../constants/statusStyles";
 import { useTheme } from "../../data/provider/ThemeProvider";
 import { darkColors, lightColors } from "../../theme/colors";
+import { createGlobalStyles } from "../../theme/globalStyles";
 
 type Props = {
   appointment: Appointment
@@ -14,6 +15,7 @@ export const PastBookingCard = ({ appointment }: Props) => {
     STATUS_STYLES[status.toLowerCase() as keyof typeof STATUS_STYLES];
 
   const { isDarkMode } = useTheme();
+    const globalStyles = createGlobalStyles(isDarkMode)
   const colors = isDarkMode ? darkColors : lightColors
 
   return (
@@ -24,9 +26,9 @@ export const PastBookingCard = ({ appointment }: Props) => {
 
       {/* Información central */}
       <View style={styles.infoContainer}>
-        <View style={styles.status}>
+        <View style={globalStyles.status}>
           <View style={[
-            styles.statusDot,
+            globalStyles.statusDot,
             { backgroundColor: statusStyle.text }
           ]} />
           <Text style={[
@@ -79,18 +81,6 @@ const styles = StyleSheet.create({
   infoContainer: {
     flex: 1,
     justifyContent: "space-between"
-  },
-
-  status: {
-    flexDirection: "row",
-    alignItems: "center"
-  },
-
-  statusDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    marginRight: 6
   },
 
   statusText: {

@@ -7,6 +7,5 @@ export interface Appointment {
     serviceImg: string,
     status: string,
     price: number,
-    employeeName: string,
-    clientName: string
+    employeeName: string
 }

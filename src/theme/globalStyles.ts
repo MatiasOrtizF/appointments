@@ -58,6 +58,18 @@ export const createGlobalStyles = (isDarkMode: boolean) => {
             fontSize: 14,
             marginBottom: 12,
             fontWeight: "500"
-        }
+        },
+
+        status: {
+            flexDirection: "row",
+            alignItems: "center"
+        },
+
+        statusDot: {
+            width: 8,
+            height: 8,
+            borderRadius: 4,
+            marginRight: 6
+        },
     });
 };

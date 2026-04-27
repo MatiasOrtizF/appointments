@@ -9,11 +9,14 @@ import {
 } from "react-native";
 import { Calendar } from "react-native-calendars";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { MainStackParamList } from "../../navigation/types";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useScheduleAppointment } from "./useScheduleAppointment";
-import { CreateAppointmentInput } from "../../domain/models/CreateAppointmentInput";
 import LoadingScreen from "../../shared/LoadingScreen";
+import { ALERT_TYPE, Dialog } from "react-native-alert-notification";
+import { useTheme } from "../../data/provider/ThemeProvider";
+import { createGlobalStyles } from "../../theme/globalStyles";
+import { darkColors, lightColors } from "../../theme/colors";
+import Divider from "../../shared/Divider";
 
 /* ======================
    TYPES & CONSTANTS
@@ -47,44 +50,67 @@ const isWeekendOrWednesday = (dateString: string, disabledDays: number[]) => {
 ====================== */
 
 export const ScheduleAppointmentScreen: React.FC = () => {
-  const { serviceId } = useLocalSearchParams<{ serviceId?: string }>()
+  const { serviceId, employeeImg, employeeName, employeeId } = useLocalSearchParams<{
+    serviceId?: string
+    employeeImg?: string
+    employeeName?: string
+    employeeId?: string
+  }>()
+
   const route = useRoute();
   const { serviceName } = useLocalSearchParams<{ serviceName?: string }>()
-  const { service, hours, daysNotAvailable, success, loading, error, fetchService, createApointment } = useScheduleAppointment()
+  const { service, hours, daysNotAvailable, today, todayString, selectedDate, setSelectedDate, selectedTime, setSelectedTime, success, loading, error, fetchHourAvailable, fetchService, createApointment } = useScheduleAppointment()
 
-  const today = new Date();
-  const todayString = today.toISOString().split("T")[0];
+  const navigation = useNavigation()
 
-  const [selectedDate, setSelectedDate] = useState(todayString);
-  const [selectedTime, setSelectedTime] = useState<Hour | null>(null);
-
+  const { isDarkMode } = useTheme();
+  const globalStyles = createGlobalStyles(isDarkMode)
+  const colors = isDarkMode ? darkColors : lightColors;
 
   const handleContinue = () => {
-    const input: CreateAppointmentInput = {
-      clientName: "string",
-      dateTime: "string",
-      employeeImg: "string",
-      employeeName: "string",
-      price: 0,
-      service: "string",
-      serviceImg: "string",
-      status: "string",
-    }
-    createApointment(input)
+
+    createApointment(selectedDate, selectedTime, employeeImg, employeeName, employeeId)
     //console.log(serviceName + selectedDate + "T" + selectedTime+":00")
   };
 
   useEffect(() => {
     if (serviceId) {
-      fetchService(serviceId)
+      fetchHourAvailable(serviceId)
     }
   }, [])
 
+  useEffect(() => {
+    if (success) {
+      Dialog.show({
+        type: ALERT_TYPE.SUCCESS,
+        title: 'Turno reservado',
+        textBody: 'Puedes ver todos tus turnos en la seccion de booking',
+        button: 'Continuar',
+        closeOnOverlayTap: false,
+        onPressButton: () => {
+          Dialog.hide();
+          navigation.goBack();
+        },
+      });
+    }
+
+    if (error) {
+      Dialog.show({
+        type: ALERT_TYPE.DANGER,
+        title: "Error",
+        textBody: error,
+        button: "Cerrar",
+        closeOnOverlayTap: false,
+      });
+    }
+  }, [success, error])
+
   /* ===== LIMITES DE NAVEGACIÓN ===== */
   const minDate = useMemo(() => {
-    const d = new Date(today.getFullYear(), today.getMonth(), 1);
-    return d.toISOString().split("T")[0];
-  }, []);
+    return today.toISOString().split("T")[0];
+    /*const d = new Date(today.getFullYear(), today.getMonth(), 1);
+    return d.toISOString().split("T")[0];*/
+  }, [today]);
 
   const maxDate = useMemo(() => {
     const d = new Date(today);
@@ -121,14 +147,14 @@ export const ScheduleAppointmentScreen: React.FC = () => {
       ...disabledDays,
       [selectedDate]: {
         selected: true,
-        selectedColor: "#000",
+        selectedColor: colors.primary,
       },
     };
   }, [disabledDays, selectedDate]);
 
   /* ===== HANDLERS ===== */
   const onDayPress = useCallback((day: any) => {
-    if(daysNotAvailable) {
+    if (daysNotAvailable) {
       if (isWeekendOrWednesday(day.dateString, daysNotAvailable)) return;
     }
 
@@ -136,8 +162,12 @@ export const ScheduleAppointmentScreen: React.FC = () => {
     setSelectedTime(null); // reset hora al cambiar día
   }, [daysNotAvailable]);
 
-  const onSelectHour = (hour: Hour) => {
-    setSelectedTime(hour);
+  const handleSelectHour = (hour: Hour) => {
+    if (hour === selectedTime) {
+      setSelectedTime(null);
+    } else {
+      setSelectedTime(hour);
+    }
   };
 
   if (loading || !daysNotAvailable) {
@@ -150,11 +180,9 @@ export const ScheduleAppointmentScreen: React.FC = () => {
      RENDER
   ====================== */
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background, paddingHorizontal: 24 }}>
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* 📅 CALENDARIO */}
-        <Text style={styles.title}>Seleccionar fecha</Text>
-
         <Calendar
           current={todayString}
           minDate={minDate}
@@ -164,14 +192,49 @@ export const ScheduleAppointmentScreen: React.FC = () => {
           enableSwipeMonths={false}
           hideExtraDays
           theme={{
-            arrowColor: "#000",
-            todayTextColor: "#000",
-            textDisabledColor: "#B0B0B0",
+            calendarBackground: colors.background,
+            arrowColor: colors.textPrimary,
+            monthTextColor: colors.textPrimary,
+
+            textSectionTitleColor: colors.textSecondary,
+            textDisabledColor: colors.textSecondary,
+
+            dayTextColor: colors.textPrimary,
+
+            selectedDayTextColor: '#000',
           }}
         />
 
+        <View style={{ flexDirection: 'row', marginVertical: 15, gap: 20 }}>
+          <View style={globalStyles.status}>
+            <View style={[
+              globalStyles.statusDot,
+              { backgroundColor: colors.primary }
+            ]} />
+            <Text style={{ color: colors.textSecondary }}>Selected</Text>
+          </View>
+
+          <View style={globalStyles.status}>
+            <View style={[
+              globalStyles.statusDot,
+              { backgroundColor: colors.textPrimary }
+            ]} />
+            <Text style={{ color: colors.textSecondary }}>Disponible</Text>
+          </View>
+
+          <View style={globalStyles.status}>
+            <View style={[
+              globalStyles.statusDot,
+              { backgroundColor: colors.textSecondary }
+            ]} />
+            <Text style={{ color: colors.textSecondary }}>No Disponible</Text>
+          </View>
+        </View>
+
+        <Divider />
+
         {/* ⏰ HORARIOS */}
-        <Text style={styles.sectionTitle}>Horarios disponibles</Text>
+        <Text style={[globalStyles.subTitle, { color: colors.textPrimary, marginTop: 15 }]}>Horarios disponibles</Text>
 
         <View style={styles.hoursContainer}>
           {hours?.map((hour) => {
@@ -180,16 +243,17 @@ export const ScheduleAppointmentScreen: React.FC = () => {
             return (
               <TouchableOpacity
                 key={hour}
-                onPress={() => onSelectHour(hour)}
+                onPress={() => handleSelectHour(hour)}
                 style={[
                   styles.hourItem,
-                  selected && styles.hourSelected,
+                  { borderColor: colors.textPrimary },
+                  selected && { backgroundColor: colors.primary },
                 ]}
               >
                 <Text
                   style={[
-                    styles.hourText,
-                    selected && styles.hourTextSelected,
+                    { color: colors.textPrimary },
+                    selected && { color: "#1f1f1f", fontWeight: "600" }
                   ]}
                 >
                   {hour}
@@ -201,10 +265,10 @@ export const ScheduleAppointmentScreen: React.FC = () => {
       </ScrollView>
 
       {/* ✅ FOOTER */}
-      <View style={styles.bottomBar}>
+      <View style={[styles.bottomBar, { borderColor: colors.textPrimary }]}>
         <View>
-          <Text style={styles.selectedLabel}>Selected time</Text>
-          <Text style={styles.selectedValue}>
+          <Text style={{ fontSize: 12, color: colors.textSecondary }}>SELECTED TIME</Text>
+          <Text style={[styles.selectedValue, { color: colors.textPrimary }]}>
             {selectedTime
               ? `${selectedDate} · ${selectedTime}`
               : "Seleccioná un horario"}
@@ -215,11 +279,12 @@ export const ScheduleAppointmentScreen: React.FC = () => {
           onPress={handleContinue}
           disabled={!selectedTime}
           style={[
-            styles.continueButton,
+            globalStyles.primaryButton,
             !selectedTime && styles.buttonDisabled,
+            { flex: 1 }
           ]}
         >
-          <Text style={styles.continueText}>Continue →</Text>
+          <Text style={globalStyles.primaryButtonText}>Continue →</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -227,14 +292,6 @@ export const ScheduleAppointmentScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  selected: {
-    marginTop: 16,
-    fontSize: 16,
-  },
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
   title: {
     fontSize: 18,
     fontWeight: "600",
@@ -273,47 +330,23 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: "#ddd",
-  },
-  hourSelected: {
-    backgroundColor: "#000",
-    borderColor: "#000",
-  },
-  hourText: {
-    fontSize: 14,
-  },
-  hourTextSelected: {
-    color: "#fff",
   },
 
   bottomBar: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    padding: 16,
+    paddingTop: 16,
+    paddingBottom: 24,
     borderTopWidth: 1,
-    borderColor: "#eee",
-  },
-  selectedLabel: {
-    fontSize: 12,
-    color: "#666",
+    gap: 15
   },
   selectedValue: {
     fontSize: 14,
     fontWeight: "600",
   },
 
-  continueButton: {
-    backgroundColor: "#000",
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 12,
-  },
   buttonDisabled: {
     opacity: 0.5,
-  },
-  continueText: {
-    color: "#fff",
-    fontWeight: "600",
-  },
+  }
 });

@@ -22,6 +22,5 @@ export const addAppointmentUsecase = async (
         dateTime: Timestamp.fromDate(new Date(input.dateTime))
     };
 
-
     return appointmentRepository.addAppointment(request)
 }

@@ -1,11 +1,12 @@
 import { useState } from "react"
-import { Service } from "../../../domain/models/Service";
+import { Employee, Service } from "../../../domain/models/Service";
 import { serviceRepository } from "../../../data/repository/ServiceRepository";
 import { mapServiceErrorToMessage } from "../../../errors/serviceErrors";
 
 export const useServiceDetail = () => {
-  const [service, setService] = useState<Service>()
-  const [loading, setLoading] = useState(false)
+  const [service, setService] = useState<Service>();
+  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const getService = async (id: string) => {
@@ -28,6 +29,8 @@ export const useServiceDetail = () => {
 
   return {
     service,
+    selectedEmployee,
+    setSelectedEmployee,
     loading,
     error,
     getService

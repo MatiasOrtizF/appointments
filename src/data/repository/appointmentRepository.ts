@@ -1,4 +1,4 @@
-import { addDoc, collection, doc, getDocs, limit, query, setDoc, Timestamp, where } from 'firebase/firestore';
+import { addDoc, collection, doc, getDoc, getDocs, limit, query, setDoc, Timestamp, where } from 'firebase/firestore';
 import { Appointment } from '../../domain/models/Appointment'
 import { AppointmentResponse, toDomain } from '../remote/response/AppointmentResponse';
 import { db } from '../../config/Firebase';
@@ -6,6 +6,8 @@ import { Result } from '../../shared/types/result';
 import { AppointmentError } from '../../errors/appointmentErrors';
 import { FirebaseError } from 'firebase/app';
 import { CreateAppointmentRequest } from '../../domain/models/CreateAppointmentRequest';
+import { withTimeout } from '../../utils/withTimeOut';
+import { Hour } from '../../utils/generateHours';
 
 const COLLECTION_APPOINTMENT = "appointment"
 
@@ -67,11 +69,26 @@ export class AppointmentRepository {
 
   async addAppointment(request: CreateAppointmentRequest): Promise<Result<void, AppointmentError>> {
     try {
+      const appointmentId =
+        `${request.employeeId}_${request.dateTime.toMillis()}`;
 
-      await addDoc(
-        collection(db, COLLECTION_APPOINTMENT),
-        request
+      const appointmentRef = doc(
+        db,
+        COLLECTION_APPOINTMENT,
+        appointmentId
       );
+
+      const snapshot = await getDoc(appointmentRef);
+
+      if (snapshot.exists()) {
+        return { ok: false, error: "slot_taken" };
+      }
+
+      await setDoc(appointmentRef, {
+        ...request,
+        id: appointmentId,
+        createdAt: Timestamp.now(),
+      });
 
       return { ok: true, data: undefined }
 
@@ -79,6 +96,30 @@ export class AppointmentRepository {
       return handleAppointmentError(error);
     }
   };
+
+  async getHoursAvailable(serviceId: string, day: string): Promise<Result<string[], AppointmentError>> {
+    try {
+
+      const q = query(
+        collection(db, COLLECTION_APPOINTMENT),
+        where("serviceId", "==", serviceId),
+        where("date", "==", day),
+      );
+
+      const snapshot = await getDocs(q);
+
+      const hours = snapshot.docs.map((doc) => {
+        const data = doc.data() as AppointmentResponse
+        return data.time
+      })
+
+      return { ok: true, data: hours }
+
+    } catch (error) {
+      return handleAppointmentError(error);
+    }
+  };
+
 }
 
 const handleAppointmentError = (
