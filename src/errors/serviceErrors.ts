@@ -19,6 +19,6 @@ export const mapServiceErrorToMessage = (error: ServiceError): string => {
     case "timeout":
       return "La solicitud tardó demasiado"
     default:
-      return "Error al cargar servicios"
+      return "Algo salio mal intentalo mas tarde"
   }
 }

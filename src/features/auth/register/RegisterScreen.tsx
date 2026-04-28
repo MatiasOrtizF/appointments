@@ -6,9 +6,10 @@ import { useRegister } from "./useRegister";
 import { lightColors, darkColors } from "../../../theme/colors";
 import { createGlobalStyles } from "../../../theme/globalStyles";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { router } from "expo-router";
+import { router, useNavigation } from "expo-router";
 import { useTheme } from "../../../data/provider/ThemeProvider";
 import LoadingButton from "../../../shared/LoadingButton";
+import { ALERT_TYPE, Dialog } from "react-native-alert-notification";
 
 export default function RegisterScreen() {
     const [keyboardVisible, setKeyboardVisible] = useState(false)
@@ -16,20 +17,40 @@ export default function RegisterScreen() {
     const { isDarkMode } = useTheme();
     const globalStyles = createGlobalStyles(isDarkMode)
     const colors = isDarkMode ? darkColors : lightColors
+    const navigation = useNavigation()
 
     const {
-        fullName,
+        name,
+        lastName,
         email,
         password,
         confirmPassword,
-        setFullName,
+        setName,
+        setLastName,
         setEmail,
         setPassword,
         setConfirmPassword,
         register,
         loading,
-        error
+        error,
+        success
     } = useRegister();
+
+    useEffect(() => {
+        if (success) {
+            Dialog.show({
+                type: ALERT_TYPE.SUCCESS,
+                title: 'Turno reservado',
+                textBody: 'Puedes ver todos tus turnos en la seccion de booking',
+                button: 'Continuar',
+                closeOnOverlayTap: false,
+                onPressButton: () => {
+                    Dialog.hide();
+                    navigation.goBack();
+                },
+            });
+        }
+    }, [success])
 
 
     useEffect(() => {
@@ -91,15 +112,29 @@ export default function RegisterScreen() {
                             null
                         }
 
-                        {/* Fullname */}
+                        {/* name */}
                         <View style={globalStyles.inputContainer}>
                             <MaterialIcons name="person" size={20} color={colors.secondary} />
 
                             <TextInput
-                                placeholder="Full Name"
+                                placeholder="Name"
                                 placeholderTextColor={colors.secondary}
-                                value={fullName}
-                                onChangeText={setFullName}
+                                value={name}
+                                onChangeText={setName}
+                                keyboardType="default"
+                                style={globalStyles.input}
+                            />
+                        </View>
+
+                        {/* lastName */}
+                        <View style={globalStyles.inputContainer}>
+                            <MaterialIcons name="person" size={20} color={colors.secondary} />
+
+                            <TextInput
+                                placeholder="Last Name"
+                                placeholderTextColor={colors.secondary}
+                                value={lastName}
+                                onChangeText={setLastName}
                                 keyboardType="default"
                                 style={globalStyles.input}
                             />
@@ -171,8 +206,7 @@ export default function RegisterScreen() {
                             </TouchableOpacity>
                         </View>
 
-                        {error && <Text style={[styles.errorText, { color: colors.error }]}>❌ {error}</Text>}
-
+                        {error && <Text style={globalStyles.error}>❌ {error}</Text>}
 
                         <TouchableOpacity style={[globalStyles.primaryButton, styles.button]} onPress={register} disabled={loading}>
                             {loading ? (

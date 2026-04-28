@@ -1,5 +1,6 @@
 import { User } from "firebase/auth"
 import { Result } from "../../shared/types/result"
+import { UserError } from "../userError"
 
 export type RegisterError =
     | "email-already-in-use"
@@ -12,28 +13,28 @@ export type RegisterError =
 
 export type RegisterResult = Result<User, RegisterError>
 
-export const mapRegisterErrorToMessage = (error: RegisterError): string => {
+export const mapRegisterErrorToMessage = (error: RegisterError): UserError => {
     switch (error) {
 
         case "email-already-in-use":
-            return "Ese email ya está registrado"
+            return "email-already-in-use";
 
         case "weak-password":
-            return "La contraseña es demasiado débil"
+            return "weak-password";
 
         case "invalid-email":
-            return "El email no es válido"
-
-        case "too-many-requests":
-            return "Demasiados intentos. Probá más tarde"
+            return "invalid-email";
 
         case "network":
-            return "Sin conexión a internet"
+            return "network";
 
         case "timeout":
-            return "La solicitud tardó demasiado"
+            return "timeout";
+
+        case "too-many-requests":
+            return "unknown"; // o agregarlo a UserError
 
         default:
-            return "No se pudo iniciar sesión"
+            return "unknown";
     }
 }

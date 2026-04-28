@@ -131,11 +131,23 @@ const handleAppointmentError = (
       case "permission-denied":
         return { ok: false, error: "permission" };
 
+      case "unauthenticated":
+      case "auth/unauthenticated":
+        return { ok: false, error: "unauthenticated" };
+
       case "unavailable":
+      case "failed-precondition":
         return { ok: false, error: "network" };
 
       case "deadline-exceeded":
         return { ok: false, error: "timeout" };
+
+      case "not-found":
+        return { ok: false, error: "not-found" };
+
+      case "already-exists":
+      case "aborted":
+        return { ok: false, error: "slot_taken" };
 
       default:
         return { ok: false, error: "unknown" };

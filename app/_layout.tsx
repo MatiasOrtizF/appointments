@@ -7,6 +7,7 @@ import { ThemeProvider, useTheme } from '../src/data/provider/ThemeProvider'
 import { useEffect } from 'react'
 import { AuthProvider, useAuth } from '../src/data/provider/AuthProvider'
 import LoadingScreen from '../src/shared/LoadingScreen'
+import { auth } from '../src/config/Firebase'
 
 export default function RootLayout() {
   return (
@@ -32,11 +33,37 @@ function NavigationGuard() {
     if (loading) return;
 
     const inAuthGroup = segments[0] === "auth";
+    const inVerifyScreen = segments.includes("verify-email");
 
-    if (isAuthenticated && inAuthGroup) {
+    const currentUser = auth.currentUser;
+    const isEmailVerified = currentUser?.emailVerified ?? false;
+
+
+    // No logueado
+    if (!isAuthenticated) {
+      if (inVerifyScreen) {
+        router.replace("/auth/login");
+      }
+
+      if (!inAuthGroup) {
+        router.replace("/auth/login");
+      }
+      
+      return;
+    }
+
+    // Logueado pero email NO verificado
+    if (!isEmailVerified) {
+      if (!inVerifyScreen) {
+        router.replace("/auth/verify-email");
+      }
+      return;
+    }
+
+    // Logueado + verificado
+    if (inAuthGroup) {
       router.replace("/bottom");
-    } else if (!isAuthenticated && !inAuthGroup) {
-      router.replace("/auth/login");
+      return;
     }
   }, [loading, isAuthenticated, segments]);
 

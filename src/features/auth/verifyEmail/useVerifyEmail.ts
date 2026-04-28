@@ -41,12 +41,13 @@ export const useVerifyEmail = () => {
   };
 
   const logOut = async () => {
+    console.log("llamamos al log out")
     setLoading(true);
     setError(null);
 
     try {
       const result = await authRepository.signOut()
-
+      console.log("salio bien? " + result.ok)
       if (!result.ok) {
         setError(mapSignOutErrorToMessage(result.error))
       }

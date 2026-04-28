@@ -1,26 +1,30 @@
 import { useState } from "react";
-import { authRepository } from "../../../data/repository/AuthRepository";
-import { mapRegisterErrorToMessage } from "../../../errors/auth/registerError";
+import { mapUserErrorToMessage } from "../../../errors/userError";
+import { signUpUsecase } from "../../../domain/usecase/auth/signUpUsecase";
+import { SignUpRequest } from "../../../domain/models/SignUpRequest";
 
 export const useRegister = () => {
 
-  const [fullName, setFullName] = useState("");
+  const [name, setName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
 
   const register = async () => {
     setLoading(true);
     setError(null);
 
-    const trimmedFullName = fullName.trim()
+    const trimmedName = name.trim()
+    const trimmedLastName = lastName.trim()
     const trimmedEmail = email.trim()
     const trimmedPassword = password.trim()
     const trimmedConfirmPassword = confirmPassword.trim()
 
-    if (!trimmedFullName || !trimmedEmail || !trimmedPassword || !trimmedConfirmPassword) {
+    if (!trimmedName || !trimmedLastName || !trimmedEmail || !trimmedPassword || !trimmedConfirmPassword) {
       setError("Todos los campos son obligatorios")
       setLoading(false);
       return
@@ -48,12 +52,19 @@ export const useRegister = () => {
       return
     }
 
+    const input: SignUpRequest = {
+      email: email,
+      password: password,
+      name: name,
+      lastName: lastName
+    }
+
     try {
 
-      const result = await authRepository.signUp(email, password)
+      const result = await signUpUsecase(input)
 
       if (!result.ok) {
-        setError(mapRegisterErrorToMessage(result.error))
+        setError(mapUserErrorToMessage(result.error))
       }
 
     } finally {
@@ -62,17 +73,20 @@ export const useRegister = () => {
   };
 
   return {
-    fullName,
+    name,
+    lastName,
     email,
     password,
     confirmPassword,
-    setFullName,
+    setName,
+    setLastName,
     setEmail,
     setPassword,
     setConfirmPassword,
     register,
     loading,
-    error
+    error,
+    success
   };
 
 };
