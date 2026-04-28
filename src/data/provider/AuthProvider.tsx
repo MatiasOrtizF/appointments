@@ -1,28 +1,89 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { onAuthStateChanged, User } from 'firebase/auth';
-import { auth } from '../../config/Firebase';
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+} from "react";
+
+import { onAuthStateChanged } from "firebase/auth";
+import { doc, onSnapshot } from "firebase/firestore";
+
+import { auth, db } from "../../config/Firebase";
+
+type Role = "admin" | "user";
 
 type AuthContextType = {
-  user: User | null;
   loading: boolean;
+  isAuthenticated: boolean;
+  role: Role;
+  isAdmin: boolean;
 };
 
-const AuthContext = createContext<AuthContextType>({ user: null, loading: true });
+const AuthContext = createContext<AuthContextType>({
+  loading: true,
+  isAuthenticated: false,
+  role: "user",
+  isAdmin: false,
+});
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [role, setRole] = useState<Role>("user");
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      setUser(firebaseUser);
-      setLoading(false);
+    let unsubscribeUserDoc: (() => void) | null = null;
+
+    const unsubscribeAuth = onAuthStateChanged(auth, (firebaseUser) => {
+      if (unsubscribeUserDoc) {
+        unsubscribeUserDoc();
+        unsubscribeUserDoc = null;
+      }
+
+      if (!firebaseUser) {
+        setIsAuthenticated(false);
+        setRole("user");
+        setLoading(false);
+        return;
+      }
+
+      setIsAuthenticated(true);
+      setLoading(true);
+
+      unsubscribeUserDoc = onSnapshot(
+        doc(db, "user", firebaseUser.uid),
+        (snapshot) => {
+          const data = snapshot.data();
+
+          setRole(data?.role === "admin" ? "admin" : "user");
+          setLoading(false);
+        },
+        () => {
+          setRole("user");
+          setLoading(false);
+        }
+      );
     });
-    return unsubscribe;
+
+    return () => {
+      unsubscribeAuth();
+
+      if (unsubscribeUserDoc) {
+        unsubscribeUserDoc();
+      }
+    };
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loading }}>
+    <AuthContext.Provider
+      value={{
+        loading,
+        isAuthenticated,
+        role,
+        isAdmin: role === "admin",
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

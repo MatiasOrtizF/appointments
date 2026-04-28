@@ -1,75 +1,62 @@
 import { Slot, useRouter, useSegments } from 'expo-router'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
-import { ActivityIndicator, StatusBar, View } from 'react-native'
+import { StatusBar } from 'react-native'
 
 import { AlertNotificationRoot } from 'react-native-alert-notification'
 import { ThemeProvider, useTheme } from '../src/data/provider/ThemeProvider'
-import { useEffect, useState } from 'react'
-import { User } from 'firebase/auth'
-import { auth } from '../src/config/Firebase'
+import { useEffect } from 'react'
+import { AuthProvider, useAuth } from '../src/data/provider/AuthProvider'
+import LoadingScreen from '../src/shared/LoadingScreen'
 
 export default function RootLayout() {
-  const router = useRouter();
-  const segments = useSegments();
-
-  const [initializing, setInitializing] = useState(true);
-  const [user, setUser] = useState<User | null>(null);
-
-  const onAuthStateChanged = (user: User | null) => {
-    console.log("onAuthChanged", user)
-    setUser(user);
-
-    if (initializing) setInitializing(false);
-  }
-
-  useEffect(() => {
-    const subscriber = auth.onAuthStateChanged(onAuthStateChanged)
-    return subscriber;
-  }, [])
-
-
-  useEffect(() => {
-    if (initializing) return;
-
-    const inAuthGroup = segments[0] === 'auth';
-
-    if (user && inAuthGroup) {
-      router.replace('/bottom'); // ya logeado, salir de auth
-    } else if (!user && !inAuthGroup) {
-      router.replace('/auth/login'); // no logeado, forzar auth
-    }
-  }, [user, initializing, segments])
-
-  if (initializing)
-    return (
-      <View style={{
-        alignItems: "center",
-        justifyContent: "center",
-        flex: 1
-      }}>
-        <ActivityIndicator size="large" />
-      </View>
-    )
-
   return (
     <SafeAreaProvider>
       <AlertNotificationRoot>
         <ThemeProvider>
-          <AppContent/>
+          <AuthProvider>
+            <NavigationGuard />
+          </AuthProvider>
         </ThemeProvider>
       </AlertNotificationRoot>
     </SafeAreaProvider>
   )
 }
 
-const AppContent = () => {
+function NavigationGuard() {
+  const router = useRouter();
+  const segments = useSegments();
+
+  const { loading, isAuthenticated } = useAuth();
+
+  useEffect(() => {
+    if (loading) return;
+
+    const inAuthGroup = segments[0] === "auth";
+
+    if (isAuthenticated && inAuthGroup) {
+      router.replace("/bottom");
+    } else if (!isAuthenticated && !inAuthGroup) {
+      router.replace("/auth/login");
+    }
+  }, [loading, isAuthenticated, segments]);
+
+  if (loading) {
+    return (
+      <LoadingScreen />
+    );
+  }
+
+  return <AppContent />;
+}
+
+function AppContent() {
   const { isDarkMode } = useTheme();
 
   return (
     <>
       <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={isDarkMode ? '#1f1f1f' : '#f5f6fa'}
+        barStyle={isDarkMode ? "light-content" : "dark-content"}
+        backgroundColor={isDarkMode ? "#1f1f1f" : "#f5f6fa"}
       />
       <Slot />
     </>

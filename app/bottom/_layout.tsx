@@ -2,10 +2,15 @@ import { Tabs } from "expo-router";
 import { darkColors, lightColors } from "../../src/theme/colors";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useTheme } from "../../src/data/provider/ThemeProvider";
+import { useAuth } from "../../src/data/provider/AuthProvider";
 
 export default function BottomLayout() {
   const { isDarkMode } = useTheme();
+  const { isAdmin, loading } = useAuth();
+
   const colors = isDarkMode ? darkColors : lightColors;
+
+  if (loading) return null;
 
   return (
     <Tabs screenOptions={{
@@ -22,6 +27,7 @@ export default function BottomLayout() {
         paddingTop: 10,
       },
     }}>
+
       <Tabs.Screen
         name="select-service"
         options={{
@@ -31,6 +37,7 @@ export default function BottomLayout() {
           )
         }}
       />
+
       <Tabs.Screen
         name="booking"
         options={{
@@ -40,15 +47,19 @@ export default function BottomLayout() {
           )
         }}
       />
+
       <Tabs.Screen
         name="admin"
         options={{
           title: "Admin",
+          href: isAdmin ? "/bottom/admin" : null,
+
           tabBarIcon: ({ color, size }) => (
             <MaterialIcons name="admin-panel-settings" size={size} color={color} />
           )
         }}
       />
+
       <Tabs.Screen
         name="settings"
         options={{
@@ -58,6 +69,7 @@ export default function BottomLayout() {
           ),
         }}
       />
+
     </Tabs>
   );
 }
