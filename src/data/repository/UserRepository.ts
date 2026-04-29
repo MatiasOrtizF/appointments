@@ -13,26 +13,26 @@ const COLLECTION_USER = "user"
 export class UserRepository {
 
     async createUser(request: CreateUserRequest): Promise<Result<void, UserError>> {
-         try {
-             const userId = request.uid
-       
-             const userRef = doc(
-               db,
-               COLLECTION_USER,
-               userId
-             );
-       
-             await setDoc(userRef, {
-               ...request,
-               id: userId,
-               createdAt: Timestamp.now(),
-             });
-       
-             return { ok: true, data: undefined }
-       
-           } catch (error) {
-             return handleAppointmentError(error);
-           }
+        try {
+            const userId = request.uid
+
+            const userRef = doc(
+                db,
+                COLLECTION_USER,
+                userId
+            );
+
+            await setDoc(userRef, {
+                ...request,
+                id: userId,
+                createdAt: Timestamp.now(),
+            });
+
+            return { ok: true, data: undefined }
+
+        } catch (error) {
+            return handleUserError(error)
+        }
     }
 
     async deleteUser(uid: string): Promise<boolean> {
@@ -57,7 +57,7 @@ export class UserRepository {
                 doc(db, COLLECTION_USER, uid)
             )
 
-            console.log("document: "+userDoc.data())
+            console.log("document: " + userDoc.data())
 
             if (!userDoc.exists()) {
                 return { ok: false, error: "not-found" };
@@ -71,20 +71,7 @@ export class UserRepository {
             };
 
         } catch (error) {
-            if (error instanceof FirebaseError) {
-                switch (error.code) {
-                    case "permission-denied":
-                        return { ok: false, error: "permission" };
-
-                    case "unavailable":
-                        return { ok: false, error: "network" };
-
-                    default:
-                        return { ok: false, error: "unknown" };
-                }
-            }
-
-            return { ok: false, error: "unknown" };
+            return handleUserError(error)
         }
     }
 
@@ -113,35 +100,49 @@ export class UserRepository {
 
 }
 
-const handleAppointmentError = (
-  error: unknown
+const handleUserError = (
+    error: unknown
 ): Result<never, UserError> => {
 
-  if (error instanceof FirebaseError) {
-    switch (error.code) {
-      case "permission-denied":
-        return { ok: false, error: "permission" };
+    if (error instanceof FirebaseError) {
+        switch (error.code) {
+            // auth
+            case "auth/email-already-in-use":
+                return { ok: false, error: "email-already-in-use" };
 
-      case "unauthenticated":
-      case "auth/unauthenticated":
-        return { ok: false, error: "unauthenticated" };
+            case "auth/weak-password":
+                return { ok: false, error: "weak-password" };
 
-      case "unavailable":
-      case "failed-precondition":
-        return { ok: false, error: "network" };
+            case "auth/invalid-email":
+                return { ok: false, error: "invalid-email" };
 
-      case "deadline-exceeded":
-        return { ok: false, error: "timeout" };
+            case "auth/user-not-found":
+                return { ok: false, error: "not-found" };
 
-      case "not-found":
-        return { ok: false, error: "not-found" };
+            case "auth/wrong-password":
+            case "auth/invalid-credential":
+            case "auth/unauthenticated":
+                return { ok: false, error: "unauthenticated" };
 
-      default:
-        return { ok: false, error: "unknown" };
+            // firestore / infra
+            case "permission-denied":
+                return { ok: false, error: "permission" };
+
+            case "unavailable":
+                return { ok: false, error: "network" };
+
+            case "deadline-exceeded":
+                return { ok: false, error: "timeout" };
+
+            case "not-found":
+                return { ok: false, error: "not-found" };
+
+            default:
+                return { ok: false, error: "unknown" };
+        }
     }
-  }
 
-  return { ok: false, error: "unknown" };
+    return { ok: false, error: "unknown" };
 };
 
 export const userRepository = new UserRepository();

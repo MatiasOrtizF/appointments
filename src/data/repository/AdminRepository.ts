@@ -6,14 +6,16 @@ import { Result } from '../../shared/types/result';
 import { AppointmentError } from '../../errors/appointmentErrors';
 import { FirebaseError } from 'firebase/app';
 
+const COLLECTION_APPOINTMENT = "appointment"
+
 export class AdminRepository {
   async getUpcomingAdminAppointments(uid: string): Promise<Result<Appointment[], AppointmentError>> {
     try {
 
       const q = query(
-        collection(db, "appointment"),
+        collection(db, COLLECTION_APPOINTMENT),
         where("uid", "==", uid),
-         where("dateTime", ">", getTodayRange().now),
+        where("dateTime", ">", getTodayRange().now),
         where("dateTime", "<", getTodayRange().startOfTomorrow),
         orderBy("dateTime", "asc"),
         limit(3)
@@ -30,24 +32,7 @@ export class AdminRepository {
 
     } catch (error) {
       console.log(error)
-
-      if (error instanceof FirebaseError) {
-        switch (error.code) {
-          case "permission-denied":
-            return { ok: false, error: "permission" }
-
-          case "unavailable":
-            return { ok: false, error: "network" }
-
-          case "deadline-exceeded":
-            return { ok: false, error: "timeout" }
-
-          default:
-            return { ok: false, error: "unknown" }
-        }
-      }
-
-      return { ok: false, error: "unknown" }
+      return handleAdminAppointmentError(error)
     }
   };
 
@@ -55,7 +40,7 @@ export class AdminRepository {
     try {
 
       const q = query(
-        collection(db, "appointment"),
+        collection(db, COLLECTION_APPOINTMENT),
         where("uid", "==", uid),
         where("dateTime", ">", getTodayRange().now),
         where("dateTime", "<", getTodayRange().startOfTomorrow),
@@ -73,25 +58,7 @@ export class AdminRepository {
       return { ok: true, data: appointments }
 
     } catch (error) {
-      console.log(error)
-
-      if (error instanceof FirebaseError) {
-        switch (error.code) {
-          case "permission-denied":
-            return { ok: false, error: "permission" }
-
-          case "unavailable":
-            return { ok: false, error: "network" }
-
-          case "deadline-exceeded":
-            return { ok: false, error: "timeout" }
-
-          default:
-            return { ok: false, error: "unknown" }
-        }
-      }
-
-      return { ok: false, error: "unknown" }
+      return handleAdminAppointmentError(error)
     }
   };
 }
@@ -108,5 +75,40 @@ const getTodayRange = () => {
   const startOfTomorrow = Timestamp.fromDate(tomorrow);
   return { now, startOfTomorrow }
 }
+
+const handleAdminAppointmentError = (
+  error: unknown
+): Result<never, AppointmentError> => {
+
+  if (error instanceof FirebaseError) {
+    switch (error.code) {
+      case "permission-denied":
+        return { ok: false, error: "permission" };
+
+      case "unauthenticated":
+      case "auth/unauthenticated":
+        return { ok: false, error: "unauthenticated" };
+
+      case "unavailable":
+      case "failed-precondition":
+        return { ok: false, error: "network" };
+
+      case "deadline-exceeded":
+        return { ok: false, error: "timeout" };
+
+      case "not-found":
+        return { ok: false, error: "not-found" };
+
+      case "already-exists":
+      case "aborted":
+        return { ok: false, error: "slot_taken" };
+
+      default:
+        return { ok: false, error: "unknown" };
+    }
+  }
+
+  return { ok: false, error: "unknown" };
+};
 
 export const adminRepository = new AdminRepository();

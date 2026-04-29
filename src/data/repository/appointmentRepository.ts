@@ -1,4 +1,4 @@
-import { addDoc, collection, doc, getDoc, getDocs, limit, query, setDoc, Timestamp, where } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, limit, query, setDoc, Timestamp, where } from 'firebase/firestore';
 import { Appointment } from '../../domain/models/Appointment'
 import { AppointmentResponse, toDomain } from '../remote/response/AppointmentResponse';
 import { db } from '../../config/Firebase';
@@ -6,8 +6,6 @@ import { Result } from '../../shared/types/result';
 import { AppointmentError } from '../../errors/appointmentErrors';
 import { FirebaseError } from 'firebase/app';
 import { CreateAppointmentRequest } from '../../domain/models/CreateAppointmentRequest';
-import { withTimeout } from '../../utils/withTimeOut';
-import { Hour } from '../../utils/generateHours';
 
 const COLLECTION_APPOINTMENT = "appointment"
 

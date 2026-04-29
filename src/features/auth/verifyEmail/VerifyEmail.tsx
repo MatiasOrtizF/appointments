@@ -56,7 +56,7 @@ export default function VerifyEmailScreen() {
         We sent you a verification link. Please check your inbox and verify your account to continue.
       </Text>
 
-       {error && <Text style={globalStyles.error}>❌ {error}</Text>}
+      {error && <Text style={globalStyles.error}>❌ {error}</Text>}
 
       <Pressable style={[styles.primaryButton, { backgroundColor: colors.secondary }]} onPress={verifyEmail}>
         <Text style={styles.primaryText}>I already verified my email</Text>

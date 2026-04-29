@@ -43,28 +43,7 @@ export class ServiceRepository {
       return { ok: true, data: services }
 
     } catch (error) {
-      if (error instanceof FirebaseError) {
-        switch (error.code) {
-          case "permission-denied":
-            return { ok: false, error: "permission" }
-
-          case "unavailable":
-            return { ok: false, error: "network" }
-
-          case "deadline-exceeded":
-            return { ok: false, error: "timeout" }
-
-          default:
-            return { ok: false, error: "unknown" }
-        }
-      }
-
-      if (error instanceof Error && error.message === "Timeout") {
-        return { ok: false, error: "timeout" }
-      }
-
-      return { ok: false, error: "unknown" }
-
+      return handleServiceError(error)
     }
   }
 
@@ -100,32 +79,36 @@ export class ServiceRepository {
 
 
     } catch (error) {
-
-      if (error instanceof FirebaseError) {
-        switch (error.code) {
-          case "permission-denied":
-            return { ok: false, error: "permission" }
-
-          case "unavailable":
-            return { ok: false, error: "network" }
-
-          case "deadline-exceeded":
-            return { ok: false, error: "timeout" }
-
-          default:
-            return { ok: false, error: "unknown" }
-        }
-      }
-
-      if (error instanceof Error && error.message === "Timeout") {
-        return { ok: false, error: "timeout" }
-      }
-
-      return { ok: false, error: "unknown" }
-
+      return handleServiceError(error)
     }
   }
 }
 
+const handleServiceError = (
+  error: unknown
+): Result<never, ServiceError> => {
+
+  if (error instanceof FirebaseError) {
+    switch (error.code) {
+      case "permission-denied":
+        return { ok: false, error: "permission" };
+
+      case "unavailable":
+      case "failed-precondition":
+        return { ok: false, error: "network" };
+
+      case "deadline-exceeded":
+        return { ok: false, error: "timeout" };
+
+      case "not-found":
+        return { ok: false, error: "not-found" };
+
+      default:
+        return { ok: false, error: "unknown" };
+    }
+  }
+
+  return { ok: false, error: "unknown" };
+};
 
 export const serviceRepository = new ServiceRepository();
