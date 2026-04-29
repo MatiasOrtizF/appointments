@@ -1,6 +1,6 @@
 import { authRepository } from "../../../data/repository/AuthRepository"
 import { userRepository } from "../../../data/repository/UserRepository"
-import { UserError } from "../../../errors/UserError"
+import { UserError } from "../../../errors/userError"
 import { Result } from "../../../shared/types/result"
 import { AuthUser } from "../../models/AuthUser"
 

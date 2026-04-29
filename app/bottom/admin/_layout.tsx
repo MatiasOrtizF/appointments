@@ -17,6 +17,7 @@ export default function AdminLayout() {
   }
 
   if (!isAdmin) {
+    console.log("no es admin")
     return <Redirect href="/bottom/select-service" />;
   }
 
@@ -35,6 +36,14 @@ export default function AdminLayout() {
       <Stack.Screen
         name="appointment-admin"
         options={{ title: "Appointments Admin", headerShown: true }}
+      />
+      <Stack.Screen
+        name="service-admin"
+        options={{ title: "Panel de servicios", headerShown: true }}
+      />
+      <Stack.Screen
+        name="edit-service"
+        options={{ title: "Editar servicio", headerShown: true }}
       />
     </Stack>
   );

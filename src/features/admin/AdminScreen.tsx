@@ -104,7 +104,7 @@ export default function AdminScreen() {
                         <Text style={globalStyles.primaryButtonText}>New Booking</Text>
                     </Pressable>
 
-                    <Pressable style={[styles.iconButton, { backgroundColor: colors.bgCard }]} onPress={() => console.log("editar")}>
+                    <Pressable style={[styles.iconButton, { backgroundColor: colors.bgCard }]} onPress={() => router.push("/bottom/admin/service-admin")}>
                         <Ionicons name="pencil-outline" size={22} color={colors.textPrimary} />
                     </Pressable>
 

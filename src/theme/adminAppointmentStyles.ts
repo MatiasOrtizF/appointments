@@ -9,7 +9,6 @@ export const createAdminAppointmentStyles = (isDarkMode: boolean) => {
             flexDirection: "row",
             borderRadius: 16,
             padding: 16,
-            marginVertical: 8,
             elevation: 3, // android
             shadowColor: "#000", // ios
             shadowOpacity: 0.1,
@@ -34,15 +33,16 @@ export const createAdminAppointmentStyles = (isDarkMode: boolean) => {
         },
 
         client: {
+            textTransform: "capitalize",
             fontSize: 16,
             fontWeight: "600",
             color: colors.textPrimary
         },
 
         service: {
+            textTransform: "capitalize",
             fontSize: 14,
             color: colors.textSecondary,
-            textTransform: "capitalize",
             marginVertical: 2
         },
 
@@ -52,7 +52,7 @@ export const createAdminAppointmentStyles = (isDarkMode: boolean) => {
         },
 
         statusContainer: {
-            justifyContent: "flex-start",
+            justifyContent: "center",
             alignItems: "center"
         },
 

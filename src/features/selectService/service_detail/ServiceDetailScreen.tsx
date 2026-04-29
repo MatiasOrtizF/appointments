@@ -3,7 +3,7 @@ import { ScrollView, Text, View, Image, StyleSheet, TouchableOpacity, Pressable 
 import { useTheme } from "../../../data/provider/ThemeProvider";
 import { createGlobalStyles } from "../../../theme/globalStyles";
 import { darkColors, lightColors } from "../../../theme/colors";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useServiceDetail } from "./useServiceDetail";
 import LoadingScreen from "../../../shared/LoadingScreen";
 import { Ionicons } from "@expo/vector-icons";
@@ -99,7 +99,7 @@ export default function ServiceDetailScreen() {
                                 backgroundColor: selectedEmployee?.id === employee.id ? colors.secondary + "20" : "transparent"
                             }}
                             onPress={() => handleSelectEmployee(employee)}>
-                            <Image style={styles.imageEmployee} source={{ uri: employee.img }} />
+                            <Image style={globalStyles.imageEmployee} source={{ uri: employee.img }} />
 
                             <Text style={{ color: colors.textPrimary, marginTop: 3 }}>{employee.name}</Text>
                         </Pressable>
@@ -147,12 +147,6 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         marginLeft: 3,
         fontSize: 13,
-    },
-
-    imageEmployee: {
-        borderRadius: 50,
-        width: 50,
-        height: 50
     },
 
     description: {

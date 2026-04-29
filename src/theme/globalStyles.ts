@@ -71,5 +71,11 @@ export const createGlobalStyles = (isDarkMode: boolean) => {
             borderRadius: 4,
             marginRight: 6
         },
+
+        imageEmployee: {
+            borderRadius: 50,
+            width: 50,
+            height: 50
+        },
     });
 };
