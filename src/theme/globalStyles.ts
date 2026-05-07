@@ -27,7 +27,8 @@ export const createGlobalStyles = (isDarkMode: boolean) => {
         title: {
             fontSize: 33,
             fontWeight: "700",
-            color: colors.textPrimary
+            color: colors.textPrimary,
+            textTransform: "capitalize"
         },
 
         subTitle: {
@@ -40,6 +41,7 @@ export const createGlobalStyles = (isDarkMode: boolean) => {
             marginLeft: 8,
             color: colors.textPrimary,
             fontSize: 16,
+            height: 50
         },
 
         inputContainer: {
@@ -77,5 +79,10 @@ export const createGlobalStyles = (isDarkMode: boolean) => {
             width: 50,
             height: 50
         },
+        textEmployee: {
+            color: colors.textPrimary,
+            marginTop: 3,
+            textTransform: "capitalize"
+        }
     });
 };

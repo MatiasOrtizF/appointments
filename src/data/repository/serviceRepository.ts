@@ -1,5 +1,5 @@
-import { collection, doc, getDoc, getDocs } from "firebase/firestore"
-import { Service } from "../../domain/models/Service"
+import { addDoc, collection, doc, getDoc, getDocs, setDoc } from "firebase/firestore"
+import { Employee, Service } from "../../domain/models/Service"
 import { db } from "../../config/Firebase"
 import { withTimeout } from "../../utils/withTimeOut"
 import { ServiceError } from "../../errors/serviceErrors"
@@ -7,39 +7,39 @@ import { Result } from "../../shared/types/result"
 import { FirebaseError } from "firebase/app"
 import { ServiceResponse, toDomain } from "../remote/response/ServiceResponse"
 import { EmployeeResponse, employeeToDomain } from "../remote/response/EmployeeResponse"
+import { CreateServiceRequest } from "../../domain/models/CreateServiceRequest"
 
 const COLLECTION_SERVICE = "service"
+const COLLECTION_EMPLOYEE = "employee"
 
 export class ServiceRepository {
 
   async getServices(): Promise<Result<Service[], ServiceError>> {
     try {
       const snapshot = await withTimeout(
-        getDocs(collection(db, "service")),
+        getDocs(collection(db, COLLECTION_SERVICE)),
         10000
       )
 
-      const services = await Promise.all(
-        snapshot.docs.map(async (docSnap) => {
+      const employeesSnapshot = await getDocs(collection(db, COLLECTION_EMPLOYEE))
 
-          const data = docSnap.data() as ServiceResponse
-
-          const employees = await Promise.all(
-            data.employees.map(async (ref) => {
-              const employeeSnap = await getDoc(ref)
-
-              const employeeData = employeeSnap.data() as EmployeeResponse
-
-              return employeeToDomain(
-                employeeSnap.id,
-                employeeData
-              )
-            })
-          )
-
-          return toDomain(docSnap.id, data, employees)
-        })
+      const employeesMap = new Map(
+        employeesSnapshot.docs.map(doc => [
+          doc.id,
+          employeeToDomain(doc.id, doc.data() as EmployeeResponse)
+        ])
       )
+
+      const services = snapshot.docs.map((docSnap) => {
+        const data = docSnap.data() as ServiceResponse
+
+        const employees = data.employees
+          .map(id => employeesMap.get(id))
+          .filter((e): e is Employee => e !== undefined);
+
+        return toDomain(docSnap.id, data, employees)
+      })
+
       return { ok: true, data: services }
 
     } catch (error) {
@@ -60,10 +60,12 @@ export class ServiceRepository {
       const data = serviceDoc.data() as ServiceResponse;
 
       const employees = await Promise.all(
-        data.employees.map(async (ref) => {
-          const employeeSnap = await getDoc(ref)
+        data.employees.map(async (id) => {
+          const employeeSnap = await getDoc(doc(db, COLLECTION_EMPLOYEE, id));
 
-          const employeeData = employeeSnap.data() as EmployeeResponse
+          if (!employeeSnap.exists()) return undefined;
+
+          const employeeData = employeeSnap.data() as EmployeeResponse;
 
           return employeeToDomain(
             employeeSnap.id,
@@ -72,11 +74,28 @@ export class ServiceRepository {
         })
       )
 
+      const validEmployees = employees.filter(
+        (e): e is Employee => e !== undefined
+      );
+
       return {
         ok: true,
-        data: toDomain(serviceDoc.id, data, employees),
+        data: toDomain(serviceDoc.id, data, validEmployees),
       };
 
+
+    } catch (error) {
+      console.log(error)
+      return handleServiceError(error)
+    }
+  }
+
+  async addService(request: CreateServiceRequest): Promise<Result<void, ServiceError>> {
+    try {
+
+      await addDoc(collection(db, COLLECTION_SERVICE), request);
+
+      return { ok: true, data: undefined }
 
     } catch (error) {
       return handleServiceError(error)

@@ -2,6 +2,7 @@ import { Employee } from "../../../domain/models/Service"
 
 export interface EmployeeResponse {
   name: string
+  lastName: string
   img: string
   active: boolean
 }
@@ -13,6 +14,7 @@ export const employeeToDomain = (
   return {
     id,
     name: response.name,
+    lastName: response.lastName,
     img: response.img,
     active: response.active
   }

@@ -10,6 +10,7 @@ import { Ionicons } from '@expo/vector-icons'
 import { lightColors, darkColors } from '../../theme/colors'
 import { Service } from '../../domain/models/Service'
 import { useTheme } from '../../data/provider/ThemeProvider'
+import { capitalizeFirstLetter } from '../../utils/capitalizeFirstLetter'
 
 type Props = {
   service: Service
@@ -36,7 +37,7 @@ export const ServiceCard: React.FC<Props> = ({
       </View>
 
       {/* Descripción */}
-      <Text style={[styles.description, { color: colors.textSecondary }]}>{description}</Text>
+      <Text numberOfLines={3} style={[styles.description, { color: colors.textSecondary }]}>{capitalizeFirstLetter(description)}</Text>
 
       {/* Duración + Botón */}
       <View style={styles.rowBetween}>

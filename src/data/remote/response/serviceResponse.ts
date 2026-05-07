@@ -1,5 +1,4 @@
-import { DocumentReference } from "firebase/firestore"
-import { Employee, Service } from "../../../domain/models/Service"
+import { Day, Employee, Service } from "../../../domain/models/Service"
 
 export interface ServiceResponse {
   name: string
@@ -7,8 +6,8 @@ export interface ServiceResponse {
   price: number
   duration_min: number
   img: string,
-  employees: DocumentReference[]
-  days: string[]
+  employees: string[]
+  days: Day[]
   hourStart: string
   hourEnd: string
 }

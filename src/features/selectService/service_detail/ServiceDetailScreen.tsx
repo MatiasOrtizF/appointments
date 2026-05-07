@@ -101,7 +101,7 @@ export default function ServiceDetailScreen() {
                             onPress={() => handleSelectEmployee(employee)}>
                             <Image style={globalStyles.imageEmployee} source={{ uri: employee.img }} />
 
-                            <Text style={{ color: colors.textPrimary, marginTop: 3 }}>{employee.name}</Text>
+                            <Text style={globalStyles.textEmployee}>{employee.name}</Text>
                         </Pressable>
                     ))}
                 </ScrollView>

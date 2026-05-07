@@ -6,6 +6,7 @@ export type ServiceError =
   | "timeout"
   | "permission"
   | "network"
+  | "unauthenticated"
   | "not-found"
   | "unknown"
 
@@ -19,6 +20,8 @@ export const mapServiceErrorToMessage = (error: ServiceError): string => {
       return "No tenés permisos para ver los servicios"
     case "network":
       return "Sin conexión a internet"
+    case "unauthenticated":
+      return "Tenés que iniciar sesión"
     case "not-found":
       return "Turno no encontrado"
     default:

@@ -1,8 +1,8 @@
-import { Service } from "../domain/models/Service"
+import { Employee, Service } from "../domain/models/Service"
 import { Result } from "../shared/types/result"
 
 
-export type AppointmentError =
+export type EmployeeError =
     | "timeout"
     | "permission"
     | "network"
@@ -11,9 +11,9 @@ export type AppointmentError =
     | "not-found"
     | "unknown"
 
-export type AppointmentResult = Result<Service[], AppointmentError>
+export type EmployeeResult = Result<Employee[], EmployeeError>
 
-export const mapAppointmentErrorToMessage = (error: AppointmentError): string => {
+export const mapEmployeeErrorToMessage = (error: EmployeeError): string => {
     switch (error) {
         case "timeout":
             return "La solicitud tardó demasiado"

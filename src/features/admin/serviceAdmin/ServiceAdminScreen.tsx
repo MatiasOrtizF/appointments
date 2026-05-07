@@ -5,11 +5,12 @@ import { useTheme } from "../../../data/provider/ThemeProvider";
 import { darkColors, lightColors } from "../../../theme/colors";
 import { ALERT_TYPE, Dialog } from "react-native-alert-notification";
 import LoadingScreen from "../../../shared/LoadingScreen";
-import { FlatList, View, Text, ListRenderItem, RefreshControl } from "react-native";
+import { FlatList, View, Text, ListRenderItem, RefreshControl, Pressable } from "react-native";
 import { Service } from "../../../domain/models/Service";
 import { useServiceAdmin } from "./useServiceAdmin";
 import { ServiceAdminCard } from "./ServiceAdminCard";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function ServiceAdminScreen() {
     const { service,
@@ -46,6 +47,10 @@ export default function ServiceAdminScreen() {
         )
     }
 
+    const navigateToAddService = () => {
+        router.push("/bottom/admin/add-service")
+    }
+
     const renderEmpty = () => {
         if (service != null) {
             return (
@@ -67,25 +72,48 @@ export default function ServiceAdminScreen() {
     );
 
     return (
-        <FlatList<Service>
-            data={service}
-            keyExtractor={(item) => item.id}
-            showsVerticalScrollIndicator={false}
-            style={globalStyles.container}
-            contentContainerStyle={{ paddingBottom: tabBarHeight, gap: 12 }}
-            ListEmptyComponent={renderEmpty}
-            renderItem={renderItem}
+        <View style={{ flex: 1 }}>
+            <FlatList<Service>
+                data={service}
+                keyExtractor={(item) => item.id}
+                showsVerticalScrollIndicator={false}
+                style={globalStyles.container}
+                contentContainerStyle={{ paddingBottom: tabBarHeight, gap: 12 }}
+                ListEmptyComponent={renderEmpty}
+                renderItem={renderItem}
 
-            ListHeaderComponent={
-                <Text style={globalStyles.title}>Servicios</Text>
-            }
+                ListHeaderComponent={
+                    <Text style={globalStyles.title}>Servicios</Text>
+                }
 
-            refreshControl={
-                <RefreshControl
-                    refreshing={refreshing}
-                    onRefresh={onRefresh}
-                />
-            }
-        />
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                    />
+                }
+            />
+
+            <Pressable
+                onPress={() => navigateToAddService()}
+                style={{
+                    position: "absolute",
+                    bottom: 20,
+                    right: 20,
+                    backgroundColor: colors.primary,
+                    borderRadius: 30,
+                    width: 55,
+                    height: 55,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    elevation: 5, // Android sombra
+                    shadowColor: "#000", // iOS sombra
+                    shadowOpacity: 0.3,
+                    shadowRadius: 5,
+                }}
+            >
+                <Ionicons name="add" size={30} color="#000" />
+            </Pressable>
+        </View>
     )
 }

@@ -1,4 +1,6 @@
-const DAYS = [
+import { Day } from "../domain/models/Service";
+
+export const DAYS: Day[] = [
   "domingo",   // 0
   "lunes",     // 1
   "martes",    // 2

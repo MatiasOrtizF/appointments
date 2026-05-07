@@ -40,6 +40,10 @@ export const ServiceAdminCard: React.FC<Props> = ({
         );
     };
 
+    const navigateToEditService = () => {
+        router.push("/bottom/admin/edit-service")
+    }
+
     return (
         <View style={[adminAppointmentStyles.card, { gap: 10 }]}>
 
@@ -62,16 +66,16 @@ export const ServiceAdminCard: React.FC<Props> = ({
                         <Text style={adminAppointmentStyles.professional}>{" $" + price}</Text>
                     </View>
                 </View>
-                <View style={{ flexDirection: "row", gap: 7 }}>
+                <View style={{ flexDirection: "row", gap: 7, marginTop: 5 }}>
                     {employees.map((employee) => (
-                        <Image source={{ uri: employee.img }} style={styles.imageEmployee} />
+                        <Image key={employee.id} source={{ uri: employee.img }} style={styles.imageEmployee} />
                     ))}
                 </View>
             </View>
 
             {/* Estado */}
             <View style={[adminAppointmentStyles.statusContainer, { gap: 25 }]}>
-                <Ionicons name="pencil-outline" size={25} color={colors.textSecondary} onPress={() => router.push("/bottom/admin/edit-service")} />
+                <Ionicons name="pencil-outline" size={25} color={colors.textSecondary} onPress={() => navigateToEditService()} />
                 <Ionicons name="trash-outline" size={25} color={colors.textSecondary} onPress={() => handleDeleteService()} />
             </View>
         </View>

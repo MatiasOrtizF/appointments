@@ -6,7 +6,7 @@ export interface Service {
   duration_min: number
   img: string
   employees: Employee[]
-  days: string[]
+  days: Day[]
   hourStart: string
   hourEnd: string
 }
@@ -14,6 +14,16 @@ export interface Service {
 export interface Employee {
   id: string,
   name: string,
+  lastName: string,
   img: string,
   active: boolean
 }
+
+export type Day = 
+  | "lunes"
+  | "martes"
+  | "miercoles"
+  | "jueves"
+  | "viernes"
+  | "sabado"
+  | "domingo";

@@ -45,6 +45,10 @@ export default function AdminLayout() {
         name="edit-service"
         options={{ title: "Editar servicio", headerShown: true }}
       />
+       <Stack.Screen
+        name="add-service"
+        options={{ title: "Agregar servicio", headerShown: true }}
+      />
     </Stack>
   );
 }
