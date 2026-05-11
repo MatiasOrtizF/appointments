@@ -1,4 +1,4 @@
-import { addDoc, collection, doc, getDoc, getDocs, setDoc, updateDoc } from "firebase/firestore"
+import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, setDoc, updateDoc } from "firebase/firestore"
 import { Employee, Service } from "../../domain/models/Service"
 import { db } from "../../config/Firebase"
 import { withTimeout } from "../../utils/withTimeOut"
@@ -131,6 +131,23 @@ export class ServiceRepository {
         ok: true,
         data: undefined
       }
+
+    } catch (error) {
+      return handleServiceError(error)
+    }
+  }
+
+  async deleteService(id: string): Promise<Result<void, ServiceError>> {
+    try {
+
+      await withTimeout(
+        deleteDoc(
+          doc(db, COLLECTION_SERVICE, id)
+        ),
+        10000
+      )
+
+      return { ok: true, data: undefined }
 
     } catch (error) {
       return handleServiceError(error)

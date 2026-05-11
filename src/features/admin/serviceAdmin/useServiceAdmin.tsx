@@ -5,11 +5,13 @@ import { mapServiceErrorToMessage } from "../../../errors/serviceErrors"
 import { getUserInfoUsecase } from "../../../domain/usecase/admin/getUserInfoUsecase"
 import { authRepository } from "../../../data/repository/AuthRepository"
 import { mapSignOutErrorToMessage } from "../../../errors/auth/signOutError"
+import { deleteServiceUsecase } from "../../../domain/usecase/admin/deleteServiceUsecase"
 
 export const useServiceAdmin = () => {
-    const [service, setServices] = useState<Service[] | null>(null)
+    const [services, setServices] = useState<Service[] | null>(null)
     const [isAdmin, setIsAdmin] = useState(false)
     const [loading, setLoading] = useState(true)
+    const [success, setSuccess] = useState<boolean>(false)
     const [error, setError] = useState<string | null>(null);
     const [refreshing, setRefreshing] = useState(false);
 
@@ -35,7 +37,7 @@ export const useServiceAdmin = () => {
             if (result.ok) {
                 const isAdmin = result.data.role === "admin"
                 setIsAdmin(isAdmin)
-                console.log("?" +isAdmin)
+                console.log("?" + isAdmin)
                 if (isAdmin) {
                     await fetchService()
                 }
@@ -48,7 +50,6 @@ export const useServiceAdmin = () => {
     }
 
     const fetchService = async () => {
-
         try {
             const result = await serviceRepository.getServices()
 
@@ -63,16 +64,22 @@ export const useServiceAdmin = () => {
         }
     }
 
-    const addService = async () => {
-        console.log("agregar service")
-    }
+    const deleteService = async (serviceId: string) => {
+        try {
+            const result = await deleteServiceUsecase(serviceId)
 
-    const editService = async (bookingId: string) => {
-        console.log("editar: " + bookingId)
-    }
+            if (result.ok) {
+                setServices(prev =>
+                    prev?.filter(service => service.id !== serviceId) ?? null
+                )
+                setSuccess(true)
+            } else {
+                setError(mapServiceErrorToMessage(result.error))
+            }
 
-    const deleteService = async (bookingId: string) => {
-        console.log("cancelar: " + bookingId)
+        } finally {
+            setLoading(false)
+        }
     }
 
     const logOut = async () => {
@@ -93,13 +100,12 @@ export const useServiceAdmin = () => {
     };
 
     return {
-        service,
+        services,
         loading,
+        success,
         error,
         refreshing,
         onRefresh,
-        addService,
-        editService,
         deleteService
     }
 }

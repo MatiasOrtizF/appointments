@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { createGlobalStyles } from "../../../theme/globalStyles";
 import { useTheme } from "../../../data/provider/ThemeProvider";
 import { darkColors, lightColors } from "../../../theme/colors";
-import { ALERT_TYPE, Dialog } from "react-native-alert-notification";
+import { ALERT_TYPE, Dialog, Toast } from "react-native-alert-notification";
 import LoadingScreen from "../../../shared/LoadingScreen";
 import { FlatList, View, Text, ListRenderItem, RefreshControl, Pressable } from "react-native";
 import { Service } from "../../../domain/models/Service";
@@ -13,13 +13,12 @@ import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 
 export default function ServiceAdminScreen() {
-    const { service,
+    const { services,
         loading,
+        success,
         error,
         refreshing,
         onRefresh,
-        addService,
-        editService,
         deleteService
     } = useServiceAdmin()
     const { isDarkMode } = useTheme();
@@ -39,7 +38,15 @@ export default function ServiceAdminScreen() {
                 closeOnOverlayTap: false,
             });
         }
-    }, [error])
+
+        if (success) {
+            Toast.show({
+                type: ALERT_TYPE.SUCCESS,
+                title: 'Success',
+                textBody: 'Service deleted successfully',
+            })
+        }
+    }, [error, success])
 
     if (loading) {
         return (
@@ -52,7 +59,7 @@ export default function ServiceAdminScreen() {
     }
 
     const renderEmpty = () => {
-        if (service != null) {
+        if (services != null) {
             return (
                 <View style={globalStyles.container}>
                     <Text style={{ color: colors.textPrimary, fontSize: 16 }}>
@@ -63,18 +70,17 @@ export default function ServiceAdminScreen() {
         }
     }
 
-
     const renderItem: ListRenderItem<Service> = ({ item }) => (
         <ServiceAdminCard
             service={item}
-            onDelete={() => { deleteService }}
+            onDelete={deleteService}
         />
     );
 
     return (
         <View style={{ flex: 1 }}>
             <FlatList<Service>
-                data={service}
+                data={services}
                 keyExtractor={(item) => item.id}
                 showsVerticalScrollIndicator={false}
                 style={globalStyles.container}
