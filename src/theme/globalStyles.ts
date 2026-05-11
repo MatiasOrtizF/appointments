@@ -83,6 +83,33 @@ export const createGlobalStyles = (isDarkMode: boolean) => {
             color: colors.textPrimary,
             marginTop: 3,
             textTransform: "capitalize"
+        },
+
+        //edit-add service
+        card: {
+            backgroundColor: colors.bgCard,
+            gap: 20,
+            borderRadius: 16,
+            padding: 20,
+        },
+
+        label: {
+            fontWeight: "700",
+            color: colors.textSecondary,
+            textTransform: "uppercase",
+            marginBottom: 10,
+        },
+        textInput: {
+            backgroundColor: colors.background,
+            borderRadius: 50,
+            height: 50,
+            paddingHorizontal: 20,
+            fontWeight: '500'
+        },
+        formRow: {
+            flex: 1,
+            flexDirection: "row",
+            gap: 7
         }
     });
 };

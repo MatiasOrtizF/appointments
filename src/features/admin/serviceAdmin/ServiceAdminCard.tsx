@@ -16,7 +16,7 @@ export const ServiceAdminCard: React.FC<Props> = ({
     service,
     onDelete
 }) => {
-    const { id, img, name, description, duration_min, price, employees } = service
+    const { id, img, name, description, duration_min, price, employees, hourStart, hourEnd, days } = service
     const { isDarkMode } = useTheme();
     const globalStyles = createGlobalStyles(isDarkMode)
     const colors = isDarkMode ? darkColors : lightColors
@@ -41,7 +41,21 @@ export const ServiceAdminCard: React.FC<Props> = ({
     };
 
     const navigateToEditService = () => {
-        router.push("/bottom/admin/edit-service")
+        router.push({
+            pathname: "/bottom/admin/edit-service",
+            params: {
+                id,
+                img,
+                name,
+                description,
+                duration_min: duration_min.toString(),
+                price: price.toString(),
+                employees: JSON.stringify(employees),
+                hourStart: hourStart,
+                hourEnd: hourEnd,
+                days: JSON.stringify(days)
+            }
+        })
     }
 
     return (

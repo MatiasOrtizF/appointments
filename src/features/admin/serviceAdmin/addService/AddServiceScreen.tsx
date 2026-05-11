@@ -1,5 +1,5 @@
 import * as ImagePicker from "expo-image-picker";
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView, Pressable, Image, FlatList } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Pressable, Image, FlatList } from "react-native";
 import { useTheme } from "../../../../data/provider/ThemeProvider";
 import { createGlobalStyles } from "../../../../theme/globalStyles";
 import { darkColors, lightColors } from "../../../../theme/colors";
@@ -49,7 +49,6 @@ export default function AddServiceScreen() {
     const globalStyles = createGlobalStyles(isDarkMode)
 
     const colors = isDarkMode ? darkColors : lightColors
-    const styles = createStyles(colors);
     const navigation = useNavigation()
     const router = useRouter();
 
@@ -131,7 +130,7 @@ export default function AddServiceScreen() {
                             Define un nuevo servicio para ofrecer a tus clientes. Establece su precio, duración y disponibilidad para gestionar tus turnos de forma eficiente.
                         </Text>
                     </View>
-                    <View style={[styles.card, { backgroundColor: colors.bgCard, gap: 20 }]}>
+                    <View style={globalStyles.card}>
 
                         {/*Imagen*/}
                         <Pressable onPress={pickImage}>
@@ -151,7 +150,7 @@ export default function AddServiceScreen() {
 
                         {/*Titulo*/}
                         <View>
-                            <Text style={styles.label}>Service name</Text>
+                            <Text style={globalStyles.label}>Service name</Text>
                             <TextInput
                                 placeholder="Titulo para servicio"
                                 placeholderTextColor={colors.secondary}
@@ -159,13 +158,13 @@ export default function AddServiceScreen() {
                                 onChangeText={setTitle}
                                 autoCapitalize="none"
                                 keyboardType="default"
-                                style={styles.textInput}
+                                style={globalStyles.textInput}
                             />
                         </View>
 
                         {/*Descripcion*/}
                         <View>
-                            <Text style={styles.label}>description</Text>
+                            <Text style={globalStyles.label}>description</Text>
                             <TextInput
                                 placeholder="Descripcion para servicio"
                                 placeholderTextColor={colors.secondary}
@@ -173,15 +172,15 @@ export default function AddServiceScreen() {
                                 onChangeText={setDescription}
                                 autoCapitalize="none"
                                 keyboardType="default"
-                                style={styles.textInput}
+                                style={globalStyles.textInput}
                             />
                         </View>
 
                         {/*Precio y Duracion*/}
-                        <View style={styles.formRow}>
+                        <View style={globalStyles.formRow}>
 
                             <View style={{ flex: 1 }}>
-                                <Text style={styles.label}>precio (ars)</Text>
+                                <Text style={globalStyles.label}>precio (ars)</Text>
                                 <TextInput
                                     placeholder="Precio"
                                     placeholderTextColor={colors.secondary}
@@ -192,12 +191,12 @@ export default function AddServiceScreen() {
                                     }}
                                     autoCapitalize="none"
                                     keyboardType="numeric"
-                                    style={styles.textInput}
+                                    style={globalStyles.textInput}
                                 />
                             </View>
 
                             <View style={{ flex: 1 }}>
-                                <Text style={styles.label}>Duracion (min)</Text>
+                                <Text style={globalStyles.label}>Duracion (min)</Text>
                                 <TextInput
                                     placeholder="Duracion"
                                     placeholderTextColor={colors.secondary}
@@ -208,13 +207,13 @@ export default function AddServiceScreen() {
                                     }}
                                     autoCapitalize="none"
                                     keyboardType="numeric"
-                                    style={styles.textInput}
+                                    style={globalStyles.textInput}
                                 />
                             </View>
                         </View>
 
                         {/* Hora de inicio y finalizacion */}
-                        <View style={styles.formRow}>
+                        <View style={globalStyles.formRow}>
                             <TimeSelector
                                 label="Start hour"
                                 value={hourStart}
@@ -238,7 +237,7 @@ export default function AddServiceScreen() {
 
                         {/*Empleados*/}
                         <View>
-                            <Text style={styles.label}>Asignar empleados</Text>
+                            <Text style={globalStyles.label}>Asignar empleados</Text>
                             <FlatList<Employee>
                                 data={employees}
                                 horizontal
@@ -284,7 +283,7 @@ export default function AddServiceScreen() {
                         </View>
 
                         <View>
-                            <Text style={styles.label}>Dias disponibles</Text>
+                            <Text style={globalStyles.label}>Dias disponibles</Text>
                             <View
                                 style={{
                                     flexDirection: "row",
@@ -373,30 +372,3 @@ export default function AddServiceScreen() {
         </View>
     )
 }
-
-const createStyles = (colors: any) =>
-    StyleSheet.create({
-        card: {
-            borderRadius: 16,
-            padding: 20,
-        },
-
-        label: {
-            fontWeight: "700",
-            color: colors.textSecondary,
-            textTransform: "uppercase",
-            marginBottom: 10,
-        },
-        textInput: {
-            backgroundColor: colors.background,
-            borderRadius: 50,
-            height: 50,
-            paddingHorizontal: 20,
-            fontWeight: '500'
-        },
-        formRow: {
-            flex: 1,
-            flexDirection: "row",
-            gap: 7
-        }
-    });

@@ -1,4 +1,4 @@
-import { addDoc, collection, doc, getDoc, getDocs, setDoc } from "firebase/firestore"
+import { addDoc, collection, doc, getDoc, getDocs, setDoc, updateDoc } from "firebase/firestore"
 import { Employee, Service } from "../../domain/models/Service"
 import { db } from "../../config/Firebase"
 import { withTimeout } from "../../utils/withTimeOut"
@@ -8,6 +8,7 @@ import { FirebaseError } from "firebase/app"
 import { ServiceResponse, toDomain } from "../remote/response/ServiceResponse"
 import { EmployeeResponse, employeeToDomain } from "../remote/response/EmployeeResponse"
 import { CreateServiceRequest } from "../../domain/models/CreateServiceRequest"
+import { EditServiceRequest } from "../../domain/models/EditServiceRequest"
 
 const COLLECTION_SERVICE = "service"
 const COLLECTION_EMPLOYEE = "employee"
@@ -96,6 +97,40 @@ export class ServiceRepository {
       await addDoc(collection(db, COLLECTION_SERVICE), request);
 
       return { ok: true, data: undefined }
+
+    } catch (error) {
+      return handleServiceError(error)
+    }
+  }
+
+  async editServices(service: EditServiceRequest): Promise<Result<void, ServiceError>> {
+    try {
+
+      const serviceRef = doc(db, COLLECTION_SERVICE, service.id)
+
+      const serviceResponse: ServiceResponse = {
+        name: service.name,
+        description: service.description,
+        price: service.price,
+        duration_min: service.duration_min,
+        img: service.img,
+        employees: service.employees.map(employeeId => employeeId),
+        days: service.days,
+        hourStart: service.hourStart,
+        hourEnd: service.hourEnd
+      }
+
+      await withTimeout(
+        updateDoc(serviceRef, {
+          ...serviceResponse
+        }),
+        10000
+      )
+
+      return {
+        ok: true,
+        data: undefined
+      }
 
     } catch (error) {
       return handleServiceError(error)
