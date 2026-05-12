@@ -28,7 +28,6 @@ export class UserRepository {
 
             await setDoc(userRef, {
                 ...request,
-                id: userId,
                 createdAt: Timestamp.now(),
             });
 

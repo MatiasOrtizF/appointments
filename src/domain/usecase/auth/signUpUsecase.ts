@@ -4,6 +4,7 @@ import { mapRegisterErrorToMessage } from "../../../errors/auth/registerError"
 import { UserError } from "../../../errors/userError"
 import { Result } from "../../../shared/types/result"
 import { CreateUserRequest } from "../../models/CreateUserRequest"
+import { employeeStatuses, roles } from "../../models/Service"
 import { SignUpRequest } from "../../models/SignUpRequest"
 
 export const signUpUsecase = async (
@@ -20,7 +21,8 @@ export const signUpUsecase = async (
     name: input.name,
     lastName: input.lastName,
     email: input.email,
-    role: "user",
+    role: roles.USER,
+    status: employeeStatuses.ACTIVE,
     uid: user.data.uid
   };
 
