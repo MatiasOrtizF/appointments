@@ -30,11 +30,14 @@ export type Day =
   | "sabado"
   | "domingo";
 
-export type EmployeeStatus =
-  | "active"
-  | "vacation"
-  | "sick"
-  | "day_off"
+export const employeeStatuses = {
+  ACTIVE: "active",
+  VACATION: "vacation",
+  SICK: "sick",
+  DAY_OFF: "day off"
+
+} as const
+export type EmployeeStatus = typeof employeeStatuses[keyof typeof employeeStatuses]
 
 export const roles = {
   ADMIN: "admin",

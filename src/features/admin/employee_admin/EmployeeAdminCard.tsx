@@ -44,16 +44,17 @@ export const EmployeeAdminCard: React.FC<Props> = ({
     };
 
     const navigateToEditEmployee = () => {
-        /*router.push({
-            pathname: "/bottom/admin/edit-service",
+        router.push({
+            pathname: "/bottom/admin/edit-employee",
             params: {
                 id,
                 img,
                 name,
                 lastName,
-                active
+                role: role,
+                status: status
             }
-        })*/
+        })
     }
 
     return (
@@ -85,7 +86,7 @@ export const EmployeeAdminCard: React.FC<Props> = ({
 
             {/* Información */}
             <View style={adminAppointmentStyles.infoContainer}>
-                <View style={{gap: 6}}>
+                <View style={{ gap: 6 }}>
                     <Text style={adminAppointmentStyles.client}>{name + " " + lastName}</Text>
                     {/*<Text numberOfLines={3} style={adminAppointmentStyles.service}>{name}</Text>*/}
                     <Text

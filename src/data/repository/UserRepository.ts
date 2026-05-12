@@ -10,6 +10,7 @@ import { CreateUserRequest } from "../../domain/models/CreateUserRequest"
 import { withTimeout } from "../../utils/withTimeOut"
 import { EmployeeResponse, employeeToDomain } from "../remote/response/EmployeeResponse"
 import { Employee, Role } from "../../domain/models/Service"
+import { EditEmployeeRequest } from "../../domain/models/EditEmployeeRequest"
 
 const COLLECTION_USER = "user"
 
@@ -154,6 +155,36 @@ export class UserRepository {
             return { ok: true, data: undefined }
 
         } catch (error) {
+            return handleUserError(error)
+        }
+    }
+
+    async editEmployee(employee: EditEmployeeRequest): Promise<Result<void, UserError>> {
+        try {
+            const serviceRef = doc(db, COLLECTION_USER, employee.id)
+
+            const employeeResponse: EmployeeResponse = {
+                name: employee.name,
+                lastName: employee.lastName,
+                img: employee.img,
+                role: employee.role,
+                status: employee.status
+            }
+
+            await withTimeout(
+                updateDoc(serviceRef, {
+                    ...employeeResponse
+                }),
+                10000
+            )
+
+            return {
+                ok: true,
+                data: undefined
+            }
+
+        } catch (error) {
+            console.log(error)
             return handleUserError(error)
         }
     }
