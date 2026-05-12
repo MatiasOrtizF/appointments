@@ -1,4 +1,4 @@
-import { doc, setDoc, deleteDoc, getDoc, updateDoc, Timestamp } from "firebase/firestore"
+import { doc, setDoc, deleteDoc, getDoc, updateDoc, Timestamp, collection, getDocs, query, where } from "firebase/firestore"
 import { db } from "../../config/Firebase"
 import { AuthUser } from "../../domain/models/AuthUser"
 import { AuthUserResponse } from "../remote/response/AuthUserResponse"
@@ -7,6 +7,9 @@ import { Result } from "../../shared/types/result"
 import { UserError } from "../../errors/userError"
 import { FirebaseError } from "firebase/app"
 import { CreateUserRequest } from "../../domain/models/CreateUserRequest"
+import { withTimeout } from "../../utils/withTimeOut"
+import { EmployeeResponse, employeeToDomain } from "../remote/response/EmployeeResponse"
+import { Employee, Role } from "../../domain/models/Service"
 
 const COLLECTION_USER = "user"
 
@@ -75,6 +78,33 @@ export class UserRepository {
         }
     }
 
+    async getEmployees(): Promise<Result<Employee[], UserError>> {
+        try {
+
+            const q = query(
+                collection(db, COLLECTION_USER),
+                where("role", "in", ["employee", "admin"])
+            )
+
+
+            const snapshot = await withTimeout(
+                getDocs(q),
+                10000
+            )
+
+            const employees = snapshot.docs.map((docSnap) => {
+                const data = docSnap.data() as EmployeeResponse
+
+                return employeeToDomain(docSnap.id, data)
+            })
+
+            return { ok: true, data: employees }
+
+        } catch (error) {
+            return handleUserError(error)
+        }
+    }
+
     async editUser(
         uid: string,
         newName: string,
@@ -98,12 +128,41 @@ export class UserRepository {
         }
     }
 
+    async editRoleUser(email: string, role: Role): Promise<Result<void, UserError>> {
+        try {
+
+            const q = query(
+                collection(db, COLLECTION_USER),
+                where("email", "==", email)
+            );
+
+            const querySnapshot = await getDocs(q);
+
+            if (querySnapshot.empty) {
+                return {
+                    ok: false,
+                    error: "not-found"
+                };
+            }
+
+            const userDoc = querySnapshot.docs[0];
+
+            await updateDoc(userDoc.ref, {
+                role,
+            });
+
+            return { ok: true, data: undefined }
+
+        } catch (error) {
+            return handleUserError(error)
+        }
+    }
+
 }
 
 const handleUserError = (
     error: unknown
 ): Result<never, UserError> => {
-
     if (error instanceof FirebaseError) {
         switch (error.code) {
             // auth

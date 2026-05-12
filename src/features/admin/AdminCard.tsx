@@ -1,5 +1,5 @@
 import { View, Text } from "react-native"
-import { STATUS_STYLES } from "../../constants/statusStyles"
+import { APPOINTMENT_STATUS_STYLES } from "../../constants/statusStyles"
 import { Appointment } from "../../domain/models/Appointment"
 import { useTheme } from "../../data/provider/ThemeProvider"
 import { createAdminAppointmentStyles } from "../../theme/adminAppointmentStyles"
@@ -13,7 +13,7 @@ export const AdminCard: React.FC<Props> = ({
 }) => {
     const { time, clientName, service, employeeName, status } = appointment
     const statusStyle =
-        STATUS_STYLES[status.toLowerCase() as keyof typeof STATUS_STYLES];
+        APPOINTMENT_STATUS_STYLES[status.toLowerCase() as keyof typeof APPOINTMENT_STATUS_STYLES];
     const { isDarkMode } = useTheme();
     const adminAppointmentStyles = createAdminAppointmentStyles(isDarkMode)
 

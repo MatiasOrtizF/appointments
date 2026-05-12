@@ -3,10 +3,10 @@ import { getUserInfoUsecase } from "../../../../domain/usecase/admin/getUserInfo
 import { mapUserErrorToMessage } from "../../../../errors/userError";
 import { Day, Service } from "../../../../domain/models/Service";
 import { mapServiceErrorToMessage } from "../../../../errors/serviceErrors";
-import { getEmployeesUsecase } from "../../../../domain/usecase/admin/getEmployeesUsecase";
 import { mapEmployeeErrorToMessage } from "../../../../errors/employeeError";
 import { editServiceUsecase } from "../../../../domain/usecase/admin/editServiceUsecase";
 import { EditServiceRequest } from "../../../../domain/models/EditServiceRequest";
+import { getEmployeesUsecase } from "../../../../domain/usecase/admin/employee/getEmployeesUsecase";
 
 export const useEditService = () => {
     const [previewService, setPreviewService] = useState<Service>()
@@ -59,7 +59,7 @@ export const useEditService = () => {
             if (result.ok) {
                 setEmployees(result.data)
             } else {
-                setError(mapEmployeeErrorToMessage(result.error))
+                setError(mapUserErrorToMessage(result.error))
             }
 
         } finally {

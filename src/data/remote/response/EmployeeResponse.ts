@@ -1,10 +1,11 @@
-import { Employee } from "../../../domain/models/Service"
+import { Employee, EmployeeStatus, Role } from "../../../domain/models/Service"
 
 export interface EmployeeResponse {
   name: string
   lastName: string
   img: string
-  active: boolean
+  role: Role
+  status: EmployeeStatus
 }
 
 export const employeeToDomain = (
@@ -16,6 +17,7 @@ export const employeeToDomain = (
     name: response.name,
     lastName: response.lastName,
     img: response.img,
-    active: response.active
+    role: response.role,
+    status: response.status
   }
 }

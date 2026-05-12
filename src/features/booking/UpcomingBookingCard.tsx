@@ -1,7 +1,7 @@
 import { View, Image, Text, StyleSheet, Pressable, Alert } from "react-native";
 import { Appointment } from "../../domain/models/Appointment"
 import { Ionicons } from "@expo/vector-icons";
-import { STATUS_STYLES } from "../../constants/statusStyles";
+import { APPOINTMENT_STATUS_STYLES } from "../../constants/statusStyles";
 import { useTheme } from "../../data/provider/ThemeProvider";
 import { darkColors, lightColors } from "../../theme/colors";
 import { useBooking } from "./useBooking";
@@ -34,7 +34,7 @@ export const UpcomingBookingCard = ({ appointment }: Props) => {
     const { isDarkMode } = useTheme();
     const colors = isDarkMode ? darkColors : lightColors;
     const statusStyle =
-        STATUS_STYLES[status.toLowerCase() as keyof typeof STATUS_STYLES];
+        APPOINTMENT_STATUS_STYLES[status.toLowerCase() as keyof typeof APPOINTMENT_STATUS_STYLES];
 
     const { cancelAppointment } = useBooking()
 

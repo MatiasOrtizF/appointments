@@ -1,3 +1,4 @@
+
 export interface Service {
   id: string
   name: string
@@ -16,10 +17,11 @@ export interface Employee {
   name: string,
   lastName: string,
   img: string,
-  active: boolean
+  role: Role,
+  status: EmployeeStatus
 }
 
-export type Day = 
+export type Day =
   | "lunes"
   | "martes"
   | "miercoles"
@@ -27,3 +29,17 @@ export type Day =
   | "viernes"
   | "sabado"
   | "domingo";
+
+export type EmployeeStatus =
+  | "active"
+  | "vacation"
+  | "sick"
+  | "day_off"
+
+export const roles = {
+  ADMIN: "admin",
+  EMPLOYEE: "employee",
+  USER: "user"
+} as const
+
+export type Role = typeof roles[keyof typeof roles]

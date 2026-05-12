@@ -1,6 +1,8 @@
+import { Role } from "./Service"
+
 export interface AuthUser {
     uid: string
     email: string,
     fullName: string,
-    role: "admin" | "client"
+    role: Role
 }

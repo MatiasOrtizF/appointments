@@ -1,6 +1,6 @@
 import { View, Image, Text, StyleSheet } from "react-native";
 import { Appointment } from "../../domain/models/Appointment"
-import { STATUS_STYLES } from "../../constants/statusStyles";
+import { APPOINTMENT_STATUS_STYLES } from "../../constants/statusStyles";
 import { useTheme } from "../../data/provider/ThemeProvider";
 import { darkColors, lightColors } from "../../theme/colors";
 import { createGlobalStyles } from "../../theme/globalStyles";
@@ -12,7 +12,7 @@ type Props = {
 export const PastBookingCard = ({ appointment }: Props) => {
   const { id, serviceImg, status, service, date, time } = appointment
   const statusStyle =
-    STATUS_STYLES[status.toLowerCase() as keyof typeof STATUS_STYLES];
+    APPOINTMENT_STATUS_STYLES[status.toLowerCase() as keyof typeof APPOINTMENT_STATUS_STYLES];
 
   const { isDarkMode } = useTheme();
     const globalStyles = createGlobalStyles(isDarkMode)

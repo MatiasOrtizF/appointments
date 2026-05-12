@@ -1,4 +1,4 @@
-import { collection, getDocs } from "firebase/firestore"
+import { collection, deleteDoc, doc, getDocs } from "firebase/firestore"
 import { Employee } from "../../domain/models/Service"
 import { withTimeout } from "../../utils/withTimeOut"
 import { db } from "../../config/Firebase"
@@ -10,6 +10,7 @@ import { EmployeeError } from "../../errors/employeeError"
 const COLLECTION_EMPLOYEE = "employee"
 
 export class EmployeeRepository {
+
   async getEmployees(): Promise<Result<Employee[], EmployeeError>> {
     try {
       const snapshot = await withTimeout(
@@ -24,6 +25,23 @@ export class EmployeeRepository {
       })
 
       return { ok: true, data: services }
+
+    } catch (error) {
+      return handleEmployeeError(error)
+    }
+  }
+
+  async deleteEmployee(id: string): Promise<Result<void, EmployeeError>> {
+    try {
+
+      await withTimeout(
+        deleteDoc(
+          doc(db, COLLECTION_EMPLOYEE, id)
+        ),
+        10000
+      )
+
+      return { ok: true, data: undefined }
 
     } catch (error) {
       return handleEmployeeError(error)

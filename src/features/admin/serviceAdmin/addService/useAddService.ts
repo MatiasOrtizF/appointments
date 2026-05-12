@@ -5,8 +5,8 @@ import { Service } from "../../../../domain/models/Service";
 import { addServiceUsecase } from "../../../../domain/usecase/admin/addServiceUseCase";
 import { CreateServiceRequest } from "../../../../domain/models/CreateServiceRequest";
 import { mapServiceErrorToMessage } from "../../../../errors/serviceErrors";
-import { getEmployeesUsecase } from "../../../../domain/usecase/admin/getEmployeesUsecase";
 import { mapEmployeeErrorToMessage } from "../../../../errors/employeeError";
+import { getEmployeesUsecase } from "../../../../domain/usecase/admin/employee/getEmployeesUsecase";
 
 export const useAddService = () => {
     const [previewService, setPreviewService] = useState<Service>()
@@ -58,7 +58,7 @@ export const useAddService = () => {
             if (result.ok) {
                 setEmployees(result.data)
             } else {
-                setError(mapEmployeeErrorToMessage(result.error))
+                setError(mapUserErrorToMessage(result.error))
             }
 
         } finally {
