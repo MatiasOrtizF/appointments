@@ -9,7 +9,7 @@ import { FirebaseError } from "firebase/app"
 import { CreateUserRequest } from "../../domain/models/CreateUserRequest"
 import { withTimeout } from "../../utils/withTimeOut"
 import { EmployeeResponse, employeeToDomain } from "../remote/response/EmployeeResponse"
-import { Employee, Role } from "../../domain/models/Service"
+import { Employee, Role, roles } from "../../domain/models/Service"
 import { EditEmployeeRequest } from "../../domain/models/EditEmployeeRequest"
 
 const COLLECTION_USER = "user"
@@ -161,7 +161,7 @@ export class UserRepository {
 
     async editEmployee(employee: EditEmployeeRequest): Promise<Result<void, UserError>> {
         try {
-            const serviceRef = doc(db, COLLECTION_USER, employee.id)
+            const userRef = doc(db, COLLECTION_USER, employee.id)
 
             const employeeResponse: EmployeeResponse = {
                 name: employee.name,
@@ -172,7 +172,7 @@ export class UserRepository {
             }
 
             await withTimeout(
-                updateDoc(serviceRef, {
+                updateDoc(userRef, {
                     ...employeeResponse
                 }),
                 10000
@@ -189,6 +189,27 @@ export class UserRepository {
         }
     }
 
+    async deleteEmployee(id: string): Promise<Result<void, UserError>> {
+        try {
+            const userRef = doc(db, COLLECTION_USER, id)
+
+            await withTimeout(
+                updateDoc(userRef, {
+                    role: roles.USER,
+                }),
+                10000
+            )
+
+            return {
+                ok: true,
+                data: undefined
+            }
+
+        } catch (error) {
+            console.log(error)
+            return handleUserError(error)
+        }
+    }
 }
 
 const handleUserError = (

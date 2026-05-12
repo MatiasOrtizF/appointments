@@ -1,13 +1,11 @@
 import { useEffect, useState } from "react"
 import { Employee } from "../../../domain/models/Service"
-import { mapServiceErrorToMessage } from "../../../errors/serviceErrors"
 import { getUserInfoUsecase } from "../../../domain/usecase/admin/getUserInfoUsecase"
 import { authRepository } from "../../../data/repository/AuthRepository"
 import { mapSignOutErrorToMessage } from "../../../errors/auth/signOutError"
-import { deleteServiceUsecase } from "../../../domain/usecase/admin/deleteServiceUsecase"
-import { mapEmployeeErrorToMessage } from "../../../errors/employeeError"
 import { getEmployeesUsecase } from "../../../domain/usecase/admin/employee/getEmployeesUsecase"
 import { mapUserErrorToMessage } from "../../../errors/userError"
+import { deleteEmployeeUsecase } from "../../../domain/usecase/admin/employee/deleteEmployeeUsecase"
 
 export const useEmployeeAdmin = () => {
     const [employees, setEmployees] = useState<Employee[] | null>(null)
@@ -68,7 +66,7 @@ export const useEmployeeAdmin = () => {
 
     const deleteEmployee = async (employeeId: string) => {
         try {
-            const result = await deleteServiceUsecase(employeeId)
+            const result = await deleteEmployeeUsecase(employeeId)
 
             if (result.ok) {
                 setEmployees(prev =>
@@ -76,7 +74,7 @@ export const useEmployeeAdmin = () => {
                 )
                 setSuccess(true)
             } else {
-                setError(mapServiceErrorToMessage(result.error))
+                setError(mapUserErrorToMessage(result.error))
             }
 
         } finally {
@@ -85,7 +83,6 @@ export const useEmployeeAdmin = () => {
     }
 
     const logOut = async () => {
-        console.log("llamamos al log out")
         setLoading(true);
         setError(null);
 
