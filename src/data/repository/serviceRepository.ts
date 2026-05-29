@@ -9,6 +9,7 @@ import { ServiceResponse, toDomain } from "../remote/response/ServiceResponse"
 import { EmployeeResponse, employeeToDomain } from "../remote/response/EmployeeResponse"
 import { CreateServiceRequest } from "../../domain/models/CreateServiceRequest"
 import { EditServiceRequest } from "../../domain/models/EditServiceRequest"
+import { supabase } from "../../config/Supabase"
 
 const COLLECTION_SERVICE = "service"
 const COLLECTION_EMPLOYEE = "employee"
@@ -16,77 +17,111 @@ const COLLECTION_EMPLOYEE = "employee"
 export class ServiceRepository {
 
   async getServices(): Promise<Result<Service[], ServiceError>> {
+    console.log("llamo a servicios")
     try {
-      const snapshot = await withTimeout(
-        getDocs(collection(db, COLLECTION_SERVICE)),
-        10000
+      const { data, error } = await supabase
+        .from("servicios")
+        .select(`
+    id,
+    title,
+    description,
+    price,
+    duration_minutes,
+    image_url,
+    available_days,
+    start_time,
+    end_time,
+    servicios_empleados (
+      empleado:empleados (
+        id,
+        name,
+        image_url
       )
+    )
+  `)
+      if (error) throw error
 
-      const employeesSnapshot = await getDocs(collection(db, COLLECTION_EMPLOYEE))
+      console.log("data", data)
 
-      const employeesMap = new Map(
-        employeesSnapshot.docs.map(doc => [
-          doc.id,
-          employeeToDomain(doc.id, doc.data() as EmployeeResponse)
-        ])
-      )
+      const services: Service[] = (data ?? []).map((service) => {
+        const employees =
+          service.servicios_empleados?.map((se: any) => se.empleado) ?? []
 
-      const services = snapshot.docs.map((docSnap) => {
-        const data = docSnap.data() as ServiceResponse
-
-        const employees = data.employees
-          .map(id => employeesMap.get(id))
-          .filter((e): e is Employee => e !== undefined);
-
-        return toDomain(docSnap.id, data, employees)
+        return toDomain({
+          id: service.id,
+          title: service.title,
+          description: service.description,
+          price: service.price,
+          duration_minutes: service.duration_minutes,
+          image_url: service.image_url,
+          available_days: service.available_days,
+          start_time: service.start_time,
+          end_time: service.end_time,
+          employees
+        })
       })
 
-      return { ok: true, data: services }
+      console.log("services", services)
 
+      return { ok: true, data: services }
     } catch (error) {
+      console.log("otro error", error)
       return handleServiceError(error)
     }
   }
 
   async getService(id: string): Promise<Result<Service, ServiceError>> {
     try {
-      const serviceDoc = await getDoc(
-        doc(db, COLLECTION_SERVICE, id)
-      )
 
-      if (!serviceDoc.exists()) {
-        return { ok: false, error: "unknown" };
-      }
-
-      const data = serviceDoc.data() as ServiceResponse;
-
-      const employees = await Promise.all(
-        data.employees.map(async (id) => {
-          const employeeSnap = await getDoc(doc(db, COLLECTION_EMPLOYEE, id));
-
-          if (!employeeSnap.exists()) return undefined;
-
-          const employeeData = employeeSnap.data() as EmployeeResponse;
-
-          return employeeToDomain(
-            employeeSnap.id,
-            employeeData
+      const { data, error } = await supabase
+        .from("servicios")
+        .select(`
+        id,
+        title,
+        description,
+        price,
+        duration_minutes,
+        image_url,
+        available_days,
+        start_time,
+        end_time,
+        servicios_empleados (
+          empleado:empleados (
+            id,
+            name,
+            image_url
           )
-        })
-      )
+        )
+      `)
+        .eq("id", id)
+        .single()
 
-      const validEmployees = employees.filter(
-        (e): e is Employee => e !== undefined
-      );
+      if (error) throw error
+
+      const employees: Employee[] =
+      data.servicios_empleados?.map((se: any) =>
+        employeeToDomain(se.empleado)
+      ) ?? []
+
+      const service = toDomain({
+        id: data.id,
+        title: data.title,
+        description: data.description,
+        price: data.price,
+        duration_minutes: data.duration_minutes,
+        image_url: data.image_url,
+        available_days: data.available_days,
+        start_time: data.start_time,
+        end_time: data.end_time,
+        employees
+      })
 
       return {
         ok: true,
-        data: toDomain(serviceDoc.id, data, validEmployees),
-      };
-
+        data: service
+      }
 
     } catch (error) {
-      console.log(error)
       return handleServiceError(error)
     }
   }
@@ -109,12 +144,12 @@ export class ServiceRepository {
       const serviceRef = doc(db, COLLECTION_SERVICE, service.id)
 
       const serviceResponse: ServiceResponse = {
-        name: service.name,
+        title: service.name,
         description: service.description,
         price: service.price,
         duration_min: service.duration_min,
         img: service.img,
-        employees: service.employees.map(employeeId => employeeId),
+        employees: [],
         days: service.days,
         hourStart: service.hourStart,
         hourEnd: service.hourEnd
@@ -155,28 +190,33 @@ export class ServiceRepository {
   }
 }
 
-const handleServiceError = (
-  error: unknown
+export const handleServiceError = (
+  error: any
 ): Result<never, ServiceError> => {
 
-  if (error instanceof FirebaseError) {
-    switch (error.code) {
-      case "permission-denied":
-        return { ok: false, error: "permission" };
+  console.log("SERVICE ERROR:", error)
 
-      case "unavailable":
-      case "failed-precondition":
-        return { ok: false, error: "network" };
+  switch (error?.code) {
 
-      case "deadline-exceeded":
-        return { ok: false, error: "timeout" };
+    // RLS / permisos
+    case "42501":
+      return { ok: false, error: "permission" }
 
-      case "not-found":
-        return { ok: false, error: "not-found" };
+    // no encontrado
+    case "PGRST116":
+      return { ok: false, error: "not-found" }
 
-      default:
-        return { ok: false, error: "unknown" };
-    }
+    // timeout/network
+    case "57014":
+      return { ok: false, error: "timeout" }
+
+    // postgres connection
+    case "08006":
+    case "08001":
+      return { ok: false, error: "network" }
+
+    default:
+      return { ok: false, error: "unknown" }
   }
 
   return { ok: false, error: "unknown" };

@@ -29,6 +29,7 @@ export const useScheduleAppointment = () => {
       const result = await appointmentRepository.getHoursAvailable(serviceId, todayString)
 
       if (result.ok) {
+        console.log("a ver", result.data)
         setHoursNotAvailable(result.data)
       } else {
         setError(mapAppointmentErrorToMessage(result.error))
@@ -42,10 +43,10 @@ export const useScheduleAppointment = () => {
 
     try {
       const result = await serviceRepository.getService(serviceId)
-
       if (result.ok) {
 
         setService(result.data)
+        console.log("hour start", result.data.hourStart)
         const hoursGenerated = generateHours(result.data.hourStart, result.data.hourEnd, result.data.duration_min, hoursNotAvailable)
         setHours(hoursGenerated)
         const missingDays = getMissingDaysIndexes(result.data.days)

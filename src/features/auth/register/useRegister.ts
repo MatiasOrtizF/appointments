@@ -2,6 +2,10 @@ import { useState } from "react";
 import { mapUserErrorToMessage } from "../../../errors/userError";
 import { signUpUsecase } from "../../../domain/usecase/auth/signUpUsecase";
 import { SignUpRequest } from "../../../domain/models/SignUpRequest";
+import { authRepository } from "../../../data/repository/AuthRepository";
+import { CreateUserRequest } from "../../../domain/models/CreateUserRequest";
+import { employeeStatuses, roles } from "../../../domain/models/Service";
+import { mapRegisterErrorToMessage } from "../../../errors/auth/registerError";
 
 export const useRegister = () => {
 
@@ -52,19 +56,21 @@ export const useRegister = () => {
       return
     }
 
-    const input: SignUpRequest = {
+    const input: CreateUserRequest = {
       email: email,
       password: password,
       name: name,
-      lastName: lastName
+      lastName: lastName,
     }
 
     try {
 
-      const result = await signUpUsecase(input)
+      const result = await authRepository.signUp(input)
 
-      if (!result.ok) {
-        setError(mapUserErrorToMessage(result.error))
+      if (result.ok) {
+        setSuccess(true)
+      } else {
+        setError(mapRegisterErrorToMessage(result.error))
       }
 
     } finally {

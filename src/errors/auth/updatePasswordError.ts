@@ -1,32 +1,25 @@
-import { Result } from "../../shared/types/result"
-
 export type UpdatePasswordError =
-  | "unauthenticated"
-  | "invalid-credential"
   | "weak-password"
+  | "same-password"
   | "requires-recent-login"
   | "network"
   | "timeout"
   | "unknown"
 
-export type UpdatePasswordResult =
-  Result<void, UpdatePasswordError>
-
 export const mapUpdatePasswordErrorToMessage = (
   error: UpdatePasswordError
 ): string => {
-  switch (error) {
-    case "unauthenticated":
-      return "Tenés que iniciar sesión"
 
-    case "invalid-credential":
-      return "La contraseña actual no es correcta"
+  switch (error) {
 
     case "weak-password":
-      return "La nueva contraseña es demasiado débil"
+      return "La contraseña es demasiado débil"
+
+    case "same-password":
+      return "La nueva contraseña debe ser diferente"
 
     case "requires-recent-login":
-      return "Volvé a iniciar sesión para continuar"
+      return "Debes volver a iniciar sesión"
 
     case "network":
       return "Sin conexión a internet"

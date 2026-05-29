@@ -1,22 +1,22 @@
 import { Employee, EmployeeStatus, Role } from "../../../domain/models/Service"
 
 export interface EmployeeResponse {
+  id: number,
   name: string
   lastName: string
-  img: string
+  image_url: string
   role: Role
   status: EmployeeStatus
 }
 
 export const employeeToDomain = (
-  id: string,
   response: EmployeeResponse
 ): Employee => {
   return {
-    id,
+    id: response.id,
     name: response.name,
     lastName: response.lastName,
-    img: response.img,
+    img: response.image_url,
     role: response.role,
     status: response.status
   }

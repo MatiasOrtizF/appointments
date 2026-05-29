@@ -11,29 +11,33 @@ import { withTimeout } from "../../utils/withTimeOut"
 import { EmployeeResponse, employeeToDomain } from "../remote/response/EmployeeResponse"
 import { Employee, Role, roles } from "../../domain/models/Service"
 import { EditEmployeeRequest } from "../../domain/models/EditEmployeeRequest"
+import { supabase } from "../../config/Supabase"
 
-const COLLECTION_USER = "user"
+const COLLECTION_USERS = "usuarios"
 
 export class UserRepository {
 
     async createUser(request: CreateUserRequest): Promise<Result<void, UserError>> {
         try {
-            const userId = request.uid
+            const { data, error } = await supabase
+                .from(COLLECTION_USERS)
+                .insert({
+                    id: request.uid,
+                    name: request.name,
+                    last_name: request.lastName,
+                    email: request.email,
+                })
+                .select()
+                .single()
 
-            const userRef = doc(
-                db,
-                COLLECTION_USER,
-                userId
-            );
 
-            await setDoc(userRef, {
-                ...request,
-                createdAt: Timestamp.now(),
-            });
+            if (error) throw error
+            console.log("error al crear usuario2", error)
 
             return { ok: true, data: undefined }
 
         } catch (error) {
+            console.log("error al crear usuario1", error)
             return handleUserError(error)
         }
     }

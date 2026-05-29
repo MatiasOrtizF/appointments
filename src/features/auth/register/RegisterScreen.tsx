@@ -40,8 +40,8 @@ export default function RegisterScreen() {
         if (success) {
             Dialog.show({
                 type: ALERT_TYPE.SUCCESS,
-                title: 'Turno reservado',
-                textBody: 'Puedes ver todos tus turnos en la seccion de booking',
+                title: 'Usuario creado',
+                textBody: 'Te enviamos un enlace de verificación. Si no lo encuentras, revisa spam o promociones.',
                 button: 'Continuar',
                 closeOnOverlayTap: false,
                 onPressButton: () => {

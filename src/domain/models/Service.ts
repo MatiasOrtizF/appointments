@@ -13,7 +13,7 @@ export interface Service {
 }
 
 export interface Employee {
-  id: string,
+  id: number,
   name: string,
   lastName: string,
   img: string,

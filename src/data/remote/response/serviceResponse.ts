@@ -1,33 +1,42 @@
 import { Day, Employee, Service } from "../../../domain/models/Service"
 
 export interface ServiceResponse {
-  name: string
+  id: string,
+  title: string
   description: string
   price: number
-  duration_min: number
-  img: string,
-  employees: string[]
-  days: Day[]
-  hourStart: string
-  hourEnd: string
+  duration_minutes: number
+  image_url: string,
+  available_days: Day[]
+
+  start_time: string
+  end_time: string
+
+  employees: Employee[]
 }
 
 export const toDomain = (
-  id: string,
-  response: ServiceResponse,
-  employees: Employee[]
+response: ServiceResponse
 ): Service => {
 
   return {
-    id,
-    name: response.name,
+    id: response.id,
+    name: response.title,
+
     description: response.description,
+
     price: response.price,
-    duration_min: response.duration_min,
-    img: response.img,
-    employees: employees,
-    days: response.days,
-    hourStart: response.hourStart,
-    hourEnd: response.hourEnd
+
+    duration_min: response.duration_minutes,
+
+    img: response.image_url,
+
+    employees: response.employees,
+
+    days: response.available_days,
+
+    hourStart: response.start_time,
+
+    hourEnd: response.end_time
   }
 }

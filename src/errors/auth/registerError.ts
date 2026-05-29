@@ -1,40 +1,38 @@
-import { User } from "firebase/auth"
-import { Result } from "../../shared/types/result"
-import { UserError } from "../userError"
 
 export type RegisterError =
-    | "email-already-in-use"
-    | "weak-password"
-    | "invalid-email"
-    | "too-many-requests"
-    | "network"
-    | "timeout"
-    | "unknown"
+  | "email-already-in-use"
+  | "weak-password"
+  | "invalid-email"
+  | "too-many-requests"
+  | "network"
+  | "timeout"
+  | "unknown"
 
-export type RegisterResult = Result<User, RegisterError>
+export const mapRegisterErrorToMessage = (
+  error: RegisterError
+): string => {
 
-export const mapRegisterErrorToMessage = (error: RegisterError): UserError => {
-    switch (error) {
+  switch (error) {
 
-        case "email-already-in-use":
-            return "email-already-in-use";
+    case "email-already-in-use":
+      return "El email ya está registrado"
 
-        case "weak-password":
-            return "weak-password";
+    case "weak-password":
+      return "La contraseña es demasiado débil"
 
-        case "invalid-email":
-            return "invalid-email";
+    case "invalid-email":
+      return "El email no es válido"
 
-        case "network":
-            return "network";
+    case "too-many-requests":
+      return "Demasiados intentos. Probá más tarde"
 
-        case "timeout":
-            return "timeout";
+    case "network":
+      return "Sin conexión a internet"
 
-        case "too-many-requests":
-            return "unknown"; // o agregarlo a UserError
+    case "timeout":
+      return "La solicitud tardó demasiado"
 
-        default:
-            return "unknown";
-    }
+    default:
+      return "No se pudo crear la cuenta"
+  }
 }

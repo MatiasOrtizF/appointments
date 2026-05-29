@@ -17,6 +17,7 @@ export const useServiceDetail = () => {
       const result = await serviceRepository.getService(id)
 
       if (result.ok) {
+        console.log("empleados???", result.data)
         setService(result.data)
       } else {
         setError(mapServiceErrorToMessage(result.error))

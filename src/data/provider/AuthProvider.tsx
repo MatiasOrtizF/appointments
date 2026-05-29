@@ -4,91 +4,128 @@ import {
   useEffect,
   useState,
   ReactNode,
-} from "react";
+} from "react"
 
-import { onAuthStateChanged } from "firebase/auth";
-import { doc, onSnapshot } from "firebase/firestore";
+import { User } from "@supabase/supabase-js"
+import { supabase } from "../../config/Supabase"
 
-import { auth, db } from "../../config/Firebase";
-
-type Role = "admin" | "user";
+type Role = "admin" | "user"
 
 type AuthContextType = {
-  loading: boolean;
-  isAuthenticated: boolean;
-  role: Role;
-  isAdmin: boolean;
-};
+  loading: boolean
+  isAuthenticated: boolean
+  role: Role
+  isAdmin: boolean
+  user: User | null
+}
 
 const AuthContext = createContext<AuthContextType>({
   loading: true,
   isAuthenticated: false,
   role: "user",
   isAdmin: false,
-});
+  user: null
+})
 
-export function AuthProvider({ children }: { children: ReactNode }) {
-  const [loading, setLoading] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [role, setRole] = useState<Role>("user");
+export function AuthProvider({
+  children
+}: {
+  children: ReactNode
+}) {
+
+  const [loading, setLoading] = useState(true)
+
+  const [user, setUser] =
+    useState<User | null>(null)
+
+  const [role, setRole] =
+    useState<Role>("user")
 
   useEffect(() => {
-    let unsubscribeUserDoc: (() => void) | null = null;
 
-    const unsubscribeAuth = onAuthStateChanged(auth, (firebaseUser) => {
-      if (unsubscribeUserDoc) {
-        unsubscribeUserDoc();
-        unsubscribeUserDoc = null;
-      }
+    // sesión inicial
+    supabase.auth.getUser()
+      .then(async ({ data }) => {
 
-      if (!firebaseUser) {
-        setIsAuthenticated(false);
-        setRole("user");
-        setLoading(false);
-        return;
-      }
+        const currentUser = data.user
 
-      setIsAuthenticated(true);
-      setLoading(true);
+        setUser(currentUser)
 
-      unsubscribeUserDoc = onSnapshot(
-        doc(db, "user", firebaseUser.uid),
-        (snapshot) => {
-          const data = snapshot.data();
-
-          setRole(data?.role === "admin" ? "admin" : "user");
-          setLoading(false);
-        },
-        () => {
-          setRole("user");
-          setLoading(false);
+        if (!currentUser) {
+          setRole("user")
+          setLoading(false)
+          return
         }
-      );
-    });
+
+        await loadRole(currentUser.id)
+
+        setLoading(false)
+      })
+
+    // listener auth
+    const {
+      data: listener
+    } = supabase.auth.onAuthStateChange(
+      async (_, session) => {
+
+        const currentUser =
+          session?.user ?? null
+
+        setUser(currentUser)
+
+        if (!currentUser) {
+          setRole("user")
+          setLoading(false)
+          return
+        }
+
+        await loadRole(currentUser.id)
+
+        setLoading(false)
+      }
+    )
 
     return () => {
-      unsubscribeAuth();
+      listener.subscription.unsubscribe()
+    }
 
-      if (unsubscribeUserDoc) {
-        unsubscribeUserDoc();
-      }
-    };
-  }, []);
+  }, [])
+
+  const loadRole = async (userId: string) => {
+
+    const { data, error } = await supabase
+      .from("usuarios")
+      .select("role")
+      .eq("id", userId)
+      .single()
+
+    if (error || !data) {
+      setRole("user")
+      return
+    }
+
+    setRole(
+      data.role === "admin"
+        ? "admin"
+        : "user"
+    )
+  }
 
   return (
     <AuthContext.Provider
       value={{
         loading,
-        isAuthenticated,
+        isAuthenticated: !!user,
         role,
         isAdmin: role === "admin",
+        user
       }}
     >
       {children}
     </AuthContext.Provider>
-  );
+  )
 }
 
 export function useAuth() {
-  return useContext(AuthContext);
+  return useContext(AuthContext)
 }

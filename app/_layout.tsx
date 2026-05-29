@@ -1,91 +1,133 @@
-import { Slot, useRouter, useSegments } from 'expo-router'
-import { SafeAreaProvider } from 'react-native-safe-area-context'
-import { StatusBar } from 'react-native'
+import { Slot, useRouter, useSegments } from "expo-router"
 
-import { AlertNotificationRoot } from 'react-native-alert-notification'
-import { ThemeProvider, useTheme } from '../src/data/provider/ThemeProvider'
-import { useEffect } from 'react'
-import { AuthProvider, useAuth } from '../src/data/provider/AuthProvider'
-import LoadingScreen from '../src/shared/LoadingScreen'
-import { auth } from '../src/config/Firebase'
+import { SafeAreaProvider } from "react-native-safe-area-context"
+
+import { StatusBar } from "react-native"
+
+import { AlertNotificationRoot }
+  from "react-native-alert-notification"
+
+import { useEffect } from "react"
+
+import {
+  ThemeProvider,
+  useTheme
+} from "../src/data/provider/ThemeProvider"
+
+import {
+  AuthProvider,
+  useAuth
+} from "../src/data/provider/AuthProvider"
+
+import LoadingScreen
+  from "../src/shared/LoadingScreen"
 
 export default function RootLayout() {
+
   return (
     <SafeAreaProvider>
+
       <AlertNotificationRoot>
+
         <ThemeProvider>
+
           <AuthProvider>
             <NavigationGuard />
           </AuthProvider>
+
         </ThemeProvider>
+
       </AlertNotificationRoot>
+
     </SafeAreaProvider>
   )
 }
 
 function NavigationGuard() {
-  const router = useRouter();
-  const segments = useSegments();
 
-  const { loading, isAuthenticated } = useAuth();
+  const router = useRouter()
+
+  const segments = useSegments()
+
+  const {
+    loading,
+    isAuthenticated,
+    user
+  } = useAuth()
 
   useEffect(() => {
-    if (loading) return;
 
-    const inAuthGroup = segments[0] === "auth";
-    const inVerifyScreen = segments.includes("verify-email");
+    if (loading) return
 
-    const currentUser = auth.currentUser;
-    const isEmailVerified = currentUser?.emailVerified ?? false;
+    const inAuthGroup =
+      segments[0] === "auth"
 
+    const inVerifyScreen =
+      segments.includes("verify-email")
 
-    // No logueado
+    const isEmailVerified =
+      !!user?.email_confirmed_at
+
+    // NO autenticado
     if (!isAuthenticated) {
-      if (inVerifyScreen) {
-        router.replace("/auth/login");
-      }
 
       if (!inAuthGroup) {
-        router.replace("/auth/login");
+        router.replace("/auth/login")
       }
-      
-      return;
+
+      return
     }
 
-    // Logueado pero email NO verificado
+    // autenticado pero NO verificado
     if (!isEmailVerified) {
+
       if (!inVerifyScreen) {
-        router.replace("/auth/verify-email");
+        router.replace("/auth/verify-email")
       }
-      return;
+
+      return
     }
 
-    // Logueado + verificado
+    // autenticado + verificado
     if (inAuthGroup) {
-      router.replace("/bottom");
-      return;
+      router.replace("/bottom")
     }
-  }, [loading, isAuthenticated, segments]);
+
+  }, [
+    loading,
+    isAuthenticated,
+    user,
+    segments
+  ])
 
   if (loading) {
-    return (
-      <LoadingScreen />
-    );
+    return <LoadingScreen />
   }
 
-  return <AppContent />;
+  return <AppContent />
 }
 
 function AppContent() {
-  const { isDarkMode } = useTheme();
+
+  const { isDarkMode } = useTheme()
 
   return (
     <>
       <StatusBar
-        barStyle={isDarkMode ? "light-content" : "dark-content"}
-        backgroundColor={isDarkMode ? "#1f1f1f" : "#f5f6fa"}
+        barStyle={
+          isDarkMode
+            ? "light-content"
+            : "dark-content"
+        }
+
+        backgroundColor={
+          isDarkMode
+            ? "#1f1f1f"
+            : "#f5f6fa"
+        }
       />
+
       <Slot />
     </>
-  );
+  )
 }

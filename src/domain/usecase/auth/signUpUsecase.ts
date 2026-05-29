@@ -23,7 +23,7 @@ export const signUpUsecase = async (
     email: input.email,
     role: roles.USER,
     status: employeeStatuses.ACTIVE,
-    uid: user.data.uid
+    uid: user.data.id
   };
 
   return userRepository.createUser(request)

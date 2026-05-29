@@ -1,20 +1,21 @@
-import { Result } from "../../shared/types/result"
-
 export type VerifyEmailError =
   | "unauthenticated"
+  | "not-verified"
   | "network"
   | "timeout"
   | "unknown"
 
-export type VerifyEmailResult =
-  Result<boolean, VerifyEmailError>
-
 export const mapVerifyEmailErrorToMessage = (
   error: VerifyEmailError
 ): string => {
+
   switch (error) {
+
     case "unauthenticated":
-      return "Tenés que iniciar sesión"
+      return "Debes iniciar sesión"
+
+    case "not-verified":
+      return "Tu email aún no fue verificado"
 
     case "network":
       return "Sin conexión a internet"
