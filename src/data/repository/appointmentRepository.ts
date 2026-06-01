@@ -28,6 +28,7 @@ export class AppointmentRepository {
           servicios (*)
         `)
         .eq("user_id", uid)
+        .neq("status", "cancelled")
         .gt("appointment_at", now)
         .order("appointment_at", { ascending: true })
         .limit(10);
@@ -68,6 +69,7 @@ export class AppointmentRepository {
           servicios (*)
         `)
         .eq("user_id", uid)
+        .neq("status", "cancelled")
         .lt("appointment_at", now)
         .order("appointment_at", { ascending: false })
         .limit(10);
@@ -91,6 +93,28 @@ export class AppointmentRepository {
       return handleAppointmentError(error);
     }
   };
+
+  async cancelAppointment(
+    appointmentId: string
+  ): Promise<Result<void, AppointmentError>> {
+    try {
+
+      const { error } = await supabase
+        .from(TABLE_TURNOS)
+        .delete()
+        .eq("id", appointmentId);
+
+      if (error) throw error;
+
+      return {
+        ok: true,
+        data: undefined
+      };
+
+    } catch (error) {
+      return handleAppointmentError(error);
+    }
+  }
 
   async addAppointment(request: CreateAppointmentRequest): Promise<Result<void, AppointmentError>> {
     try {

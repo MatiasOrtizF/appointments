@@ -3,6 +3,7 @@ import { Appointment } from "../../domain/models/Appointment"
 import { mapAppointmentErrorToMessage } from "../../errors/appointmentErrors"
 import { getUpcomingAppointmentsUsecase } from "../../domain/usecase/appointments/getUpcomingAppointmentsUsecase"
 import { getPastAppointmentsUsecase } from "../../domain/usecase/appointments/getPastAppointmentsUsecase"
+import { appointmentRepository } from "../../data/repository/AppointmentRepository"
 
 export const useBooking = () => {
   const [pastAppointments, setPastAppointments] = useState<Appointment[]>([])
@@ -10,6 +11,7 @@ export const useBooking = () => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [success, setSuccess] = useState<boolean | null>(null);
 
   const onRefresh = async (tab: string) => {
     setRefreshing(true);
@@ -23,8 +25,33 @@ export const useBooking = () => {
     setRefreshing(false);
   };
 
-  const cancelAppointment = async (appointmentId: String) => {
-    console.log("cancelar" + appointmentId)
+  const cancelAppointment = async (appointmentId: string) => {
+    setLoading(true)
+    setError(null)
+
+    try {
+      const result = await appointmentRepository.cancelAppointment(appointmentId)
+
+      if (result.ok) {
+        setUpcommingAppointments(prev => {
+          console.log("antes", prev)
+
+          const filtered = prev?.filter(
+            appointment => appointment.id !== appointmentId
+          ) ?? null
+
+          console.log("despues", filtered)
+
+          return filtered
+        })
+        setSuccess(true)
+      } else {
+        setError(mapAppointmentErrorToMessage(result.error))
+      }
+
+    } finally {
+      setLoading(false)
+    }
   }
 
   const fetchUpcomingAppointments = async () => {
@@ -73,6 +100,7 @@ export const useBooking = () => {
     upcommingAppointments,
     loading,
     error,
+    success,
     cancelAppointment,
     refreshing,
     onRefresh

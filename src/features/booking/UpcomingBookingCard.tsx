@@ -6,39 +6,39 @@ import { useTheme } from "../../data/provider/ThemeProvider";
 import { darkColors, lightColors } from "../../theme/colors";
 import { useBooking } from "./useBooking";
 import { formatAppointmentDate } from "../../utils/formatAppointmentDate";
+import { useEffect } from "react";
+import { ALERT_TYPE, Dialog, Toast } from "react-native-alert-notification";
 
 type Props = {
-    appointment: Appointment
+    appointment: Appointment,
+    onCancel: (appointmentId: string) => void;
 }
 
 const handleCancel = (onCancel: (bookingId: string) => void, bookingId: string) => {
-  Alert.alert(
-    "Cancelar turno",
-    "¿Estás seguro de que querés cancelar este turno?",
-    [
-      {
-        text: "No",
-        style: "cancel",
-      },
-      {
-        text: "Cancelar",
-        style: "destructive",
-        onPress: () => onCancel(bookingId),
-      },
-    ]
-  );
+    Alert.alert(
+        "Cancelar turno",
+        "¿Estás seguro de que querés cancelar este turno?",
+        [
+            {
+                text: "No",
+                style: "cancel",
+            },
+            {
+                text: "Cancelar",
+                style: "destructive",
+                onPress: () => onCancel(bookingId),
+            },
+        ]
+    );
 };
 
-
-export const UpcomingBookingCard = ({ appointment }: Props) => {
+export const UpcomingBookingCard = ({ appointment, onCancel }: Props) => {
     const { id, employee, service, appointmentAt, status } = appointment
     const { isDarkMode } = useTheme();
     const colors = isDarkMode ? darkColors : lightColors;
     const statusStyle =
         APPOINTMENT_STATUS_STYLES[status.toLowerCase() as keyof typeof APPOINTMENT_STATUS_STYLES];
-
-    const { cancelAppointment } = useBooking()
-
+        
     return (
         <View style={styles.card}>
 
@@ -70,29 +70,29 @@ export const UpcomingBookingCard = ({ appointment }: Props) => {
 
 
             {/* INFO ROW */}
-            <View style={[styles.infoRow, {backgroundColor: colors.bgCard}]}>
+            <View style={[styles.infoRow, { backgroundColor: colors.bgCard }]}>
 
                 <View style={styles.dateContainer}>
                     <Ionicons name="calendar-outline" size={18} color={colors.textSecondary} />
 
                     <View>
-                        <Text style={[styles.label, {color: colors.textSecondary}]}>Date & Time</Text>
-                        <Text style={[styles.date, {color: colors.textPrimary}]}>{formatAppointmentDate(appointment.appointmentAt)}</Text>
+                        <Text style={[styles.label, { color: colors.textSecondary }]}>Date & Time</Text>
+                        <Text style={[styles.date, { color: colors.textPrimary }]}>{formatAppointmentDate(appointment.appointmentAt)}</Text>
                     </View>
                 </View>
 
                 <View style={styles.priceContainer}>
-                    <Text style={[styles.label, {color: colors.textSecondary}]}>Price</Text>
-                    <Text style={[styles.price, {color: colors.textPrimary}]}>${service.price}</Text>
+                    <Text style={[styles.label, { color: colors.textSecondary }]}>Price</Text>
+                    <Text style={[styles.price, { color: colors.textPrimary }]}>${service.price}</Text>
                 </View>
 
             </View>
 
             {/* DIVIDER */}
-            <View style={{ height: 1, backgroundColor: colors.divider}} />
+            <View style={{ height: 1, backgroundColor: colors.divider }} />
 
             {/* CANCEL BUTTON */}
-            <Pressable style={[styles.cancelButton, {backgroundColor: colors.bgCard}]} onPress={() => handleCancel(cancelAppointment, id)}>
+            <Pressable style={[styles.cancelButton, { backgroundColor: colors.bgCard }]} onPress={() => handleCancel(onCancel, id)}>
                 <Text style={styles.cancelText}>Cancel</Text>
             </Pressable>
 

@@ -2,7 +2,7 @@ import { FlatList, Text, View, StyleSheet, ListRenderItem, Pressable, RefreshCon
 import { PastBookingCard } from "./PastBookingCard";
 import { Appointment } from "../../domain/models/Appointment";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { UpcomingBookingCard } from "./UpcomingBookingCard";
 import { useBooking } from "./useBooking";
 import { lightColors, darkColors } from "../../theme/colors";
@@ -10,6 +10,7 @@ import { createGlobalStyles } from "../../theme/globalStyles";
 import { useTheme } from "../../data/provider/ThemeProvider";
 import { Colors } from "../../theme/types";
 import LoadingScreen from "../../shared/LoadingScreen";
+import { ALERT_TYPE, Dialog, Toast } from "react-native-alert-notification";
 
 type Props = {
     tab: "upcoming" | "past";
@@ -24,7 +25,28 @@ export default function BookingScreen() {
     const globalStyles: ReturnType<typeof createGlobalStyles> = createGlobalStyles(isDarkMode)
     const colors = isDarkMode ? darkColors : lightColors
 
-    const { pastAppointments, upcommingAppointments, loading, refreshing, onRefresh } = useBooking()
+    const { pastAppointments, upcommingAppointments, loading, error, success, cancelAppointment, refreshing, onRefresh } = useBooking()
+
+    useEffect(() => {
+        if (error) {
+            Dialog.show({
+                type: ALERT_TYPE.DANGER,
+                title: "Error",
+                textBody: error,
+                button: "Cerrar",
+                closeOnOverlayTap: false,
+            });
+        }
+
+        if (success) {
+            Toast.show({
+                type: ALERT_TYPE.SUCCESS,
+                title: 'Success',
+                textBody: 'Turno cancelado con exito!',
+            })
+        }
+    }, [error, success])
+
 
     if (loading) {
         return <LoadingScreen />
@@ -37,6 +59,7 @@ export default function BookingScreen() {
         tab === "upcoming" ? (
             <UpcomingBookingCard
                 appointment={item}
+                onCancel={cancelAppointment}
             />
         ) : (
             <PastBookingCard
@@ -84,7 +107,7 @@ export default function BookingScreen() {
                 refreshControl={
                     <RefreshControl
                         refreshing={refreshing}
-                        onRefresh={()=> onRefresh(tab)}
+                        onRefresh={() => onRefresh(tab)}
                     />
                 }
             />
