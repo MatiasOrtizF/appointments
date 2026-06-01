@@ -12,7 +12,6 @@ import { appointmentRepository } from "../../data/repository/AppointmentReposito
 export const useScheduleAppointment = () => {
   const [service, setService] = useState<Service>()
   const [hours, setHours] = useState<Hour[]>()
-  const [hoursNotAvailable, setHoursNotAvailable] = useState<string[]>([])
   const [daysNotAvailable, setDaysNotAvailable] = useState<number[]>()
   const today = new Date();
   const todayString = today.toISOString().split("T")[0];
@@ -22,32 +21,30 @@ export const useScheduleAppointment = () => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null);
 
-  const fetchHourAvailable = async (serviceId: string) => {
+  const fetchHourAvailable = async (serviceId: string, employeeId: string, selectedDay: string | null) => {
     setLoading(true)
     setError(null)
     try {
-      const result = await appointmentRepository.getHoursAvailable(serviceId, todayString)
+      const result = await appointmentRepository.getHoursAvailable(serviceId, employeeId, selectedDate)
 
       if (result.ok) {
-        console.log("a ver", result.data)
-        setHoursNotAvailable(result.data)
+        const hoursNotAvailable = result.data
+        fetchService(serviceId, hoursNotAvailable, selectedDate)
       } else {
         setError(mapAppointmentErrorToMessage(result.error))
       }
     } finally {
-      fetchService(serviceId)
     }
   }
 
-  const fetchService = async (serviceId: string) => {
+  const fetchService = async (serviceId: string, hoursNotAvailable: string[], day: string) => {
 
     try {
       const result = await serviceRepository.getService(serviceId)
       if (result.ok) {
 
         setService(result.data)
-        console.log("hour start", result.data.hourStart)
-        const hoursGenerated = generateHours(result.data.hourStart, result.data.hourEnd, result.data.duration_min, hoursNotAvailable)
+        const hoursGenerated = generateHours(result.data.hourStart, result.data.hourEnd, result.data.duration_min, hoursNotAvailable, day)
         setHours(hoursGenerated)
         const missingDays = getMissingDaysIndexes(result.data.days)
         setDaysNotAvailable(missingDays)
@@ -60,23 +57,16 @@ export const useScheduleAppointment = () => {
     }
   }
 
-  const createApointment = async (date: string, time: string | null, employeeImg: string | undefined, employeeName: string | undefined, employeeId: string | undefined) => {
+  const createApointment = async (employeeId: string | undefined) => {
     setLoading(true)
     setError(null)
 
-    if (time != null && service != null && selectedTime != null) {
+    if (service != null && selectedTime != null) {
       const input: CreateAppointmentInput = {
-        dateTime: date + "T" + time,
         date: selectedDate,
         employeeId: employeeId ? employeeId : "",
-        employeeImg: employeeImg ? employeeImg : "",
-        employeeName: employeeName ? employeeName : "",
-        price: service.price,
-        service: service.name,
         serviceId: service.id,
-        serviceImg: service.img,
-        time: selectedTime,
-        status: "pending",
+        time: selectedTime
       }
 
       try {

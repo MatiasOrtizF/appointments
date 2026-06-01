@@ -1,15 +1,8 @@
 import { Hour } from "../../utils/generateHours";
 
 export interface CreateAppointmentInput {
-    dateTime: string,
     date: string,
+    time: Hour,
     employeeId: string,
-    employeeImg: string,
-    employeeName: string,
-    price: number,
-    service: string,
     serviceId: string,
-    serviceImg: string,
-    status: string,
-    time: Hour
 }

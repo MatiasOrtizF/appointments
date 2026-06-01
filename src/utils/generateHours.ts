@@ -4,8 +4,10 @@ export const generateHours = (
   hourStart: string,
   hourEnd: string,
   duration: number,
-  hoursNotAvailable: string[]
+  hoursNotAvailable: string[],
+  day: string
 ): Hour[] => {
+  console.log("los horarios no disponibles son: ", hoursNotAvailable, "hour start: ", hourStart, "hour end: ", hourEnd)
   const result: Hour[] = [];
 
   const [startHour, startMinute] = hourStart.split(":").map(Number);
@@ -15,7 +17,9 @@ export const generateHours = (
   const endTotalMinutes = endHour * 60 + endMinute;
 
   const now = new Date();
-  const currentTotalMinutes = now.getHours() * 60 + now.getMinutes();
+  const todayString = now.toISOString().split("T")[0];
+  const isNow = todayString === day
+  const currentTotalMinutes = isNow ? now.getHours() * 60 + now.getMinutes() : 0;
 
   for (
     let current = startTotalMinutes;
@@ -32,8 +36,6 @@ export const generateHours = (
 
     const isFutureHour = current > currentTotalMinutes;
     const isAvailable = !hoursNotAvailable.includes(time);
-
-    console.log(isAvailable)
 
     if (isFutureHour && isAvailable) {
       result.push(`${formattedHour}:${formattedMinute}`);

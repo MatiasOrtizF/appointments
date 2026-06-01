@@ -6,8 +6,10 @@ import { Result } from '../../shared/types/result';
 import { AppointmentError } from '../../errors/appointmentErrors';
 import { FirebaseError } from 'firebase/app';
 import { CreateAppointmentRequest } from '../../domain/models/CreateAppointmentRequest';
+import { supabase } from '../../config/Supabase';
 
 const COLLECTION_APPOINTMENT = "appointment"
+const TABLE_TURNOS = "turnos"
 
 export class AppointmentRepository {
   async getUpcomingAppointments(uid: string): Promise<Result<Appointment[], AppointmentError>> {
@@ -67,54 +69,68 @@ export class AppointmentRepository {
 
   async addAppointment(request: CreateAppointmentRequest): Promise<Result<void, AppointmentError>> {
     try {
-      const appointmentId =
-        `${request.employeeId}_${request.dateTime.toMillis()}`;
 
-      const appointmentRef = doc(
-        db,
-        COLLECTION_APPOINTMENT,
-        appointmentId
-      );
+      console.log("important!! ", request.appointmentAt)
+      const { error } = await supabase
+        .from(TABLE_TURNOS)
+        .insert({
+          user_id: request.userId,
+          employee_id: request.employeeId,
+          service_id: request.serviceId,
+          appointment_at: request.appointmentAt,
+        });
 
-      const snapshot = await getDoc(appointmentRef);
+      if (error) {
+        console.log("error addAppointment", error);
 
-      if (snapshot.exists()) {
-        return { ok: false, error: "slot_taken" };
+        if (error.code === "23505") {
+          return { ok: false, error: "slot_taken" };
+        }
+
+        throw error;
       }
 
-      await setDoc(appointmentRef, {
-        ...request,
-        id: appointmentId,
-        createdAt: Timestamp.now(),
-      });
-
-      return { ok: true, data: undefined }
+      return {
+        ok: true,
+        data: undefined
+      };
 
     } catch (error) {
       return handleAppointmentError(error);
     }
   };
 
-  async getHoursAvailable(serviceId: string, day: string): Promise<Result<string[], AppointmentError>> {
+  async getHoursAvailable(serviceId: string, employeeId: string, day: string): Promise<Result<string[], AppointmentError>> {
     try {
+      const startDate = `${day}T00:00:00-03:00`;
+      const endDate = `${day}T23:59:59-03:00`;
 
-      const q = query(
-        collection(db, COLLECTION_APPOINTMENT),
-        where("serviceId", "==", serviceId),
-        where("date", "==", day),
+      const { data, error } = await supabase
+        .from(TABLE_TURNOS)
+        .select(`appointment_at`)
+        .eq("service_id", serviceId)
+        .eq("employee_id", employeeId)
+        .gte("appointment_at", startDate)
+        .lte("appointment_at", endDate);
+
+      if (error) throw error
+
+      const appointments = data.map(item =>
+        new Date(item.appointment_at)
+          .toLocaleTimeString("es-AR", {
+            timeZone: "America/Argentina/Buenos_Aires",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false
+          })
       );
 
-      const snapshot = await getDocs(q);
+      console.log("horarios ocupados", appointments)
 
-      const hours = snapshot.docs.map((doc) => {
-        const data = doc.data() as AppointmentResponse
-        return data.time
-      })
-
-      return { ok: true, data: hours }
-
+      return { ok: true, data: appointments }
     } catch (error) {
-      return handleAppointmentError(error);
+      console.log("otro error", error)
+      return handleAppointmentError(error)
     }
   };
 

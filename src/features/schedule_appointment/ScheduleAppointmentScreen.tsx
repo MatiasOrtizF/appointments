@@ -68,16 +68,22 @@ export const ScheduleAppointmentScreen: React.FC = () => {
   const colors = isDarkMode ? darkColors : lightColors;
 
   const handleContinue = () => {
-
-    createApointment(selectedDate, selectedTime, employeeImg, employeeName, employeeId)
+    createApointment(employeeId)
     //console.log(serviceName + selectedDate + "T" + selectedTime+":00")
   };
 
   useEffect(() => {
-    if (serviceId) {
-      fetchHourAvailable(serviceId)
+    if (serviceId && employeeId) {
+      fetchHourAvailable(serviceId, employeeId, null)
     }
   }, [])
+
+  useEffect(()=> {
+      if (serviceId && employeeId) {
+        fetchHourAvailable(serviceId, employeeId, selectedDate)
+      }
+    console.log("lo cambie ", selectedDate)
+  }, [selectedDate])
 
   useEffect(() => {
     if (success) {

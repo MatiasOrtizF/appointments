@@ -1,4 +1,3 @@
-import { Timestamp } from "firebase/firestore"
 import { appointmentRepository } from "../../../data/repository/AppointmentRepository"
 import { authRepository } from "../../../data/repository/AuthRepository"
 import { AppointmentError } from "../../../errors/appointmentErrors"
@@ -17,9 +16,10 @@ export const addAppointmentUsecase = async (
     }
 
     const request: CreateAppointmentRequest = {
-        ...input,
-        uid: user.uid,
-        dateTime: Timestamp.fromDate(new Date(input.dateTime))
+        userId: user.id,
+        employeeId: input.employeeId,
+        serviceId: input.serviceId,
+        appointmentAt: input.date + "T" + input.time + ":00-03:00"
     };
 
     return appointmentRepository.addAppointment(request)

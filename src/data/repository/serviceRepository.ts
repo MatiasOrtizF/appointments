@@ -17,7 +17,6 @@ const COLLECTION_EMPLOYEE = "employee"
 export class ServiceRepository {
 
   async getServices(): Promise<Result<Service[], ServiceError>> {
-    console.log("llamo a servicios")
     try {
       const { data, error } = await supabase
         .from("servicios")
@@ -41,8 +40,6 @@ export class ServiceRepository {
   `)
       if (error) throw error
 
-      console.log("data", data)
-
       const services: Service[] = (data ?? []).map((service) => {
         const employees =
           service.servicios_empleados?.map((se: any) => se.empleado) ?? []
@@ -60,8 +57,6 @@ export class ServiceRepository {
           employees
         })
       })
-
-      console.log("services", services)
 
       return { ok: true, data: services }
     } catch (error) {
@@ -97,7 +92,7 @@ export class ServiceRepository {
         .single()
 
       if (error) throw error
-
+      console.log("data", data)
       const employees: Employee[] =
       data.servicios_empleados?.map((se: any) =>
         employeeToDomain(se.empleado)
