@@ -5,6 +5,7 @@ import { APPOINTMENT_STATUS_STYLES } from "../../constants/statusStyles";
 import { useTheme } from "../../data/provider/ThemeProvider";
 import { darkColors, lightColors } from "../../theme/colors";
 import { useBooking } from "./useBooking";
+import { formatAppointmentDate } from "../../utils/formatAppointmentDate";
 
 type Props = {
     appointment: Appointment
@@ -30,7 +31,7 @@ const handleCancel = (onCancel: (bookingId: string) => void, bookingId: string) 
 
 
 export const UpcomingBookingCard = ({ appointment }: Props) => {
-    const { id, serviceImg, status, service, date, time, price, employeeName } = appointment
+    const { id, employee, service, appointmentAt, status } = appointment
     const { isDarkMode } = useTheme();
     const colors = isDarkMode ? darkColors : lightColors;
     const statusStyle =
@@ -43,7 +44,7 @@ export const UpcomingBookingCard = ({ appointment }: Props) => {
 
             {/* IMAGE */}
             <View style={styles.imageContainer}>
-                <Image source={{ uri: serviceImg }} style={styles.image} />
+                <Image source={{ uri: service.img }} style={styles.image} />
 
                 <View
                     style={[
@@ -62,8 +63,8 @@ export const UpcomingBookingCard = ({ appointment }: Props) => {
                 </View>
 
                 <View style={styles.imageBottom}>
-                    <Text style={styles.service}>{service}</Text>
-                    <Text style={styles.employee}>con {employeeName}</Text>
+                    <Text style={styles.service}>{service.name}</Text>
+                    <Text style={styles.employee}>con {employee.name}</Text>
                 </View>
             </View>
 
@@ -76,13 +77,13 @@ export const UpcomingBookingCard = ({ appointment }: Props) => {
 
                     <View>
                         <Text style={[styles.label, {color: colors.textSecondary}]}>Date & Time</Text>
-                        <Text style={[styles.date, {color: colors.textPrimary}]}>{date} {time}</Text>
+                        <Text style={[styles.date, {color: colors.textPrimary}]}>{formatAppointmentDate(appointment.appointmentAt)}</Text>
                     </View>
                 </View>
 
                 <View style={styles.priceContainer}>
                     <Text style={[styles.label, {color: colors.textSecondary}]}>Price</Text>
-                    <Text style={[styles.price, {color: colors.textPrimary}]}>${price}</Text>
+                    <Text style={[styles.price, {color: colors.textPrimary}]}>${service.price}</Text>
                 </View>
 
             </View>

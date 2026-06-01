@@ -5,7 +5,7 @@ import { withTimeout } from "../../utils/withTimeOut"
 import { ServiceError } from "../../errors/serviceErrors"
 import { Result } from "../../shared/types/result"
 import { FirebaseError } from "firebase/app"
-import { ServiceResponse, toDomain } from "../remote/response/ServiceResponse"
+import { ServiceResponse, serviceToDomain } from "../remote/response/ServiceResponse"
 import { EmployeeResponse, employeeToDomain } from "../remote/response/EmployeeResponse"
 import { CreateServiceRequest } from "../../domain/models/CreateServiceRequest"
 import { EditServiceRequest } from "../../domain/models/EditServiceRequest"
@@ -44,7 +44,7 @@ export class ServiceRepository {
         const employees =
           service.servicios_empleados?.map((se: any) => se.empleado) ?? []
 
-        return toDomain({
+        return serviceToDomain({
           id: service.id,
           title: service.title,
           description: service.description,
@@ -98,7 +98,7 @@ export class ServiceRepository {
         employeeToDomain(se.empleado)
       ) ?? []
 
-      const service = toDomain({
+      const service = serviceToDomain({
         id: data.id,
         title: data.title,
         description: data.description,

@@ -1,37 +1,54 @@
 import { collection, doc, getDoc, getDocs, limit, query, setDoc, Timestamp, where } from 'firebase/firestore';
 import { Appointment } from '../../domain/models/Appointment'
-import { AppointmentResponse, toDomain } from '../remote/response/AppointmentResponse';
+import { AppointmentResponse, appointmentToDomain } from '../remote/response/AppointmentResponse';
 import { db } from '../../config/Firebase';
 import { Result } from '../../shared/types/result';
 import { AppointmentError } from '../../errors/appointmentErrors';
 import { FirebaseError } from 'firebase/app';
 import { CreateAppointmentRequest } from '../../domain/models/CreateAppointmentRequest';
 import { supabase } from '../../config/Supabase';
+import { employeeToDomain } from '../remote/response/EmployeeResponse';
+import { serviceToDomain } from '../remote/response/ServiceResponse';
 
 const COLLECTION_APPOINTMENT = "appointment"
 const TABLE_TURNOS = "turnos"
 
 export class AppointmentRepository {
+
   async getUpcomingAppointments(uid: string): Promise<Result<Appointment[], AppointmentError>> {
     try {
 
-      const now = Timestamp.fromDate(new Date())
+      const now = new Date().toISOString();
 
-      const q = query(
-        collection(db, COLLECTION_APPOINTMENT),
-        where("uid", "==", uid),
-        where("dateTime", ">", now),
-        limit(10)
-      );
+      const { data, error } = await supabase
+        .from(TABLE_TURNOS)
+        .select(`
+          *,
+          empleados (*),
+          servicios (*)
+        `)
+        .eq("user_id", uid)
+        .gt("appointment_at", now)
+        .order("appointment_at", { ascending: true })
+        .limit(10);
 
-      const snapshot = await getDocs(q);
+      if (error) throw error;
 
-      const appointments = snapshot.docs.map((doc) => {
-        const data = doc.data() as AppointmentResponse
-        return toDomain(doc.id, data)
+      const appointments: Appointment[] = (data ?? []).map((appointment) => {
+        return appointmentToDomain({
+          id: appointment.id,
+          created_at: appointment.created_at,
+          employee: employeeToDomain(appointment.empleados),
+          service: serviceToDomain(appointment.servicios),
+          appointment_at: appointment.appointment_at,
+          status: appointment.status,
+        })
       })
 
-      return { ok: true, data: appointments }
+      return {
+        ok: true,
+        data: appointments
+      };
 
     } catch (error) {
       return handleAppointmentError(error);
@@ -39,26 +56,34 @@ export class AppointmentRepository {
   };
 
   async getPastAppointments(uid: string): Promise<Result<Appointment[], AppointmentError>> {
-    console.log("llegaste")
     try {
 
-      const now = Timestamp.fromDate(new Date())
+      const now = new Date().toISOString();
 
-      const q = query(
-        collection(db, COLLECTION_APPOINTMENT),
-        where("uid", "==", uid),
-        where("dateTime", "<", now),
-        limit(10)
-      );
+      const { data, error } = await supabase
+        .from(TABLE_TURNOS)
+        .select(`
+          *,
+          empleados (*),
+          servicios (*)
+        `)
+        .eq("user_id", uid)
+        .lt("appointment_at", now)
+        .order("appointment_at", { ascending: false })
+        .limit(10);
 
-      const snapshot = await getDocs(q);
+      if (error) throw error;
 
-      const appointments = snapshot.docs.map((doc) => {
-        const data = doc.data() as AppointmentResponse
-        return toDomain(doc.id, data)
+      const appointments: Appointment[] = (data ?? []).map((appointment) => {
+        return appointmentToDomain({
+          id: appointment.id,
+          created_at: appointment.created_at,
+          employee: employeeToDomain(appointment.empleados),
+          service: serviceToDomain(appointment.servicios),
+          appointment_at: appointment.appointment_at,
+          status: appointment.status,
+        })
       })
-
-      console.log("Mira esto" + appointments)
 
       return { ok: true, data: appointments }
 

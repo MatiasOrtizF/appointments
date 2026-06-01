@@ -15,7 +15,7 @@ export interface ServiceResponse {
   employees: Employee[]
 }
 
-export const toDomain = (
+export const serviceToDomain = (
 response: ServiceResponse
 ): Service => {
 

@@ -4,25 +4,26 @@ import { APPOINTMENT_STATUS_STYLES } from "../../constants/statusStyles";
 import { useTheme } from "../../data/provider/ThemeProvider";
 import { darkColors, lightColors } from "../../theme/colors";
 import { createGlobalStyles } from "../../theme/globalStyles";
+import { formatAppointmentDate } from "../../utils/formatAppointmentDate";
 
 type Props = {
   appointment: Appointment
 }
 
 export const PastBookingCard = ({ appointment }: Props) => {
-  const { id, serviceImg, status, service, date, time } = appointment
+  const { id, employee, service, appointmentAt, status } = appointment
   const statusStyle =
     APPOINTMENT_STATUS_STYLES[status.toLowerCase() as keyof typeof APPOINTMENT_STATUS_STYLES];
 
   const { isDarkMode } = useTheme();
-    const globalStyles = createGlobalStyles(isDarkMode)
+  const globalStyles = createGlobalStyles(isDarkMode)
   const colors = isDarkMode ? darkColors : lightColors
 
   return (
-    <View style={[styles.card, {backgroundColor: colors.bgCard}]}>
+    <View style={[styles.card, { backgroundColor: colors.bgCard }]}>
 
       {/* Imagen izquierda */}
-      <Image source={{ uri: serviceImg }} style={styles.image} />
+      <Image source={{ uri: service.img }} style={styles.image} />
 
       {/* Información central */}
       <View style={styles.infoContainer}>
@@ -36,18 +37,11 @@ export const PastBookingCard = ({ appointment }: Props) => {
             { color: statusStyle.text }
           ]}>{status}</Text>
         </View>
-        <Text style={[styles.serviceName, {color: colors.textPrimary}]}>{service}</Text>
+        <Text style={[styles.serviceName, { color: colors.textPrimary }]}>{service.name}</Text>
         <View style={styles.dateContainer}>
-          <Text style={[styles.date, {color: colors.textSecondary}]}>{date}</Text>
-          <Text style={[styles.date, {color: colors.textSecondary}]}>{" \u2022 "}</Text>
-          <Text style={[styles.date, {color: colors.textSecondary}]}>{time}</Text>
+          <Text style={[styles.date, { color: colors.textSecondary }]}>{formatAppointmentDate(appointment.appointmentAt)}</Text>
         </View>
       </View>
-
-      {/* Botón derecha */}
-      {/*<TouchableOpacity onPress={() => onCancel(id)}>
-        <Ionicons name="close-circle-outline" size={40} color="red" />
-      </TouchableOpacity>*/}
 
     </View>
   );

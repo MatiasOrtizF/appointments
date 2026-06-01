@@ -13,5 +13,5 @@ export const getUpcomingAppointmentsUsecase = async (
     return { ok: false, error: "unauthenticated" }
   }
 
-  return appointmentRepository.getUpcomingAppointments(user.uid)
+  return appointmentRepository.getUpcomingAppointments(user.id)
 }
