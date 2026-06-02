@@ -1,9 +1,11 @@
 import { Appointment } from "../../../domain/models/Appointment"
+import { AuthUser } from "../../../domain/models/AuthUser";
 import { Employee, Service } from "../../../domain/models/Service"
 
 export interface AppointmentResponse {
   id: string,
   created_at: string,
+  user: AuthUser
   employee: Employee,
   service: Service,
   appointment_at: string,
@@ -23,6 +25,7 @@ export const appointmentToDomain = (
   return {
     id: response.id,
     createdAt: response.created_at,
+    user: response.user,
     employee: response.employee,
     service: response.service,
     appointmentAt: response.appointment_at,

@@ -1,18 +1,27 @@
 import { AuthUser } from "../../../domain/models/AuthUser"
 
 export interface AuthUserResponse {
-    fullName: string
-    email: string
-    role: "admin" | "client"
+    id: string,
+    created_at: string,
+    name: string,
+    last_name: string,
+    email: string,
+    role: RoleResponse
 }
 
-export const toDomain = (
-    uid: string,
+type RoleResponse = 
+  | "user"
+  | "admin"
+  | "employee"
+
+export const authUserToDomain = (
     response: AuthUserResponse
 ): AuthUser => {
     return {
-        uid,
-        fullName: response.fullName,
+        id: response.id,
+        createdAt: response.created_at,
+        name: response.name,
+        lastName: response.last_name,
         email: response.email,
         role: response.role
     }

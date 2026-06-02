@@ -1,5 +1,6 @@
 import { useState } from "react"
-import { authRepository } from "../../../data/repository/AuthRepository";
+import { updatePasswordUseCase } from "../../../domain/usecase/auth/updatePasswordUsecase";
+import { mapUpdatePasswordErrorToMessage } from "../../../errors/auth/updatePasswordError";
 
 export const useChangePassword = () => {
     const [currentPassword, setCurrentPassword] = useState("");
@@ -54,15 +55,18 @@ export const useChangePassword = () => {
             return
         }
 
+        setLoading(true)
+        setError(null)
+
         try {
-            setLoading(true)
-            setError(null)
+            const result = await updatePasswordUseCase(trimmedCurrentPassword, trimmedNewPassword)
 
-            await authRepository.updatePassword(trimmedCurrentPassword, trimmedNewPassword)
-
-            setSuccess(true)
-        } catch (e: any) {
-            setError(e.message)
+            if (result.ok) {
+                console.log("cambiaste la contraseña.")
+                setSuccess(true)
+            } else {
+                setError(mapUpdatePasswordErrorToMessage(result.error))
+            }
         } finally {
             setLoading(false)
         }

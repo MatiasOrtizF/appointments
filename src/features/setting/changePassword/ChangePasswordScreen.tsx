@@ -47,6 +47,17 @@ export default function ChangePasswordScreen() {
     ] as const
 
     useEffect(() => {
+        if (error) {
+            console.log("desde screen", error)
+            Dialog.show({
+                type: ALERT_TYPE.DANGER,
+                title: "Error",
+                textBody: error,
+                button: "Cerrar",
+                closeOnOverlayTap: false,
+            });
+        }
+
         if (success) {
             Dialog.show({
                 type: ALERT_TYPE.SUCCESS,
@@ -60,7 +71,7 @@ export default function ChangePasswordScreen() {
                 },
             });
         }
-    }, [success])
+    }, [error, success])
 
     return (
         <KeyboardAwareScrollView
@@ -85,7 +96,7 @@ export default function ChangePasswordScreen() {
                 }
 
                 {/* Current Password */}
-                <Text style={[styles.label, {color: colors.textPrimary}]}>Contraseña actual</Text>
+                <Text style={[styles.label, { color: colors.textPrimary }]}>Contraseña actual</Text>
                 <View style={globalStyles.inputContainer}>
                     {/* Icono */}
                     <MaterialIcons name="lock" size={20} color={colors.secondary} />
@@ -111,7 +122,7 @@ export default function ChangePasswordScreen() {
                 </View>
 
                 {/* New Password */}
-                <Text style={[styles.label, {color: colors.textPrimary}]}>Nueva contraseña</Text>
+                <Text style={[styles.label, { color: colors.textPrimary }]}>Nueva contraseña</Text>
                 <View style={globalStyles.inputContainer}>
                     {/* Icono */}
                     <MaterialIcons name="lock" size={20} color={colors.secondary} />
@@ -138,8 +149,8 @@ export default function ChangePasswordScreen() {
                     </TouchableOpacity>
                 </View>
 
-              {/* Confirm New Password */}
-                <Text style={[styles.label, {color: colors.textPrimary}]}>Confirmar nueva contraseña</Text>
+                {/* Confirm New Password */}
+                <Text style={[styles.label, { color: colors.textPrimary }]}>Confirmar nueva contraseña</Text>
                 <View style={globalStyles.inputContainer}>
                     {/* Icono */}
                     <MaterialIcons name="lock" size={20} color={colors.secondary} />
@@ -165,8 +176,6 @@ export default function ChangePasswordScreen() {
                         />
                     </TouchableOpacity>
                 </View>
-
-                {error && <Text style={styles.errorText}>❌ {error}</Text>}
 
                 {passwordRules.map((rule) => {
                     const isValid = validations?.[rule.key]

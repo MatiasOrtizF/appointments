@@ -33,7 +33,7 @@ export const AppointmentAdminCard: React.FC<Props> = ({
     appointment,
     onCancel
 }) => {
-    const { id, time, clientName, service, employeeName, status } = appointment
+    const { id, employee, service, user, appointmentAt, status } = appointment
     const statusStyle =
         APPOINTMENT_STATUS_STYLES[status.toLowerCase() as keyof typeof APPOINTMENT_STATUS_STYLES];
     const { isDarkMode } = useTheme();
@@ -45,14 +45,14 @@ export const AppointmentAdminCard: React.FC<Props> = ({
 
             {/* Hora */}
             <View style={adminAppointmentStyles.timeContainer}>
-                <Text style={adminAppointmentStyles.time}>{time}</Text>
+                <Text style={adminAppointmentStyles.time}>{"time"}</Text>
             </View>
 
             {/* Información */}
             <View style={adminAppointmentStyles.infoContainer}>
-                <Text style={adminAppointmentStyles.client}>{clientName}</Text>
-                <Text style={adminAppointmentStyles.service}>{service}</Text>
-                <Text style={adminAppointmentStyles.professional}>Con {employeeName}</Text>
+                <Text style={adminAppointmentStyles.client}>{user.name}</Text>
+                <Text style={adminAppointmentStyles.service}>{service.name}</Text>
+                <Text style={adminAppointmentStyles.professional}>Con {employee.name}</Text>
             </View>
 
             {/* Estado */}

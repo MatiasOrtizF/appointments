@@ -9,6 +9,7 @@ import { CreateAppointmentRequest } from '../../domain/models/CreateAppointmentR
 import { supabase } from '../../config/Supabase';
 import { employeeToDomain } from '../remote/response/EmployeeResponse';
 import { serviceToDomain } from '../remote/response/ServiceResponse';
+import { authUserToDomain } from '../remote/response/AuthUserResponse';
 
 const COLLECTION_APPOINTMENT = "appointment"
 const TABLE_TURNOS = "turnos"
@@ -25,7 +26,8 @@ export class AppointmentRepository {
         .select(`
           *,
           empleados (*),
-          servicios (*)
+          servicios (*),
+          usuarios (*)
         `)
         .eq("user_id", uid)
         .neq("status", "cancelled")
@@ -39,6 +41,7 @@ export class AppointmentRepository {
         return appointmentToDomain({
           id: appointment.id,
           created_at: appointment.created_at,
+          user: authUserToDomain(appointment.usuarios),
           employee: employeeToDomain(appointment.empleados),
           service: serviceToDomain(appointment.servicios),
           appointment_at: appointment.appointment_at,
@@ -66,7 +69,8 @@ export class AppointmentRepository {
         .select(`
           *,
           empleados (*),
-          servicios (*)
+          servicios (*),
+          usuarios (*)
         `)
         .eq("user_id", uid)
         .neq("status", "cancelled")
@@ -80,6 +84,7 @@ export class AppointmentRepository {
         return appointmentToDomain({
           id: appointment.id,
           created_at: appointment.created_at,
+          user: authUserToDomain(appointment.usuarios),
           employee: employeeToDomain(appointment.empleados),
           service: serviceToDomain(appointment.servicios),
           appointment_at: appointment.appointment_at,

@@ -1,33 +1,28 @@
 export type UpdatePasswordError =
-  | "weak-password"
-  | "same-password"
-  | "requires-recent-login"
-  | "network"
-  | "timeout"
-  | "unknown"
+  | "invalid_credentials"
+  | "weak_password"
+  | "same_password"
+  | "unauthorized"
+  | "unknown";
 
 export const mapUpdatePasswordErrorToMessage = (
   error: UpdatePasswordError
 ): string => {
 
   switch (error) {
+    case "invalid_credentials":
+      return "La contraseña actual es incorrecta";
 
-    case "weak-password":
-      return "La contraseña es demasiado débil"
+    case "weak_password":
+      return "La nueva contraseña es demasiado débil";
 
-    case "same-password":
-      return "La nueva contraseña debe ser diferente"
+    case "same_password":
+      return "La nueva contraseña debe ser diferente a la actual";
 
-    case "requires-recent-login":
-      return "Debes volver a iniciar sesión"
-
-    case "network":
-      return "Sin conexión a internet"
-
-    case "timeout":
-      return "La solicitud tardó demasiado"
+    case "unauthorized":
+      return "Tu sesión expiró. Iniciá sesión nuevamente";
 
     default:
-      return "No se pudo actualizar la contraseña"
+      return "Ocurrió un error inesperado";
   }
 }

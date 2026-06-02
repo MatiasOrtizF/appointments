@@ -211,6 +211,7 @@ export class AuthRepository {
   ): Promise<Result<void, UpdatePasswordError>> {
 
     try {
+    console.log("ANTES UPDATE USER");
 
       const { error } =
         await supabase.auth.updateUser({
@@ -227,11 +228,43 @@ export class AuthRepository {
       }
 
     } catch (error) {
+    console.log("CATCH UPDATE PASSWORD");
 
       return handleAuthError(error)
     }
   }
 
+  async verifyCurrentPassword(
+    email: string,
+    currentPassword: string
+  ): Promise<Result<void, UpdatePasswordError>> {
+
+    try {
+console.log("ANTES SIGN IN");
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password: currentPassword
+      });
+
+      if (error) {
+        console.log("error", error)
+        return {
+          ok: false,
+          error: "invalid_credentials"
+        };
+      }
+
+      console.log("DESPUES SIGN IN", error);
+
+      return {
+        ok: true,
+        data: undefined
+      };
+
+    } catch (error) {
+      return handleAuthError(error);
+    }
+  }
 }
 
 const handleAuthError = <T>(

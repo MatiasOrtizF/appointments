@@ -19,7 +19,7 @@ type Props = {
 };
 
 export default function AdminScreen() {
-    const { upcommingAdminAppointments, isAdmin, loading, refreshing, onRefresh } = useAdmin()
+    const { upcommingAdminAppointments, loading, refreshing, onRefresh } = useAdmin()
     const { isDarkMode } = useTheme();
     const globalStyles = createGlobalStyles(isDarkMode)
     const colors = isDarkMode ? darkColors : lightColors
@@ -31,13 +31,13 @@ export default function AdminScreen() {
         )
     }
 
-    if (!isAdmin && !loading) {
+    /*if (!isAdmin && !loading) {
         return (
             <View style={{ flex: 1, backgroundColor: colors.background, justifyContent: "center", alignItems: "center", padding: 20 }}>
                 <Text style={{ color: colors.textPrimary, textAlign: "center" }}>Solamente los admins pueden acceder a esta informacion</Text>
             </View>
         )
-    }
+    }*/
 
     return (
         <ScrollView

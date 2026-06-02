@@ -67,9 +67,11 @@ export function AuthProvider({
       data: listener
     } = supabase.auth.onAuthStateChange(
       async (_, session) => {
-
+    console.log("AUTH EVENT", _);
         const currentUser =
           session?.user ?? null
+
+          console.log("AUTH USER", currentUser?.id);
 
         setUser(currentUser)
 
