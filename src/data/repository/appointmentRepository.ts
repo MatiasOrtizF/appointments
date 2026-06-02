@@ -109,8 +109,10 @@ export class AppointmentRepository {
         .delete()
         .eq("id", appointmentId);
 
-      if (error) throw error;
-
+      if (error) {
+        console.log("error al borrar turnos ", error)
+        throw error
+      }
       return {
         ok: true,
         data: undefined

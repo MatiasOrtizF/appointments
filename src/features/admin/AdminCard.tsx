@@ -4,7 +4,7 @@ import { Appointment } from "../../domain/models/Appointment"
 import { useTheme } from "../../data/provider/ThemeProvider"
 import { createAdminAppointmentStyles } from "../../theme/adminAppointmentStyles"
 import { use } from "react"
-import { formatAppointmentTimeAdmin } from "../../utils/formatAppointmentDateAdmin"
+import { formatAppointmentTimeAdmin } from "../../utils/formatAppointmentTimeAdmin"
 import { capitalizeFirstLetter } from "../../utils/capitalizeFirstLetter"
 
 type Props = {

@@ -5,10 +5,12 @@ import { useTheme } from "../../data/provider/ThemeProvider"
 import { createAdminAppointmentStyles } from "../../theme/adminAppointmentStyles"
 import { Ionicons } from "@expo/vector-icons"
 import { useAppointmentAdmin } from "./useAppointmentAdmin"
+import { formatAppointmentDate } from "../../utils/formatAppointmentDate"
+import { formatAppointmentTimeAdmin } from "../../utils/formatAppointmentTimeAdmin"
 
 type Props = {
     appointment: Appointment,
-    onCancel: (bookingId: string) => void
+    onCancel: (appointmentId: string) => void
 }
 
 const handleCancel = (onCancel: (bookingId: string) => void, bookingId: string) => {
@@ -38,21 +40,20 @@ export const AppointmentAdminCard: React.FC<Props> = ({
         APPOINTMENT_STATUS_STYLES[status.toLowerCase() as keyof typeof APPOINTMENT_STATUS_STYLES];
     const { isDarkMode } = useTheme();
     const adminAppointmentStyles = createAdminAppointmentStyles(isDarkMode)
-    const { cancelAppointment } = useAppointmentAdmin()
 
     return (
-        <View style={adminAppointmentStyles.card}>
+        <View style={[adminAppointmentStyles.card, { marginVertical: 10 }]}>
 
             {/* Hora */}
             <View style={adminAppointmentStyles.timeContainer}>
-                <Text style={adminAppointmentStyles.time}>{"time"}</Text>
+                <Text style={adminAppointmentStyles.time}>{formatAppointmentTimeAdmin(appointmentAt)}</Text>
             </View>
 
             {/* Información */}
             <View style={adminAppointmentStyles.infoContainer}>
-                <Text style={adminAppointmentStyles.client}>{user.name}</Text>
+                <Text style={adminAppointmentStyles.client}>{user.name} {user.lastName}</Text>
                 <Text style={adminAppointmentStyles.service}>{service.name}</Text>
-                <Text style={adminAppointmentStyles.professional}>Con {employee.name}</Text>
+                <Text style={adminAppointmentStyles.professional}>Con {employee.name} {employee.lastName}</Text>
             </View>
 
             {/* Estado */}

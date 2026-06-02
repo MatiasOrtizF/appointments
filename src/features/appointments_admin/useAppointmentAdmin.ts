@@ -1,53 +1,28 @@
 import { useEffect, useState } from "react"
 import { Appointment } from "../../domain/models/Appointment"
 import { mapAppointmentErrorToMessage } from "../../errors/appointmentErrors"
-import { getUserInfoUsecase } from "../../domain/usecase/admin/getUserInfoUsecase"
-import { mapUserErrorToMessage } from "../../errors/userError"
-import { getAdminAppointmentsUsecase } from "../../domain/usecase/admin/getAdminAppointmentsUsecase"
+import { adminRepository } from "../../data/repository/AdminRepository"
+import { appointmentRepository } from "../../data/repository/AppointmentRepository"
 
 export const useAppointmentAdmin = () => {
   const [adminAppointments, setAdminAppointments] = useState<Appointment[] | null>(null)
-  const [isAdmin, setIsAdmin] = useState(false)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<boolean | null>(null);
   const [refreshing, setRefreshing] = useState(false);
 
   const onRefresh = async () => {
     setRefreshing(true);
-
-    await getUserInfo();
-
+    fetchAdminAppointments()
     setRefreshing(false);
   };
-
-  const getUserInfo = async () => {
-    setLoading(true)
-    setError(null)
-
-    try {
-      const result = await getUserInfoUsecase()
-
-      if (result.ok) {
-        const isAdmin = result.data.role === "admin"
-        setIsAdmin(isAdmin)
-        if (isAdmin) {
-          await fetchAdminAppointments()
-        }
-      } else {
-        setError(mapUserErrorToMessage(result.error))
-      }
-
-    } finally {
-      setLoading(false)
-    }
-  }
 
   const fetchAdminAppointments = async () => {
     setLoading(true)
     setError(null)
 
     try {
-      const result = await getAdminAppointmentsUsecase()
+      const result = await adminRepository.getAdminAppointments()
 
       if (result.ok) {
         setAdminAppointments(result.data)
@@ -60,19 +35,41 @@ export const useAppointmentAdmin = () => {
     }
   }
 
-  const cancelAppointment = async (bookingId: string) => {
-    console.log("cancelar: "+bookingId)
+  const cancelAppointment = async (appointmentId: string) => {
+    setLoading(true)
+    setError(null)
+
+    try {
+      const result = await appointmentRepository.cancelAppointment(appointmentId)
+
+      if (result.ok) {
+        setAdminAppointments(prev => {
+
+          const filtered = prev?.filter(
+            appointment => appointment.id !== appointmentId
+          ) ?? null
+
+          return filtered
+        })
+        setSuccess(true)
+      } else {
+        setError(mapAppointmentErrorToMessage(result.error))
+      }
+
+    } finally {
+      setLoading(false)
+    }
   }
 
   useEffect(() => {
-    getUserInfo()
+    fetchAdminAppointments()
   }, [])
 
   return {
     adminAppointments,
-    isAdmin,
     loading,
     error,
+    success,
     refreshing,
     onRefresh,
     cancelAppointment

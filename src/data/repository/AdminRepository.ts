@@ -17,7 +17,6 @@ export class AdminRepository {
   async getUpcomingTodayAppointments(): Promise<Result<Appointment[], AppointmentError>> {
     try {
 
-      //const now = new Date().toISOString();
       const { now, startOfTomorrow } = getTodayRange()
 
       const { data, error } = await supabase
@@ -68,28 +67,53 @@ export class AdminRepository {
     }
   };
 
-  async getAdminAppointments(uid: string): Promise<Result<Appointment[], AppointmentError>> {
-    try {
+  async getAdminAppointments(): Promise<Result<Appointment[], AppointmentError>> {
+     try {
 
-      const q = query(
-        collection(db, COLLECTION_APPOINTMENT),
-        where("uid", "==", uid),
-        where("dateTime", ">", getTodayRange().now),
-        where("dateTime", "<", getTodayRange().startOfTomorrow),
-        orderBy("dateTime", "asc"),
-        limit(10)
-      );
+      const { now, startOfTomorrow } = getTodayRange()
 
-      const snapshot = await getDocs(q);
+      const { data, error } = await supabase
+        .from(TABLE_TURNOS)
+        .select(`
+          *,
+          empleados (*),
+          servicios (*),
+          usuarios(*)
+        `)
+        .gt("appointment_at", now.toISOString())
+        .order("appointment_at", { ascending: true })
+        .limit(10)
 
-      const appointments = snapshot.docs.map((doc) => {
-        const data = doc.data() as AppointmentResponse
-        return appointmentToDomain(doc.id, data)
+      if (error) {
+        console.log("error de admin", error)
+        throw error
+      }
+
+      const appointments: Appointment[] = (data ?? []).map((appointment) => {
+
+        (data ?? []).forEach((appointment) => {
+          console.log("USUARIO", appointment.usuarios)
+          console.log("EMPLEADO", appointment.empleados)
+          console.log("SERVICIO", appointment.servicios)
+        })
+        return appointmentToDomain({
+          id: appointment.id,
+          created_at: appointment.created_at,
+          user: authUserToDomain(appointment.usuarios),
+          employee: employeeToDomain(appointment.empleados),
+          service: serviceToDomain(appointment.servicios),
+          appointment_at: appointment.appointment_at,
+          status: appointment.status,
+        })
       })
 
-      return { ok: true, data: appointments }
+      return {
+        ok: true,
+        data: appointments
+      }
 
     } catch (error) {
+      console.log("error desde admin", error)
       return handleAdminAppointmentError(error)
     }
   };
