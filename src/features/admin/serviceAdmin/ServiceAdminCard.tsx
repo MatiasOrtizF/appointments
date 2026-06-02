@@ -59,7 +59,7 @@ export const ServiceAdminCard: React.FC<Props> = ({
     }
 
     return (
-        <View style={[adminAppointmentStyles.card, { gap: 10 }]}>
+        <View style={[adminAppointmentStyles.card, { gap: 15, height: 150 }]}>
 
             {/* Imagen */}
             <View style={{ justifyContent: "center" }}>

@@ -41,7 +41,7 @@ export const createGlobalStyles = (isDarkMode: boolean) => {
             marginLeft: 8,
             color: colors.textPrimary,
             fontSize: 16,
-            height: 50
+            height: 50,
         },
 
         inputContainer: {
@@ -100,6 +100,7 @@ export const createGlobalStyles = (isDarkMode: boolean) => {
             marginBottom: 10,
         },
         textInput: {
+            color: colors.textPrimary,
             backgroundColor: colors.background,
             borderRadius: 50,
             height: 50,

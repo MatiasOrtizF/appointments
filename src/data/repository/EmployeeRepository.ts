@@ -6,25 +6,37 @@ import { Result } from "../../shared/types/result"
 import { EmployeeResponse, employeeToDomain } from "../remote/response/EmployeeResponse"
 import { FirebaseError } from "firebase/app"
 import { EmployeeError } from "../../errors/employeeError"
+import { supabase } from "../../config/Supabase"
 
 const COLLECTION_EMPLOYEE = "employee"
+const TABLE_EMPLEADOS = "empleados"
 
 export class EmployeeRepository {
 
   async getEmployees(): Promise<Result<Employee[], EmployeeError>> {
     try {
-      const snapshot = await withTimeout(
-        getDocs(collection(db, COLLECTION_EMPLOYEE)),
-        10000
-      )
 
-      const services = snapshot.docs.map((docSnap) => {
-        const data = docSnap.data() as EmployeeResponse
+      const { data, error } = await supabase
+        .from(TABLE_EMPLEADOS)
+        .select("*")
 
-        return employeeToDomain(docSnap.id, data)
+      if (error) throw error;
+
+      const employees: Employee[] = (data ?? []).map((employee) => {
+        return employeeToDomain({
+          id: employee.id,
+          name: employee.name,
+          last_name: employee.last_name,
+          image_url: employee.image_url,
+          role: employee.role,
+          status: employee.status
+        })
       })
 
-      return { ok: true, data: services }
+      return {
+        ok: true,
+        data: employees
+      };
 
     } catch (error) {
       return handleEmployeeError(error)

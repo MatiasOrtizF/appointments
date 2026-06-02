@@ -7,6 +7,8 @@ import { mapEmployeeErrorToMessage } from "../../../../errors/employeeError";
 import { editServiceUsecase } from "../../../../domain/usecase/admin/editServiceUsecase";
 import { EditServiceRequest } from "../../../../domain/models/EditServiceRequest";
 import { getEmployeesUsecase } from "../../../../domain/usecase/admin/employee/getEmployeesUsecase";
+import { employeeRepository } from "../../../../data/repository/EmployeeRepository";
+import { serviceRepository } from "../../../../data/repository/ServiceRepository";
 
 export const useEditService = () => {
     const [previewService, setPreviewService] = useState<Service>()
@@ -16,7 +18,7 @@ export const useEditService = () => {
     const [description, setDescription] = useState<Service["description"]>("")
     const [price, setPrice] = useState<Service["price"] | null>(null)
     const [duration, setDuration] = useState<Service["duration_min"] | null>(null)
-    const [selectedEmployees, setSelectedEmployees] = useState<string[]>([])
+    const [selectedEmployees, setSelectedEmployees] = useState<number[]>([])
     const [days, setDays] = useState<Service["days"]>([])
     const [hourStart, setHourStart] = useState<string | null>(null)
     const [hourEnd, setHourEnd] = useState<string | null>(null)
@@ -29,37 +31,15 @@ export const useEditService = () => {
     const [success, setSuccess] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-
-    const getUserInfo = async () => {
-        setLoading(true)
-        setError(null)
-
-        try {
-            const result = await getUserInfoUsecase()
-
-            if (result.ok) {
-                const isAdmin = result.data.role === "admin"
-                setIsAdmin(isAdmin)
-                if (isAdmin) {
-                    fetchEmployees()
-                }
-            } else {
-                setError(mapUserErrorToMessage(result.error))
-            }
-
-        } finally {
-            setLoading(false)
-        }
-    }
-
     const fetchEmployees = async () => {
         try {
-            const result = await getEmployeesUsecase()
+            const result = await employeeRepository.getEmployees()
 
             if (result.ok) {
+                console.log(result.data)
                 setEmployees(result.data)
             } else {
-                setError(mapUserErrorToMessage(result.error))
+                setError(mapEmployeeErrorToMessage(result.error))
             }
 
         } finally {
@@ -86,7 +66,7 @@ export const useEditService = () => {
                 hourEnd: hourEnd
             };
             try {
-                const result = await editServiceUsecase(serviceInput)
+                const result = await serviceRepository.editServices(serviceInput)
 
                 if (result.ok) {
                     setSuccess(true)
@@ -142,7 +122,7 @@ export const useEditService = () => {
     }, [title, description, price, duration, image, selectedEmployees, days, hourStart, hourEnd])
 
     useEffect(() => {
-        getUserInfo()
+        fetchEmployees()
         //fetchUpcomingAdminAppointments()
     }, [])
 
@@ -154,7 +134,7 @@ export const useEditService = () => {
         )
     }
 
-        const toggleSelectedEmployee = (employeeId: string) => {
+        const toggleSelectedEmployee = (employeeId: number) => {
         setSelectedEmployees(prevList =>
             prevList.includes(employeeId)
                 ? prevList.filter(item => item !== employeeId) // lo saco

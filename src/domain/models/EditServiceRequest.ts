@@ -7,7 +7,7 @@ export interface EditServiceRequest {
     price: number
     duration_min: number
     img: string,
-    employees: string[]
+    employees: number[]
     days: Day[]
     hourStart: string
     hourEnd: string

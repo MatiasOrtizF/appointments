@@ -26,7 +26,7 @@ export default function TimeSelector({
 
             <Pressable onPress={onPress}>
                 <View style={styles.timeButton}>
-                    <Text style={styles.timeText}>
+                    <Text style={[styles.timeText, {color: colors.textPrimary}]}>
                         {value ?? "--:--"}
                     </Text>
 

@@ -119,7 +119,7 @@ export default function EditServiceScreen() {
         if (success) {
             Dialog.show({
                 type: ALERT_TYPE.SUCCESS,
-                title: 'Servicio creado',
+                title: 'Servicio Modificado!',
                 textBody: 'Puedes ver todos tus servicios en la seccion de admin',
                 button: 'Continuar',
                 closeOnOverlayTap: false,
@@ -287,7 +287,7 @@ export default function EditServiceScreen() {
                             <FlatList<Employee>
                                 data={employees}
                                 horizontal
-                                keyExtractor={(employee: Employee) => employee.id}
+                                keyExtractor={(employee: Employee) => employee.id.toString()}
                                 showsHorizontalScrollIndicator={false}
                                 contentContainerStyle={{ gap: 12 }}
                                 renderItem={({ item: employee }) => {
@@ -353,6 +353,7 @@ export default function EditServiceScreen() {
                                         >
                                             <Text
                                                 style={{
+                                                    color: !isSelected ? colors.textPrimary : colors.background,
                                                     fontWeight: isSelected ? '600' : '400'
                                                 }}
                                             >{capitalizeFirstLetter(day)}</Text>

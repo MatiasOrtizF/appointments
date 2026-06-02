@@ -13,13 +13,14 @@ import { supabase } from "../../config/Supabase"
 
 const COLLECTION_SERVICE = "service"
 const COLLECTION_EMPLOYEE = "employee"
+const TABLE_SERVICIOS = "servicios"
 
 export class ServiceRepository {
 
   async getServices(): Promise<Result<Service[], ServiceError>> {
     try {
       const { data, error } = await supabase
-        .from("servicios")
+        .from(TABLE_SERVICIOS)
         .select(`
     id,
     title,
@@ -69,7 +70,7 @@ export class ServiceRepository {
     try {
 
       const { data, error } = await supabase
-        .from("servicios")
+        .from(TABLE_SERVICIOS)
         .select(`
         id,
         title,
@@ -94,9 +95,9 @@ export class ServiceRepository {
       if (error) throw error
       console.log("data", data)
       const employees: Employee[] =
-      data.servicios_empleados?.map((se: any) =>
-        employeeToDomain(se.empleado)
-      ) ?? []
+        data.servicios_empleados?.map((se: any) =>
+          employeeToDomain(se.empleado)
+        ) ?? []
 
       const service = serviceToDomain({
         id: data.id,
@@ -135,34 +136,34 @@ export class ServiceRepository {
 
   async editServices(service: EditServiceRequest): Promise<Result<void, ServiceError>> {
     try {
+      console.log("llame a edtiar servicio")
+      const { error } = await supabase
+        .from(TABLE_SERVICIOS)
+        .update({
+          title: service.name,
+          description: service.description,
+          price: service.price,
+          duration_minutes: service.duration_min,
+          image_url: service.img,
+          available_days: service.days,
+          start_time: service.hourStart,
+          end_time: service.hourEnd,
+        })
+        .eq("id", service.id)
 
-      const serviceRef = doc(db, COLLECTION_SERVICE, service.id)
-
-      const serviceResponse: ServiceResponse = {
-        title: service.name,
-        description: service.description,
-        price: service.price,
-        duration_min: service.duration_min,
-        img: service.img,
-        employees: [],
-        days: service.days,
-        hourStart: service.hourStart,
-        hourEnd: service.hourEnd
+      if (error) {
+        console.log("error 1", error)
+        throw error
       }
-
-      await withTimeout(
-        updateDoc(serviceRef, {
-          ...serviceResponse
-        }),
-        10000
-      )
 
       return {
         ok: true,
-        data: undefined
+        data: undefined,
       }
 
     } catch (error) {
+              console.log("error 2", error)
+
       return handleServiceError(error)
     }
   }

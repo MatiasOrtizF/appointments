@@ -84,7 +84,7 @@ export default function ServiceAdminScreen() {
                 keyExtractor={(item) => item.id}
                 showsVerticalScrollIndicator={false}
                 style={globalStyles.container}
-                contentContainerStyle={{ paddingBottom: tabBarHeight, gap: 12 }}
+                contentContainerStyle={{ paddingBottom: tabBarHeight, gap: 20 }}
                 ListEmptyComponent={renderEmpty}
                 renderItem={renderItem}
 
