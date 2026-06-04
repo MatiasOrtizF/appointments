@@ -5,8 +5,8 @@ export interface CreateServiceRequest {
   description: string
   price: number
   duration_min: number
-  img: string
-  employees: string[]
+  imgUrl: string
+  employees: number[]
   days: Day[]
   hourStart: string
   hourEnd: string

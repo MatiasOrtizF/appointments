@@ -2,7 +2,6 @@ import { useEffect, useState } from "react"
 import { Service } from "../../../domain/models/Service"
 import { serviceRepository } from "../../../data/repository/ServiceRepository"
 import { mapServiceErrorToMessage } from "../../../errors/serviceErrors"
-import { deleteServiceUsecase } from "../../../domain/usecase/admin/deleteServiceUsecase"
 
 export const useServiceAdmin = () => {
     const [services, setServices] = useState<Service[] | null>(null)
@@ -40,8 +39,8 @@ export const useServiceAdmin = () => {
 
     const deleteService = async (serviceId: string) => {
         try {
-            const result = await deleteServiceUsecase(serviceId)
-
+            const result = await serviceRepository.deleteService(serviceId)
+            
             if (result.ok) {
                 setServices(prev =>
                     prev?.filter(service => service.id !== serviceId) ?? null

@@ -1,12 +1,10 @@
 import { useEffect, useState } from "react";
-import { getUserInfoUsecase } from "../../../../domain/usecase/admin/getUserInfoUsecase";
-import { mapUserErrorToMessage } from "../../../../errors/userError";
 import { Service } from "../../../../domain/models/Service";
-import { addServiceUsecase } from "../../../../domain/usecase/admin/addServiceUseCase";
-import { CreateServiceRequest } from "../../../../domain/models/CreateServiceRequest";
 import { mapServiceErrorToMessage } from "../../../../errors/serviceErrors";
 import { mapEmployeeErrorToMessage } from "../../../../errors/employeeError";
-import { getEmployeesUsecase } from "../../../../domain/usecase/admin/employee/getEmployeesUsecase";
+import { employeeRepository } from "../../../../data/repository/EmployeeRepository";
+import { CreateServiceInput } from "../../../../domain/models/CreateserviceInput";
+import { addServiceUsecase } from "../../../../domain/usecase/service/addServiceUsecase";
 
 export const useAddService = () => {
     const [previewService, setPreviewService] = useState<Service>()
@@ -15,7 +13,7 @@ export const useAddService = () => {
     const [description, setDescription] = useState<Service["description"]>("")
     const [price, setPrice] = useState<Service["price"] | null>(null)
     const [duration, setDuration] = useState<Service["duration_min"] | null>(null)
-    const [selectedEmployees, setSelectedEmployees] = useState<string[]>([])
+    const [selectedEmployees, setSelectedEmployees] = useState<number[]>([])
     const [days, setDays] = useState<Service["days"]>([])
     const [hourStart, setHourStart] = useState<string | null>(null)
     const [hourEnd, setHourEnd] = useState<string | null>(null)
@@ -28,37 +26,14 @@ export const useAddService = () => {
     const [success, setSuccess] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-
-    const getUserInfo = async () => {
-        setLoading(true)
-        setError(null)
-
-        try {
-            const result = await getUserInfoUsecase()
-
-            if (result.ok) {
-                const isAdmin = result.data.role === "admin"
-                setIsAdmin(isAdmin)
-                if (isAdmin) {
-                    fetchEmployees()
-                }
-            } else {
-                setError(mapUserErrorToMessage(result.error))
-            }
-
-        } finally {
-            setLoading(false)
-        }
-    }
-
     const fetchEmployees = async () => {
         try {
-            const result = await getEmployeesUsecase()
+            const result = await employeeRepository.getEmployees()
 
             if (result.ok) {
                 setEmployees(result.data)
             } else {
-                setError(mapUserErrorToMessage(result.error))
+                setError(mapEmployeeErrorToMessage(result.error))
             }
 
         } finally {
@@ -72,7 +47,7 @@ export const useAddService = () => {
         setError(null)
 
         if (hourEnd != null && hourStart != null && isFormValid()) {
-            const serviceInput: CreateServiceRequest = {
+            const serviceInput: CreateServiceInput = {
                 name: title,
                 description,
                 price: price ?? 0,
@@ -142,7 +117,7 @@ export const useAddService = () => {
     }, [title, description, price, duration, image, selectedEmployees, days, hourStart, hourEnd])
 
     useEffect(() => {
-        getUserInfo()
+        fetchEmployees()
         //fetchUpcomingAdminAppointments()
     }, [])
 

@@ -3,7 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, ScrollView, Pressable, Image, 
 import { useTheme } from "../../../../data/provider/ThemeProvider";
 import { createGlobalStyles } from "../../../../theme/globalStyles";
 import { darkColors, lightColors } from "../../../../theme/colors";
-import { useNavigation, useRouter } from "expo-router";
+import { useNavigation } from "expo-router";
 import { useAddService } from "./useAddService";
 import LoadingButton from "../../../../shared/LoadingButton";
 import Divider from "../../../../shared/Divider";
@@ -37,20 +37,17 @@ export default function AddServiceScreen() {
         hourEnd, setHourEnd,
         employees,
         previewVisibility,
-        isAdmin,
         creatingService,
         loading,
         success,
         error,
         addService,
-        getHourString
     } = useAddService()
     const { isDarkMode } = useTheme();
     const globalStyles = createGlobalStyles(isDarkMode)
 
     const colors = isDarkMode ? darkColors : lightColors
     const navigation = useNavigation()
-    const router = useRouter();
 
     useEffect(() => {
         if (error) {
@@ -98,7 +95,7 @@ export default function AddServiceScreen() {
     };
 
 
-    const handleSelectEmployee = (employeeId: string) => {
+    const handleSelectEmployee = (employeeId: number) => {
         setSelectedEmployees(prevList =>
             prevList.includes(employeeId)
                 ? prevList.filter(item => item !== employeeId) // lo saco
@@ -241,7 +238,7 @@ export default function AddServiceScreen() {
                             <FlatList<Employee>
                                 data={employees}
                                 horizontal
-                                keyExtractor={(employee: Employee) => employee.id}
+                                keyExtractor={(employee: Employee) => employee.id.toString()}
                                 showsHorizontalScrollIndicator={false}
                                 contentContainerStyle={{ gap: 12 }}
                                 renderItem={({ item: employee }) => {
@@ -307,6 +304,7 @@ export default function AddServiceScreen() {
                                         >
                                             <Text
                                                 style={{
+                                                    color: !isSelected ? colors.textPrimary : colors.background,
                                                     fontWeight: isSelected ? '600' : '400'
                                                 }}
                                             >{capitalizeFirstLetter(day)}</Text>

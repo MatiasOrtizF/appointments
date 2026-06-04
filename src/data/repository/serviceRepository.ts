@@ -1,12 +1,11 @@
-import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, setDoc, updateDoc } from "firebase/firestore"
+import { deleteDoc, doc } from "firebase/firestore"
 import { Employee, Service } from "../../domain/models/Service"
 import { db } from "../../config/Firebase"
 import { withTimeout } from "../../utils/withTimeOut"
 import { ServiceError } from "../../errors/serviceErrors"
 import { Result } from "../../shared/types/result"
-import { FirebaseError } from "firebase/app"
-import { ServiceResponse, serviceToDomain } from "../remote/response/ServiceResponse"
-import { EmployeeResponse, employeeToDomain } from "../remote/response/EmployeeResponse"
+import { serviceToDomain } from "../remote/response/ServiceResponse"
+import { employeeToDomain } from "../remote/response/EmployeeResponse"
 import { CreateServiceRequest } from "../../domain/models/CreateServiceRequest"
 import { EditServiceRequest } from "../../domain/models/EditServiceRequest"
 import { supabase } from "../../config/Supabase"
@@ -125,9 +124,28 @@ export class ServiceRepository {
   async addService(request: CreateServiceRequest): Promise<Result<void, ServiceError>> {
     try {
 
-      await addDoc(collection(db, COLLECTION_SERVICE), request);
+      const { error } = await supabase
+        .from(TABLE_SERVICIOS)
+        .insert({
+          title: request.name,
+          description: request.description,
+          price: request.price,
+          duration_minutes: request.duration_min,
+          image_url: request.imgUrl,
+          available_days: request.days,
+          start_time: request.hourStart,
+          end_time: request.hourEnd
+        });
 
-      return { ok: true, data: undefined }
+      if (error) {
+        console.log("error addAppointment", error);
+        throw error;
+      }
+
+      return {
+        ok: true,
+        data: undefined
+      };
 
     } catch (error) {
       return handleServiceError(error)
@@ -162,7 +180,7 @@ export class ServiceRepository {
       }
 
     } catch (error) {
-              console.log("error 2", error)
+      console.log("error 2", error)
 
       return handleServiceError(error)
     }
