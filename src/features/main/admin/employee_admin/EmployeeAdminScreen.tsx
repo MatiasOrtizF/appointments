@@ -82,7 +82,7 @@ export default function EmployeeAdminScreen() {
         <View style={{ flex: 1 }}>
             <FlatList<Employee>
                 data={employees}
-                keyExtractor={(item) => item.id}
+                keyExtractor={(item) => item.id.toString()}
                 showsVerticalScrollIndicator={false}
                 style={globalStyles.container}
                 contentContainerStyle={{ paddingBottom: tabBarHeight, gap: 12 }}

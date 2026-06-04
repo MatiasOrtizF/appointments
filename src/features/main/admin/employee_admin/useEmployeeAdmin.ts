@@ -6,6 +6,8 @@ import { mapSignOutErrorToMessage } from "../../../../errors/auth/signOutError"
 import { getEmployeesUsecase } from "../../../../domain/usecase/admin/employee/getEmployeesUsecase"
 import { mapUserErrorToMessage } from "../../../../errors/userError"
 import { deleteEmployeeUsecase } from "../../../../domain/usecase/admin/employee/deleteEmployeeUsecase"
+import { employeeRepository } from "../../../../data/repository/EmployeeRepository"
+import { mapEmployeeErrorToMessage } from "../../../../errors/employeeError"
 
 export const useEmployeeAdmin = () => {
     const [employees, setEmployees] = useState<Employee[] | null>(null)
@@ -16,47 +18,25 @@ export const useEmployeeAdmin = () => {
     const [refreshing, setRefreshing] = useState(false);
 
     useEffect(() => {
-        getUserInfo()
+        fetchEmployee()
     }, [])
 
     const onRefresh = async () => {
         setRefreshing(true);
 
-        await getUserInfo();
+        await fetchEmployee();
 
         setRefreshing(false);
     };
 
-    const getUserInfo = async () => {
-        setLoading(true)
-        setError(null)
-
-        try {
-            const result = await getUserInfoUsecase()
-
-            if (result.ok) {
-                const isAdmin = result.data.role === "admin"
-                setIsAdmin(isAdmin)
-                console.log("?" + isAdmin)
-                if (isAdmin) {
-                    await fetchEmployee()
-                }
-            } else {
-                logOut()
-            }
-        } finally {
-            setLoading(false)
-        }
-    }
-
     const fetchEmployee = async () => {
         try {
-            const result = await getEmployeesUsecase()
+            const result = await employeeRepository.getEmployees()
 
             if (result.ok) {
                 setEmployees(result.data)
             } else {
-                setError(mapUserErrorToMessage(result.error))
+                setError(mapEmployeeErrorToMessage(result.error))
             }
 
         } finally {
@@ -64,17 +44,17 @@ export const useEmployeeAdmin = () => {
         }
     }
 
-    const deleteEmployee = async (employeeId: string) => {
+    const deleteEmployee = async (employeeId: number) => {
         try {
-            const result = await deleteEmployeeUsecase(employeeId)
+            const result = await employeeRepository.deleteEmployee(employeeId)
 
             if (result.ok) {
                 setEmployees(prev =>
-                    prev?.filter(service => service.id !== employeeId) ?? null
+                    prev?.filter(employee => employee.id !== employeeId) ?? null
                 )
                 setSuccess(true)
             } else {
-                setError(mapUserErrorToMessage(result.error))
+                setError(mapEmployeeErrorToMessage(result.error))
             }
 
         } finally {

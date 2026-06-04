@@ -1,62 +1,47 @@
-import { useEffect, useState } from "react"
-import { getUserInfoUsecase } from "../../../../../domain/usecase/admin/getUserInfoUsecase"
+import { useState } from "react"
 import { mapSignOutErrorToMessage } from "../../../../../errors/auth/signOutError"
 import { authRepository } from "../../../../../data/repository/AuthRepository"
-import { Role, roles } from "../../../../../domain/models/Service"
-import { addRoleUsecase } from "../../../../../domain/usecase/admin/employee/addRoleUsecase"
-import { mapUserErrorToMessage } from "../../../../../errors/userError"
+import { Employee, employeeStatuses, Role, } from "../../../../../domain/models/Service"
+import { addEmployeeUsecase } from "../../../../../domain/usecase/employee/addEmployeeUsecase"
+import { mapEmployeeErrorToMessage } from "../../../../../errors/employeeError"
+import { CreateEmployeeInput } from "../../../../../domain/models/CreateEmployeeInput"
 
 export const useAddEmployee = () => {
-    const [isAdmin, setIsAdmin] = useState(false)
-    const [email, setEmail] = useState("")
-    const [selectedRole, setSelectedRole] = useState<Role | null>(null)
-    const [addingRole, setAddingRole] = useState(false)
+    const [image, setImage] = useState<Employee["img"]>("")
+    const [name, setName] = useState<Employee["name"]>("")
+    const [lastName, setLastName] = useState<Employee["lastName"]>("")
+    const [selectedStatus, setSelectedStatus] = useState<Employee["status"] | null>(employeeStatuses.ACTIVE)
+    const [addingEmployee, setAddingEmployee] = useState(false)
     const [loading, setLoading] = useState(true)
     const [success, setSuccess] = useState<boolean>(false)
     const [error, setError] = useState<string | null>(null);
     const [errorForm, setErrorForm] = useState<string | null>(null);
 
-    useEffect(() => {
-        getUserInfo()
-    }, [])
-
-    const getUserInfo = async () => {
-        setLoading(true)
+    const addEmployee = async () => {
+        setAddingEmployee(true)
         setError(null)
+
+        if (selectedStatus == null || !isFormValid()) {
+            setAddingEmployee(false)
+            return
+        }
+
+        const employeeInput: CreateEmployeeInput = {
+            image: image,
+            name: name,
+            lastName: lastName,
+            status: selectedStatus
+        };
 
         try {
-            const result = await getUserInfoUsecase()
-
+            const result = await addEmployeeUsecase(employeeInput)
             if (result.ok) {
-                const isAdmin = result.data.role === "admin"
-                setIsAdmin(isAdmin)
-                console.log("?" + isAdmin)
-                if (isAdmin) {
-
-                }
+                setSuccess(true)
             } else {
-                logOut()
+                setError(mapEmployeeErrorToMessage(result.error))
             }
         } finally {
-            setLoading(false)
-        }
-    }
-
-    const addEmployee = async () => {
-        setAddingRole(true)
-        setError(null)
-
-        if (selectedRole != null) {
-            try {
-                const result = await addRoleUsecase(email, selectedRole)
-                if (result.ok) {
-                    setSuccess(true)
-                } else {
-                    setError(mapUserErrorToMessage(result.error))
-                }
-            } finally {
-                setAddingRole(false)
-            }
+            setAddingEmployee(false)
         }
     }
 
@@ -78,28 +63,40 @@ export const useAddEmployee = () => {
     };
 
     const isFormValid = () => {
-        const trimmedEmail = email.trim();
+        const trimmedImage = image.trim()
+        const trimmedName = name.trim()
+        const trimmedLastName = lastName.trim()
 
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-        if (!emailRegex.test(trimmedEmail)) {
-            setErrorForm("por favor agrega un email valido")
-            return false;
+        if (!trimmedImage) {
+            setErrorForm("Por favor agrega una imagen")
+            return false
         }
 
-        if (!selectedRole) {
-            setErrorForm("por favor seleciona un rol")
-            return false;
+        if (!trimmedName) {
+            setErrorForm("Por favor agrega un nombre")
+            return false
+        }
+
+        if (!trimmedLastName) {
+            setErrorForm("Por favor agrega un apellido")
+            return false
+        }
+
+        if (!selectedStatus) {
+            setErrorForm("Por favor selecciona un estado")
+            return false
         }
 
         setErrorForm(null)
-        return true;
+        return true
     };
 
     return {
-        email, setEmail,
-        addingRole, setAddingRole,
-        selectedRole, setSelectedRole,
+        image, setImage,
+        name, setName,
+        lastName, setLastName,
+        selectedStatus, setSelectedStatus,
+        addingEmployee, setAddingEmployee,
         loading,
         success,
         error,

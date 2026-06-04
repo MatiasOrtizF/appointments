@@ -10,7 +10,7 @@ import { EMPLOYEE_STATUS_STYLES } from "../../../../constants/statusStyles";
 
 type Props = {
     employee: Employee,
-    onDelete: (employeeId: string) => void
+    onDelete: (employeeId: number) => void
 }
 
 export const EmployeeAdminCard: React.FC<Props> = ({

@@ -7,6 +7,7 @@ import { EmployeeResponse, employeeToDomain } from "../remote/response/EmployeeR
 import { FirebaseError } from "firebase/app"
 import { EmployeeError } from "../../errors/employeeError"
 import { supabase } from "../../config/Supabase"
+import { CreateEmployeeRequest } from "../../domain/models/CreateEmployeeRequest"
 
 const COLLECTION_EMPLOYEE = "employee"
 const TABLE_EMPLEADOS = "empleados"
@@ -43,22 +44,55 @@ export class EmployeeRepository {
     }
   }
 
-  async deleteEmployee(id: string): Promise<Result<void, EmployeeError>> {
+  async deleteEmployee(employeeId: number): Promise<Result<void, EmployeeError>> {
     try {
 
-      await withTimeout(
-        deleteDoc(
-          doc(db, COLLECTION_EMPLOYEE, id)
-        ),
-        10000
-      )
-
-      return { ok: true, data: undefined }
+      const { error } = await supabase
+         .from(TABLE_EMPLEADOS)
+         .delete()
+         .eq("id", employeeId);
+ 
+       if (error) {
+         console.log("error al borrar empleado ", error)
+         throw error
+       }
+       return {
+         ok: true,
+         data: undefined
+       };
+ 
 
     } catch (error) {
       return handleEmployeeError(error)
     }
   }
+
+    async addEmployee(request: CreateEmployeeRequest): Promise<Result<void, EmployeeError>> {
+      try {
+  
+        const { error } = await supabase
+          .from(TABLE_EMPLEADOS)
+          .insert({
+            image_url: request.imageUrl,
+            name: request.name,
+            last_name: request.lastName,
+            status: request.status,
+          });
+  
+        if (error) {
+          console.log("error addEmployee", error);
+          throw error;
+        }
+  
+        return {
+          ok: true,
+          data: undefined
+        };
+  
+      } catch (error) {
+        return handleEmployeeError(error)
+      }
+    }
 }
 
 const handleEmployeeError = (
