@@ -1,6 +1,6 @@
 import { Redirect } from "expo-router";
 import { useAuth } from "../../../src/data/provider/AuthProvider";
-import AppointmentAdminScreen from "../../../src/features/appointments_admin/AppointmentAdminScreen";
+import AppointmentAdminScreen from "../../../src/features/main/admin/appointments_admin/AppointmentAdminScreen";
 import LoadingScreen from "../../../src/shared/LoadingScreen";
 
 export default function AppointmentAdmin() {

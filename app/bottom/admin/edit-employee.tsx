@@ -1,7 +1,7 @@
 import { Redirect } from "expo-router";
 import { useAuth } from "../../../src/data/provider/AuthProvider";
 import LoadingScreen from "../../../src/shared/LoadingScreen";
-import EditEmployeeScreen from "../../../src/features/admin/employee_admin/edit_employee/EditEmployeeScreen";
+import EditEmployeeScreen from "../../../src/features/main/admin/employee_admin/edit_employee/EditEmployeeScreen";
 
 export default function EditEmployee() {
     const { loading, isAdmin } = useAuth();

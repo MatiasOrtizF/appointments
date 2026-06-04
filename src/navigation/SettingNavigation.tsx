@@ -1,6 +1,6 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import ChangePasswordScreen from '../features/setting/changePassword/ChangePasswordScreen'
-import { SettingsScreen } from '../features/setting/SettingScreen'
+import ChangePasswordScreen from '../features/main/setting/changePassword/ChangePasswordScreen'
+import { SettingsScreen } from '../features/main/setting/SettingScreen'
 import { SettingsStackParamList } from './types'
 
 const Stack = createNativeStackNavigator<SettingsStackParamList>()

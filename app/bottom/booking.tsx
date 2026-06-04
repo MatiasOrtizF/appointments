@@ -1,4 +1,4 @@
-import BookingScreen from "../../src/features/booking/BookingScreen";
+import BookingScreen from "../../src/features/main/booking/BookingScreen";
 
 export default function Booking() {
     return(
