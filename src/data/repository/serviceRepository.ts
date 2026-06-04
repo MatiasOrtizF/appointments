@@ -1,4 +1,3 @@
-import { deleteDoc, doc } from "firebase/firestore"
 import { Employee, Service } from "../../domain/models/Service"
 import { db } from "../../config/Firebase"
 import { withTimeout } from "../../utils/withTimeOut"
@@ -186,17 +185,21 @@ export class ServiceRepository {
     }
   }
 
-  async deleteService(id: string): Promise<Result<void, ServiceError>> {
+  async deleteService(serviceId: string): Promise<Result<void, ServiceError>> {
     try {
 
-      await withTimeout(
-        deleteDoc(
-          doc(db, COLLECTION_SERVICE, id)
-        ),
-        10000
-      )
+      const { error } = await supabase
+        .from(TABLE_SERVICIOS)
+        .delete()
+        .eq("id", serviceId);
 
-      return { ok: true, data: undefined }
+      if (error) {
+        throw error
+      }
+      return {
+        ok: true,
+        data: undefined
+      };
 
     } catch (error) {
       return handleServiceError(error)

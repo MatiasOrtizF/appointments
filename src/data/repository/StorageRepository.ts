@@ -38,6 +38,45 @@ export class StorageRepository {
             return handleStorageError(error)
         }
     }
+
+    async deleteImage(imageUrl: string): Promise<Result<void, StorageError>> {
+        try {
+
+            const marker = "/storage/v1/object/public/images/"
+
+            const index = imageUrl.indexOf(marker)
+
+            if (index === -1) {
+                return {
+                    ok: false,
+                    error: "unknown"
+                }
+            }
+
+            const filePath = imageUrl.substring(
+                index + marker.length
+            )
+
+            const { error } = await supabase.storage
+                .from("images")
+                .remove([filePath])
+
+            if (error) {
+                console.log("errro al borrar 1", error)
+                throw error
+            }
+
+            return {
+                ok: true,
+                data: undefined
+            }
+
+        } catch (error) {
+            console.log("DELETE IMAGE ERROR", error)
+
+            return handleStorageError(error)
+        }
+    }
 }
 
 const handleStorageError = (

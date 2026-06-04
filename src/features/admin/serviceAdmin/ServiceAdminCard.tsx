@@ -9,7 +9,7 @@ import { createGlobalStyles } from "../../../theme/globalStyles";
 
 type Props = {
     service: Service,
-    onDelete: (serviceId: string) => void
+    onDelete: (serviceId: string, imageUrl: string) => void
 }
 
 export const ServiceAdminCard: React.FC<Props> = ({
@@ -34,7 +34,7 @@ export const ServiceAdminCard: React.FC<Props> = ({
                 {
                     text: "Borrar",
                     style: "destructive",
-                    onPress: () => onDelete(id),
+                    onPress: () => onDelete(id, img),
                 },
             ]
         );
