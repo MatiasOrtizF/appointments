@@ -1,17 +1,12 @@
-import { collection, deleteDoc, doc, getDocs } from "firebase/firestore"
 import { Employee } from "../../domain/models/Service"
-import { withTimeout } from "../../utils/withTimeOut"
-import { db } from "../../config/Firebase"
 import { Result } from "../../shared/types/result"
-import { EmployeeResponse, employeeToDomain } from "../remote/response/EmployeeResponse"
+import { employeeToDomain } from "../remote/response/EmployeeResponse"
 import { FirebaseError } from "firebase/app"
 import { EmployeeError } from "../../errors/employeeError"
 import { supabase } from "../../config/Supabase"
 import { CreateEmployeeRequest } from "../../domain/models/CreateEmployeeRequest"
-import { CreateEmployeeInput } from "../../domain/models/CreateEmployeeInput"
 import { EditEmployeeInput } from "../../domain/models/employee/EditEmployeeInput"
 
-const COLLECTION_EMPLOYEE = "employee"
 const TABLE_EMPLEADOS = "empleados"
 
 export class EmployeeRepository {
@@ -96,36 +91,36 @@ export class EmployeeRepository {
     }
   }
 
-    async editEmployee(request: EditEmployeeInput): Promise<Result<void, EmployeeError>> {
-      try {
-        console.log("llame a editar empleado")
-        const { error } = await supabase
-          .from(TABLE_EMPLEADOS)
-          .update({
-            image_url: request.newImage,
-            name: request.name,
-            last_name: request.lastName,
-            status: request.status
-          })
-          .eq("id", request.id)
-  
-        if (error) {
-          console.log("error 1", error)
-          throw error
-        }
-  
-        return {
-          ok: true,
-          data: undefined,
-        }
-  
-      } catch (error) {
-        console.log("error 2", error)
-  
-        return handleEmployeeError(error)
+  async editEmployee(request: EditEmployeeInput): Promise<Result<void, EmployeeError>> {
+    try {
+      console.log("llame a editar empleado")
+      const { error } = await supabase
+        .from(TABLE_EMPLEADOS)
+        .update({
+          image_url: request.newImage,
+          name: request.name,
+          last_name: request.lastName,
+          status: request.status
+        })
+        .eq("id", request.id)
+
+      if (error) {
+        console.log("error 1", error)
+        throw error
       }
+
+      return {
+        ok: true,
+        data: undefined,
+      }
+
+    } catch (error) {
+      console.log("error 2", error)
+
+      return handleEmployeeError(error)
     }
-  
+  }
+
 }
 
 const handleEmployeeError = (

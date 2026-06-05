@@ -1,8 +1,9 @@
+import { serviceEmployeeRepository } from "../../../data/repository/ServiceEmployeeRepository"
 import { serviceRepository } from "../../../data/repository/ServiceRepository"
 import { storageRepository } from "../../../data/repository/StorageRepository"
 import { ServiceError } from "../../../errors/serviceErrors"
 import { Result } from "../../../shared/types/result"
-import { CreateServiceInput } from "../../models/CreateserviceInput"
+import { CreateServiceInput } from "../../models/CreateServiceInput"
 import { CreateServiceRequest } from "../../models/CreateServiceRequest"
 
 export const addServiceUsecase = async (
@@ -20,5 +21,26 @@ export const addServiceUsecase = async (
         imgUrl: resultImageUrl.data
     };
 
-    return serviceRepository.addService(request)
+    const serviceResult = await serviceRepository.addService(request)
+
+    if (!serviceResult.ok) {
+        return serviceResult
+    }
+
+    const serviceId = serviceResult.data
+
+    const addEmployeesResult =
+        await serviceEmployeeRepository.addEmployeeToService(
+            serviceId,
+            input.employees
+        )
+
+    if (!addEmployeesResult.ok) {
+        return { ok: false, error: "unknown" }
+    }
+
+    return {
+        ok: true,
+        data: undefined
+    }
 }

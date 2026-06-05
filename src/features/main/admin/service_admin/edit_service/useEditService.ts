@@ -37,11 +37,12 @@ export const useEditService = () => {
     const [error, setError] = useState<string | null>(null);
 
     const fetchEmployees = async () => {
+        console.log("se llama a empleados")
         try {
             const result = await employeeRepository.getEmployees()
 
             if (result.ok) {
-                console.log(result.data)
+                console.log("empleados: ", result.data)
                 setEmployees(result.data)
             } else {
                 setError(mapEmployeeErrorToMessage(result.error))
@@ -65,7 +66,7 @@ export const useEditService = () => {
                     price: price ?? 0,
                     duration: duration ?? 0,
                     employees: selectedEmployees,
-                    days,
+                    days: days,
                     hourStart: hourStart,
                     hourEnd: hourEnd,
                     newImage: newImage,
@@ -103,7 +104,7 @@ export const useEditService = () => {
             price > 0 &&
             duration != null &&
             duration > 0 &&
-            //selectedEmployees.length > 0 &&
+            selectedEmployees.length > 0 &&
             days.length > 0 &&
             hourStart !== null &&
             hourEnd !== null &&

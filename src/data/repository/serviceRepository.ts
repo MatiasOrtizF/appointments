@@ -1,17 +1,12 @@
 import { Employee, Service } from "../../domain/models/Service"
-import { db } from "../../config/Firebase"
-import { withTimeout } from "../../utils/withTimeOut"
 import { ServiceError } from "../../errors/serviceErrors"
 import { Result } from "../../shared/types/result"
 import { serviceToDomain } from "../remote/response/ServiceResponse"
 import { employeeToDomain } from "../remote/response/EmployeeResponse"
 import { CreateServiceRequest } from "../../domain/models/CreateServiceRequest"
-import { EditServiceRequest } from "../../domain/models/EditServiceRequest"
 import { supabase } from "../../config/Supabase"
 import { EditServiceInput } from "../../domain/models/service/EditServiceInput"
 
-const COLLECTION_SERVICE = "service"
-const COLLECTION_EMPLOYEE = "employee"
 const TABLE_SERVICIOS = "servicios"
 
 export class ServiceRepository {
@@ -121,10 +116,10 @@ export class ServiceRepository {
     }
   }
 
-  async addService(request: CreateServiceRequest): Promise<Result<void, ServiceError>> {
+  async addService(request: CreateServiceRequest): Promise<Result<string, ServiceError>> {
     try {
 
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from(TABLE_SERVICIOS)
         .insert({
           title: request.name,
@@ -135,16 +130,20 @@ export class ServiceRepository {
           available_days: request.days,
           start_time: request.hourStart,
           end_time: request.hourEnd
-        });
+        })
+        .select("id")
+        .single()
 
       if (error) {
         console.log("error addAppointment", error);
         throw error;
       }
 
+      console.log("service id creado ", data.id)
+
       return {
         ok: true,
-        data: undefined
+        data: data.id
       };
 
     } catch (error) {
