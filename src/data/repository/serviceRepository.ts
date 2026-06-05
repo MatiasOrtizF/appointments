@@ -8,6 +8,7 @@ import { employeeToDomain } from "../remote/response/EmployeeResponse"
 import { CreateServiceRequest } from "../../domain/models/CreateServiceRequest"
 import { EditServiceRequest } from "../../domain/models/EditServiceRequest"
 import { supabase } from "../../config/Supabase"
+import { EditServiceInput } from "../../domain/models/service/EditServiceInput"
 
 const COLLECTION_SERVICE = "service"
 const COLLECTION_EMPLOYEE = "employee"
@@ -151,7 +152,7 @@ export class ServiceRepository {
     }
   }
 
-  async editServices(service: EditServiceRequest): Promise<Result<void, ServiceError>> {
+  async editService(service: EditServiceInput): Promise<Result<void, ServiceError>> {
     try {
       console.log("llame a edtiar servicio")
       const { error } = await supabase
@@ -160,8 +161,8 @@ export class ServiceRepository {
           title: service.name,
           description: service.description,
           price: service.price,
-          duration_minutes: service.duration_min,
-          image_url: service.img,
+          duration_minutes: service.duration,
+          image_url: service.newImage,
           available_days: service.days,
           start_time: service.hourStart,
           end_time: service.hourEnd,

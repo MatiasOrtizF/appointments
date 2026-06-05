@@ -70,7 +70,7 @@ export default function EditEmployeeScreen() {
         if (success) {
             Dialog.show({
                 type: ALERT_TYPE.SUCCESS,
-                title: 'Empleado editado',
+                title: 'Empleado editado!',
                 textBody: 'Puedes ver todos los empleados en la seccion de empleados',
                 button: 'Continuar',
                 closeOnOverlayTap: false,

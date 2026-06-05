@@ -1,27 +1,32 @@
 import { useEffect, useState } from "react";
-import { getUserInfoUsecase } from "../../../../../domain/usecase/admin/getUserInfoUsecase";
-import { mapUserErrorToMessage } from "../../../../../errors/userError";
 import { Day, Service } from "../../../../../domain/models/Service";
 import { mapServiceErrorToMessage } from "../../../../../errors/serviceErrors";
 import { mapEmployeeErrorToMessage } from "../../../../../errors/employeeError";
-import { editServiceUsecase } from "../../../../../domain/usecase/admin/editServiceUsecase";
-import { EditServiceRequest } from "../../../../../domain/models/EditServiceRequest";
-import { getEmployeesUsecase } from "../../../../../domain/usecase/admin/employee/getEmployeesUsecase";
 import { employeeRepository } from "../../../../../data/repository/EmployeeRepository";
-import { serviceRepository } from "../../../../../data/repository/ServiceRepository";
+import { EditServiceInput } from "../../../../../domain/models/service/EditServiceInput";
+import { editServiceUsecase } from "../../../../../domain/usecase/service/editserviceUsecase";
 
 export const useEditService = () => {
     const [previewService, setPreviewService] = useState<Service>()
     const [serviceId, setServiceId] = useState<Service["id"]>("")
     const [image, setImage] = useState<Service["img"]>("")
+    const [newImage, setNewImage] = useState<string>("")
     const [title, setTitle] = useState<Service["name"]>("")
+    const [initialTitle, setInitialTitle] = useState<Service["name"]>("")
     const [description, setDescription] = useState<Service["description"]>("")
+    const [initialDescription, setInitialDescription] = useState<Service["description"]>("")
     const [price, setPrice] = useState<Service["price"] | null>(null)
+    const [initialPrice, setInitialPrice] = useState<Service["price"] | null>(null)
     const [duration, setDuration] = useState<Service["duration_min"] | null>(null)
+    const [initialDuration, setInitialDuration] = useState<Service["duration_min"] | null>(null)
     const [selectedEmployees, setSelectedEmployees] = useState<number[]>([])
+    const [initialSelectedEmployees, setInitialSelectedEmployees] = useState<number[]>([])
     const [days, setDays] = useState<Service["days"]>([])
-    const [hourStart, setHourStart] = useState<string | null>(null)
-    const [hourEnd, setHourEnd] = useState<string | null>(null)
+    const [initialDays, setInitialDays] = useState<Service["days"]>([])
+    const [hourStart, setHourStart] = useState<Service["hourStart"] | null>(null)
+    const [initialHourStart, setInitialHourStart] = useState<Service["hourStart"] | null>(null)
+    const [hourEnd, setHourEnd] = useState<Service["hourEnd"] | null>(null)
+    const [initialHourEnd, setInitialHourEnd] = useState<Service["hourEnd"] | null>(null)
 
     const [employees, setEmployees] = useState<Service["employees"]>([])
     const [previewVisibility, setPreviewVisiblity] = useState(false)
@@ -48,37 +53,43 @@ export const useEditService = () => {
     }
 
     const editService = async () => {
-        console.log("se pulso")
         setEditingService(true)
         setError(null)
 
-        if (hourEnd != null && hourStart != null && isFormValid()) {
-            const serviceInput: EditServiceRequest = {
-                id: serviceId,
-                name: title,
-                description,
-                price: price ?? 0,
-                duration_min: duration ?? 0,
-                img: image,
-                employees: selectedEmployees,
-                days,
-                hourStart: hourStart,
-                hourEnd: hourEnd
-            };
-            try {
-                const result = await serviceRepository.editServices(serviceInput)
+        if (isChanged()) {
+            if (hourEnd != null && hourStart != null && isFormValid()) {
+                const serviceInput: EditServiceInput = {
+                    id: serviceId,
+                    name: title,
+                    description,
+                    price: price ?? 0,
+                    duration: duration ?? 0,
+                    employees: selectedEmployees,
+                    days,
+                    hourStart: hourStart,
+                    hourEnd: hourEnd,
+                    newImage: newImage,
+                    oldImageUrl: image,
+                    imageChanged: newImage.trim().length > 0
+                };
+                try {
+                    const result = await editServiceUsecase(serviceInput)
 
-                if (result.ok) {
-                    setSuccess(true)
-                } else {
-                    setError(mapServiceErrorToMessage(result.error))
+                    if (result.ok) {
+                        setSuccess(true)
+                    } else {
+                        setError(mapServiceErrorToMessage(result.error))
+                        setEditingService(false)
+                    }
+                } finally {
                     setEditingService(false)
                 }
-            } finally {
+            } else {
+                setError("debes completar todos los campos")
                 setEditingService(false)
             }
         } else {
-            setError("debes completar todos los campos")
+            setError("Debes realizar almenos un cambio")
             setEditingService(false)
         }
     }
@@ -92,13 +103,28 @@ export const useEditService = () => {
             price > 0 &&
             duration != null &&
             duration > 0 &&
-            selectedEmployees.length > 0 &&
+            //selectedEmployees.length > 0 &&
             days.length > 0 &&
             hourStart !== null &&
             hourEnd !== null &&
             hourStart < hourEnd //no se si esto esta bien.
         );
     };
+
+    const isChanged = () => {
+        return (
+            newImage.trim().length > 0 ||
+            title != initialTitle ||
+            description != initialDescription ||
+            price != initialPrice ||
+            duration != initialDuration ||
+            hourStart != initialHourStart ||
+            hourEnd != initialHourEnd ||
+            selectedEmployees != initialSelectedEmployees ||
+            days.length !== initialDays.length ||
+            !days.every(day => initialDays.includes(day))
+        )
+    }
 
     useEffect(() => {
         setPreviewVisiblity(isFormValid())
@@ -110,7 +136,7 @@ export const useEditService = () => {
                     description,
                     price: price ?? 0,
                     duration_min: duration ?? 0,
-                    img: image,
+                    img: newImage ? newImage : image,
                     employees: [],
                     days,
                     hourStart: hourStart,
@@ -123,10 +149,9 @@ export const useEditService = () => {
 
     useEffect(() => {
         fetchEmployees()
-        //fetchUpcomingAdminAppointments()
     }, [])
 
-     const toggleSelectedDay  = (day: Day) => {
+    const toggleSelectedDay = (day: Day) => {
         setDays(prevList =>
             prevList.includes(day)
                 ? prevList.filter(item => item !== day) // lo saco
@@ -134,7 +159,7 @@ export const useEditService = () => {
         )
     }
 
-        const toggleSelectedEmployee = (employeeId: number) => {
+    const toggleSelectedEmployee = (employeeId: number) => {
         setSelectedEmployees(prevList =>
             prevList.includes(employeeId)
                 ? prevList.filter(item => item !== employeeId) // lo saco
@@ -146,21 +171,30 @@ export const useEditService = () => {
         previewService,
         setServiceId,
         image, setImage,
+        newImage, setNewImage,
         title, setTitle,
+        setInitialTitle,
         description, setDescription,
+        setInitialDescription,
         price, setPrice,
+        setInitialPrice,
         duration, setDuration,
+        setInitialDuration,
         selectedEmployees, setSelectedEmployees,
+        setInitialSelectedEmployees,
         days, setDays,
+        setInitialDays,
         hourStart, setHourStart,
+        setInitialHourStart,
         hourEnd, setHourEnd,
+        setInitialHourEnd,
         employees, setEmployees,
         previewVisibility, setPreviewVisiblity,
         isAdmin,
         loading,
         editingService,
         success,
-        error,
+        error, setError,
         editService,
         toggleSelectedDay,
         toggleSelectedEmployee

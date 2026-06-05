@@ -52,21 +52,30 @@ export default function EditServiceScreen() {
         previewService,
         setServiceId,
         image, setImage,
+        newImage, setNewImage,
         title, setTitle,
+        setInitialTitle,
         description, setDescription,
+        setInitialDescription,
         price, setPrice,
+        setInitialPrice,
         duration, setDuration,
+        setInitialDuration,
         selectedEmployees, setSelectedEmployees,
+        setInitialSelectedEmployees,
         days, setDays,
+        setInitialDays,
         hourStart, setHourStart,
+        setInitialHourStart,
         hourEnd, setHourEnd,
+        setInitialHourEnd,
         employees, setEmployees,
         previewVisibility,
         isAdmin,
         editingService,
         loading,
         success,
-        error,
+        error, setError,
         editService,
         toggleSelectedDay,
         toggleSelectedEmployee
@@ -83,14 +92,21 @@ export default function EditServiceScreen() {
     useEffect(() => {
         setServiceId(id)
         setImage(initialImg)
+        setInitialTitle(initialName)
         setTitle(initialName)
+        setInitialDescription(initialDescription)
         setDescription(initialDescription)
+        setInitialPrice(Number(initialPrice))
         setPrice(Number(initialPrice))
+        setInitialDuration(Number(initialDuration))
         setDuration(Number(initialDuration))
+        setInitialHourStart(initialHourStart)
         setHourStart(initialHourStart)
+        setInitialHourEnd(initialHourEnd)
         setHourEnd(initialHourEnd)
 
         if (initialDays) {
+            setInitialDays(JSON.parse(initialDays))
             setDays(JSON.parse(initialDays))
         }
         if (initialEmployees) {
@@ -99,7 +115,7 @@ export default function EditServiceScreen() {
             const employeeIds = parsedEmployees.map(
                 (employee: Employee) => employee.id
             )
-
+            setInitialSelectedEmployees(employeeIds)
             setSelectedEmployees(employeeIds)
         }
     }, [])
@@ -107,12 +123,17 @@ export default function EditServiceScreen() {
 
     useEffect(() => {
         if (error) {
+            console.log(error)
             Dialog.show({
                 type: ALERT_TYPE.DANGER,
                 title: "Error",
                 textBody: error,
                 button: "Cerrar",
                 closeOnOverlayTap: false,
+                onPressButton: () => {
+                    Dialog.hide()
+                    setError(null)
+                }
             });
         }
 
@@ -138,7 +159,7 @@ export default function EditServiceScreen() {
         });
 
         if (!result.canceled) {
-            setImage(result.assets[0].uri);
+            setNewImage(result.assets[0].uri);
         } else {
             console.log("No seleccionaste ninguna imagen.")
         }
@@ -182,7 +203,7 @@ export default function EditServiceScreen() {
                         <Pressable onPress={pickImage} disabled={!!image}>
                             {image ?
                                 <Image
-                                    source={{ uri: image }}
+                                    source={{ uri: newImage ? newImage : image }}
                                     style={{ width: "100%", height: 140, borderRadius: 16 }}
                                 />
                                 :
