@@ -7,7 +7,7 @@ import { createGlobalStyles } from "../../../../../theme/globalStyles";
 import { darkColors, lightColors } from "../../../../../theme/colors";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useEffect } from "react";
-import { Employee, EmployeeStatus, employeeStatuses, Role, roles } from "../../../../../domain/models/Service";
+import { EmployeeStatus, employeeStatuses, Role } from "../../../../../domain/models/Service";
 import { Ionicons } from "@expo/vector-icons";
 import { capitalizeFirstLetter } from "../../../../../utils/capitalizeFirstLetter";
 import LoadingButton from "../../../../../shared/LoadingButton";
@@ -18,8 +18,8 @@ type Params = {
     img: string
     name: string
     lastName: string
-    role: string
     status: string
+    role: string
 }
 
 export default function EditEmployeeScreen() {
@@ -28,23 +28,23 @@ export default function EditEmployeeScreen() {
         img: initialImg,
         name: initialName,
         lastName: initialLastName,
-        role: initialRole,
-        status: initialStatus
+        status: initialStatus,
     } = useLocalSearchParams<Params>()
 
     const {
         employeeId, setEmployeeId,
         image, setImage,
+        newImage, setNewImage,
         name, setName,
+        setInitialName,
         lastName, setLastName,
-        selectedRole, setSelectedRole,
+        setInitialLastName,
         selectedStatus, setSelectedStatus,
+        setInitialSelectedStatus,
         editingEmployee,
         loading,
         success,
         error,
-        refreshing,
-        onRefresh,
         editEmployee
     } = useEditEmployee()
 
@@ -71,7 +71,7 @@ export default function EditEmployeeScreen() {
             Dialog.show({
                 type: ALERT_TYPE.SUCCESS,
                 title: 'Empleado editado',
-                textBody: 'Puedes ver todos los empleados y admin en la seccion de empleados',
+                textBody: 'Puedes ver todos los empleados en la seccion de empleados',
                 button: 'Continuar',
                 closeOnOverlayTap: false,
                 onPressButton: () => {
@@ -84,12 +84,13 @@ export default function EditEmployeeScreen() {
 
 
     useEffect(() => {
-        setEmployeeId(id)
+        setEmployeeId(Number(id))
         setImage(initialImg)
+        setInitialName(initialName)
         setName(initialName)
+        setInitialLastName(initialLastName)
         setLastName(initialLastName)
-        console.log("initial role:" + initialRole)
-        setSelectedRole(initialRole as Role)
+        setInitialSelectedStatus(initialStatus as EmployeeStatus)
         setSelectedStatus(initialStatus as EmployeeStatus)
     }, [])
 
@@ -100,7 +101,7 @@ export default function EditEmployeeScreen() {
         });
 
         if (!result.canceled) {
-            setImage(result.assets[0].uri);
+            setNewImage(result.assets[0].uri);
         } else {
             console.log("No seleccionaste ninguna imagen.")
         }
@@ -113,7 +114,7 @@ export default function EditEmployeeScreen() {
                     <View>
                         <Text style={globalStyles.title}>Editar servicio</Text>
                         <Text style={globalStyles.subTitle}>
-                            Edita la información de tu servicio para mantenerla actualizada. Modifica el precio, duración y disponibilidad para gestionar tus turnos de forma eficiente.                        </Text>
+                            Edita la información de tu empleado para mantenerla actualizada. Modifica su foto, nombre, apellido y disponibilidad para gestionar tus turnos de forma eficiente.                        </Text>
                     </View>
                     <View style={[globalStyles.card, { position: "relative" }]}>
 
@@ -121,7 +122,7 @@ export default function EditEmployeeScreen() {
                             style={{
                                 position: "absolute",
                                 top: 10,
-                                right: 10,
+                                right: 100,
                                 backgroundColor: colors.primary,
                                 borderRadius: 999,
                                 padding: 10,
@@ -137,12 +138,9 @@ export default function EditEmployeeScreen() {
                         </View>
 
                         {/*Imagen*/}
-                        <Pressable onPress={pickImage} disabled={!!image}>
+                        <Pressable onPress={pickImage} disabled={!!image} style={{ alignItems: "center" }}>
                             {image ?
-                                <Image
-                                    source={{ uri: image }}
-                                    style={{ width: "100%", height: 140, borderRadius: 16 }}
-                                />
+                                <Image source={{ uri: newImage ? newImage : image }} style={{ width: 125, height: 125, borderRadius: 100 }} />
                                 :
                                 <View style={{ width: "100%", height: 140, backgroundColor: colors.background, borderRadius: 16, justifyContent: "center", alignItems: "center" }}>
                                     <Ionicons name="camera" size={50} color={colors.textSecondary} />
@@ -205,6 +203,7 @@ export default function EditEmployeeScreen() {
                                         >
                                             <Text
                                                 style={{
+                                                    color: !isSelected ? colors.textPrimary : colors.background,
                                                     fontWeight: isSelected ? '600' : '400'
                                                 }}
                                             >{capitalizeFirstLetter(employeeStatus)}</Text>
@@ -215,42 +214,8 @@ export default function EditEmployeeScreen() {
                         </View>
 
                         <View>
-                            <Text style={globalStyles.label}>Rol</Text>
-                            <View
-                                style={{
-                                    flexDirection: "row",
-                                    flexWrap: "wrap",
-                                    gap: 10,
-                                }}
-                            >
-                                {Object.values(roles).map((role) => {
-                                    const isSelected = selectedRole === role;
-
-                                    return (
-                                        <Pressable
-                                            key={role}
-                                            style={{
-                                                backgroundColor: isSelected ? colors.primary : colors.background,
-                                                paddingHorizontal: 16,
-                                                paddingVertical: 10,
-                                                borderRadius: 12,
-                                            }}
-                                            onPress={() => setSelectedRole(role)}
-                                        >
-                                            <Text
-                                                style={{
-                                                    fontWeight: isSelected ? '600' : '400'
-                                                }}
-                                            >{capitalizeFirstLetter(role)}</Text>
-                                        </Pressable>
-                                    )
-                                })}
-                            </View>
-                        </View>
-
-                        <View>
                             <Text style={{ fontWeight: '700', color: colors.textPrimary, textTransform: "uppercase" }}>Visibilidad de la pantalla</Text>
-                            <Text style={{ color: colors.textSecondary, marginTop: 5 }}>Este servicio será visible inmediatamente en el catálogo de Luminous Noir Boutique tras su edición.</Text>
+                            <Text style={{ color: colors.textSecondary, marginTop: 5 }}>Este empleado será visible inmediatamente en el catálogo de Luminous Noir Boutique tras su edición.</Text>
                         </View>
 
                         <TouchableOpacity style={[globalStyles.primaryButton]} onPress={() => editEmployee()} disabled={editingEmployee} >

@@ -4,6 +4,7 @@ import { Result } from "../../shared/types/result"
 
 export class StorageRepository {
     async uploadImage(imageUri: string, folder: string): Promise<Result<string, StorageError>> {
+        console.log("se ejecuta el cargar imagen")
         try {
             const response = await fetch(imageUri)
             const arrayBuffer = await response.arrayBuffer()
@@ -22,6 +23,7 @@ export class StorageRepository {
                 )
 
             if (error) {
+                console.log("error 1 ", error)
                 throw error
             }
 
@@ -35,6 +37,7 @@ export class StorageRepository {
             }
 
         } catch (error) {
+            console.log("error 2 ", error)
             return handleStorageError(error)
         }
     }
