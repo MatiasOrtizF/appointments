@@ -1,4 +1,4 @@
-import { Service } from "../domain/models/Service"
+import { Service } from "../domain/models/service/Service"
 import { Result } from "../shared/types/result"
 
 

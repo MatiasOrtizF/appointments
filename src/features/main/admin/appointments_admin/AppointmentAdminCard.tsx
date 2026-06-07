@@ -1,6 +1,6 @@
 import { View, Text, TouchableOpacity, Alert } from "react-native"
 import { APPOINTMENT_STATUS_STYLES } from "../../../../constants/statusStyles"
-import { Appointment } from "../../../../domain/models/Appointment"
+import { Appointment } from "../../../../domain/models/appointments/Appointment"
 import { useTheme } from "../../../../data/provider/ThemeProvider"
 import { createAdminAppointmentStyles } from "../../../../theme/adminAppointmentStyles"
 import { Ionicons } from "@expo/vector-icons"

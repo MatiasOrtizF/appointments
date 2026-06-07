@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Service } from "../../../domain/models/Service"
+import { Service } from "../../../domain/models/service/Service"
 import { serviceRepository } from "../../../data/repository/ServiceRepository"
 import { mapServiceErrorToMessage } from "../../../errors/serviceErrors"
 

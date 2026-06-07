@@ -7,7 +7,7 @@ import { useNavigation, useRouter } from "expo-router";
 import { useAddEmployee } from "./useAddEmployee";
 import LoadingButton from "../../../../../shared/LoadingButton";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
-import { employeeStatuses, roles } from "../../../../../domain/models/Service";
+import { employeeStatuses, roles } from "../../../../../domain/models/service/Service";
 import React, { useEffect } from "react";
 import { capitalizeFirstLetter } from "../../../../../utils/capitalizeFirstLetter";
 import { ALERT_TYPE, Dialog } from "react-native-alert-notification";

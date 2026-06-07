@@ -1,4 +1,4 @@
-import { Hour } from "../../utils/generateHours";
+import { Hour } from "../../../utils/generateHours";
 
 export interface CreateAppointmentInput {
     date: string,

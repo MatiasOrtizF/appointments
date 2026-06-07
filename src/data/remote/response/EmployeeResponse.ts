@@ -1,4 +1,4 @@
-import { Employee, EmployeeStatus, Role } from "../../../domain/models/Service"
+import { Employee, EmployeeStatus, Role } from "../../../domain/models/service/Service"
 
 export interface EmployeeResponse {
   id: number,

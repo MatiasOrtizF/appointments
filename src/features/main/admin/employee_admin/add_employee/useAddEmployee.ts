@@ -1,10 +1,10 @@
 import { useState } from "react"
 import { mapSignOutErrorToMessage } from "../../../../../errors/auth/signOutError"
 import { authRepository } from "../../../../../data/repository/AuthRepository"
-import { Employee, employeeStatuses, Role, } from "../../../../../domain/models/Service"
+import { Employee, employeeStatuses, Role, } from "../../../../../domain/models/service/Service"
 import { addEmployeeUsecase } from "../../../../../domain/usecase/employee/addEmployeeUsecase"
 import { mapEmployeeErrorToMessage } from "../../../../../errors/employeeError"
-import { CreateEmployeeInput } from "../../../../../domain/models/CreateEmployeeInput"
+import { CreateEmployeeInput } from "../../../../../domain/models/employee/CreateEmployeeInput"
 
 export const useAddEmployee = () => {
     const [image, setImage] = useState<Employee["img"]>("")

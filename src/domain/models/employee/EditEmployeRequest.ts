@@ -1,4 +1,4 @@
-import { EmployeeStatus } from "../Service"
+import { EmployeeStatus } from "../service/Service"
 
 export interface EditEmployeeInput {
     id: string

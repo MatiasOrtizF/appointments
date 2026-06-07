@@ -3,9 +3,9 @@ import { userRepository } from "../../../data/repository/UserRepository"
 import { mapRegisterErrorToMessage } from "../../../errors/auth/registerError"
 import { UserError } from "../../../errors/userError"
 import { Result } from "../../../shared/types/result"
-import { CreateUserRequest } from "../../models/CreateUserRequest"
-import { employeeStatuses, roles } from "../../models/Service"
-import { SignUpRequest } from "../../models/SignUpRequest"
+import { CreateUserRequest } from "../../models/auth/CreateUserRequest"
+import { employeeStatuses, roles } from "../../models/service/Service"
+import { SignUpRequest } from "../../models/auth/SignUpRequest"
 
 export const signUpUsecase = async (
   input: SignUpRequest

@@ -6,7 +6,7 @@ import { darkColors, lightColors } from "../../../../theme/colors";
 import { ALERT_TYPE, Dialog, Toast } from "react-native-alert-notification";
 import LoadingScreen from "../../../../shared/LoadingScreen";
 import { FlatList, View, Text, ListRenderItem, RefreshControl, Pressable } from "react-native";
-import { Service } from "../../../../domain/models/Service";
+import { Service } from "../../../../domain/models/service/Service";
 import { useServiceAdmin } from "./useServiceAdmin";
 import { ServiceAdminCard } from "./ServiceAdminCard";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";

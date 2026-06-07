@@ -1,9 +1,9 @@
-import { Employee, Service } from "../../domain/models/Service"
+import { Employee, Service } from "../../domain/models/service/Service"
 import { ServiceError } from "../../errors/serviceErrors"
 import { Result } from "../../shared/types/result"
 import { serviceToDomain } from "../remote/response/ServiceResponse"
 import { employeeToDomain } from "../remote/response/EmployeeResponse"
-import { CreateServiceRequest } from "../../domain/models/CreateServiceRequest"
+import { CreateServiceRequest } from "../../domain/models/service/CreateServiceRequest"
 import { supabase } from "../../config/Supabase"
 import { EditServiceInput } from "../../domain/models/service/EditServiceInput"
 

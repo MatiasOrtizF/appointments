@@ -8,7 +8,7 @@ import { useAddService } from "./useAddService";
 import LoadingButton from "../../../../../shared/LoadingButton";
 import Divider from "../../../../../shared/Divider";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
-import { Day, Employee } from "../../../../../domain/models/Service";
+import { Day, Employee } from "../../../../../domain/models/service/Service";
 import { useEffect, useState } from "react";
 import { ServiceCard } from "../../../select_service/ServiceCard";
 import LoadingScreen from "../../../../../shared/LoadingScreen";

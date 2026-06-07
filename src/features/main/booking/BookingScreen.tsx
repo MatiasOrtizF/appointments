@@ -1,6 +1,6 @@
 import { FlatList, Text, View, StyleSheet, ListRenderItem, Pressable, RefreshControl } from "react-native";
 import { PastBookingCard } from "./PastBookingCard";
-import { Appointment } from "../../../domain/models/Appointment";
+import { Appointment } from "../../../domain/models/appointments/Appointment";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useEffect, useState } from "react";
 import { UpcomingBookingCard } from "./UpcomingBookingCard";

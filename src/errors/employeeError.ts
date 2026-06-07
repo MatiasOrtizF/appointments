@@ -1,4 +1,4 @@
-import { Employee, Service } from "../domain/models/Service"
+import { Employee, Service } from "../domain/models/service/Service"
 import { Result } from "../shared/types/result"
 
 

@@ -1,4 +1,4 @@
-import { AuthUser } from "../domain/models/AuthUser";
+import { AuthUser } from "../domain/models/auth/AuthUser";
 import { Result } from "../shared/types/result"
 
 

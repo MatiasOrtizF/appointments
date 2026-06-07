@@ -8,7 +8,7 @@ import {
 } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import { lightColors, darkColors } from '../../../theme/colors'
-import { Service } from '../../../domain/models/Service'
+import { Service } from '../../../domain/models/service/Service'
 import { useTheme } from '../../../data/provider/ThemeProvider'
 import { capitalizeFirstLetter } from '../../../utils/capitalizeFirstLetter'
 

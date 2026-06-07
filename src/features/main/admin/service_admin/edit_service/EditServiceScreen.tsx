@@ -1,7 +1,7 @@
 import * as ImagePicker from "expo-image-picker";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { View, Text, ScrollView, Pressable, Image, TextInput, FlatList, TouchableOpacity } from "react-native";
-import { Day, Employee } from "../../../../../domain/models/Service";
+import { Day, Employee } from "../../../../../domain/models/service/Service";
 import TimeSelector from "../add_service/TimeSelector";
 import { Ionicons } from "@expo/vector-icons";
 import Divider from "../../../../../shared/Divider";

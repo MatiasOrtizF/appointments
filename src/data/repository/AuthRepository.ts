@@ -8,7 +8,7 @@ import { UpdatePasswordError } from "../../errors/auth/updatePasswordError"
 import { SignOutError } from "../../errors/auth/signOutError"
 import { supabase } from "../../config/Supabase"
 import { User } from "@supabase/supabase-js"
-import { CreateUserRequest } from "../../domain/models/CreateUserRequest"
+import { CreateUserRequest } from "../../domain/models/auth/CreateUserRequest"
 
 export class AuthRepository {
   async login(

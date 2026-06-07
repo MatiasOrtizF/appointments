@@ -7,7 +7,7 @@ import { useEffect } from "react";
 import { useServiceDetail } from "./useServiceDetail";
 import LoadingScreen from "../../../../shared/LoadingScreen";
 import { Ionicons } from "@expo/vector-icons";
-import { Employee } from "../../../../domain/models/Service";
+import { Employee } from "../../../../domain/models/service/Service";
 
 export default function ServiceDetailScreen() {
     const { serviceId } = useLocalSearchParams<{ serviceId?: string }>()

@@ -1,4 +1,4 @@
-import { Day, Employee, Service } from "../../../domain/models/Service"
+import { Day, Employee, Service } from "../../../domain/models/service/Service"
 
 export interface ServiceResponse {
   id: string,

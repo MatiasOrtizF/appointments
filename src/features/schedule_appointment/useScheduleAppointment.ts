@@ -1,6 +1,6 @@
 import { useState } from "react"
-import { CreateAppointmentInput } from "../../domain/models/CreateAppointmentInput"
-import { Service } from "../../domain/models/Service"
+import { CreateAppointmentInput } from "../../domain/models/appointments/CreateAppointmentInput"
+import { Service } from "../../domain/models/service/Service"
 import { serviceRepository } from "../../data/repository/ServiceRepository"
 import { mapServiceErrorToMessage } from "../../errors/serviceErrors"
 import { generateHours, Hour } from "../../utils/generateHours"

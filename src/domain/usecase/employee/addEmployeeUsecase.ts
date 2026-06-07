@@ -2,8 +2,8 @@ import { employeeRepository } from "../../../data/repository/EmployeeRepository"
 import { storageRepository } from "../../../data/repository/StorageRepository"
 import { EmployeeError } from "../../../errors/employeeError"
 import { Result } from "../../../shared/types/result"
-import { CreateEmployeeInput } from "../../models/CreateEmployeeInput"
-import { CreateEmployeeRequest } from "../../models/CreateEmployeeRequest"
+import { CreateEmployeeInput } from "../../models/employee/CreateEmployeeInput"
+import { CreateEmployeeRequest } from "../../models/employee/CreateEmployeeRequest"
 
 export const addEmployeeUsecase = async (
     input: CreateEmployeeInput

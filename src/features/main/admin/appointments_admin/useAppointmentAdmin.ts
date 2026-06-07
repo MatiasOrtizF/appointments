@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Appointment } from "../../../../domain/models/Appointment"
+import { Appointment } from "../../../../domain/models/appointments/Appointment"
 import { mapAppointmentErrorToMessage } from "../../../../errors/appointmentErrors"
 import { adminRepository } from "../../../../data/repository/AdminRepository"
 import { appointmentRepository } from "../../../../data/repository/AppointmentRepository"

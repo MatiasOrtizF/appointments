@@ -3,8 +3,8 @@ import { serviceRepository } from "../../../data/repository/ServiceRepository"
 import { storageRepository } from "../../../data/repository/StorageRepository"
 import { ServiceError } from "../../../errors/serviceErrors"
 import { Result } from "../../../shared/types/result"
-import { CreateServiceInput } from "../../models/CreateServiceInput"
-import { CreateServiceRequest } from "../../models/CreateServiceRequest"
+import { CreateServiceInput } from "../../models/service/CreateServiceInput"
+import { CreateServiceRequest } from "../../models/service/CreateServiceRequest"
 
 export const addServiceUsecase = async (
     input: CreateServiceInput

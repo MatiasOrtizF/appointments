@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { mapSignOutErrorToMessage } from "../../../../../errors/auth/signOutError"
 import { authRepository } from "../../../../../data/repository/AuthRepository"
-import { Role, } from "../../../../../domain/models/Service"
+import { Role, } from "../../../../../domain/models/service/Service"
 import { addRoleUsecase } from "../../../../../domain/usecase/admin/employee/addRoleUsecase"
 import { mapUserErrorToMessage } from "../../../../../errors/userError"
 

@@ -1,4 +1,4 @@
-import { Role } from "./Service"
+import { Role } from "../service/Service"
 
 export interface AuthUser {
     id: string,

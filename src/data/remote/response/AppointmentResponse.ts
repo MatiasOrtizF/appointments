@@ -1,6 +1,6 @@
-import { Appointment } from "../../../domain/models/Appointment"
-import { AuthUser } from "../../../domain/models/AuthUser";
-import { Employee, Service } from "../../../domain/models/Service"
+import { Appointment } from "../../../domain/models/appointments/Appointment"
+import { AuthUser } from "../../../domain/models/auth/AuthUser";
+import { Employee, Service } from "../../../domain/models/service/Service"
 
 export interface AppointmentResponse {
   id: string,

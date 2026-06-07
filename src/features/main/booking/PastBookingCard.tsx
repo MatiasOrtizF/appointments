@@ -1,5 +1,5 @@
 import { View, Image, Text, StyleSheet } from "react-native";
-import { Appointment } from "../../../domain/models/Appointment"
+import { Appointment } from "../../../domain/models/appointments/Appointment"
 import { APPOINTMENT_STATUS_STYLES } from "../../../constants/statusStyles";
 import { useTheme } from "../../../data/provider/ThemeProvider";
 import { darkColors, lightColors } from "../../../theme/colors";

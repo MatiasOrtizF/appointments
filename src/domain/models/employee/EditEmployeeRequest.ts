@@ -1,4 +1,4 @@
-import { Day, EmployeeStatus, Role } from "./Service"
+import { Day, EmployeeStatus, Role } from "../service/Service"
 
 export interface EditEmployeeRequest {
     id: string

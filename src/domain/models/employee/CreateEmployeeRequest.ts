@@ -1,4 +1,4 @@
-import { EmployeeStatus } from "./Service"
+import { EmployeeStatus } from "../service/Service"
 
 export type CreateEmployeeRequest = {
     imageUrl: string

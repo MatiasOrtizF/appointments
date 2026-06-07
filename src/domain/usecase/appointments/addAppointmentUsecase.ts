@@ -2,8 +2,8 @@ import { appointmentRepository } from "../../../data/repository/AppointmentRepos
 import { authRepository } from "../../../data/repository/AuthRepository"
 import { AppointmentError } from "../../../errors/appointmentErrors"
 import { Result } from "../../../shared/types/result"
-import { CreateAppointmentInput } from "../../models/CreateAppointmentInput"
-import { CreateAppointmentRequest } from "../../models/CreateAppointmentRequest"
+import { CreateAppointmentInput } from "../../models/appointments/CreateAppointmentInput"
+import { CreateAppointmentRequest } from "../../models/appointments/CreateAppointmentRequest"
 
 export const addAppointmentUsecase = async (
     input: CreateAppointmentInput

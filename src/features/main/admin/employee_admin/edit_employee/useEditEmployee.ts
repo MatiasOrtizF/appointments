@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { authRepository } from "../../../../../data/repository/AuthRepository"
 import { mapSignOutErrorToMessage } from "../../../../../errors/auth/signOutError"
-import { Employee } from "../../../../../domain/models/Service"
+import { Employee } from "../../../../../domain/models/service/Service"
 import { editEmployeeUsecase } from "../../../../../domain/usecase/employee/editEmployeeUsecase"
 import { EditEmployeeInput } from "../../../../../domain/models/employee/EditEmployeeInput"
 import { mapEmployeeErrorToMessage } from "../../../../../errors/employeeError"

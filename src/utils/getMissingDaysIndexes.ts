@@ -1,4 +1,4 @@
-import { Day } from "../domain/models/Service";
+import { Day } from "../domain/models/service/Service";
 
 export const DAYS: Day[] = [
   "domingo",   // 0

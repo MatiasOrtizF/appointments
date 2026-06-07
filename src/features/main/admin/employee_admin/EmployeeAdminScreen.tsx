@@ -7,7 +7,7 @@ import { FlatList, ListRenderItem, Pressable, RefreshControl, Text, View } from 
 import { useEffect } from "react";
 import { ALERT_TYPE, Dialog, Toast } from "react-native-alert-notification";
 import LoadingScreen from "../../../../shared/LoadingScreen";
-import { Employee } from "../../../../domain/models/Service";
+import { Employee } from "../../../../domain/models/service/Service";
 import { EmployeeAdminCard } from "./EmployeeAdminCard";
 import { Ionicons } from "@expo/vector-icons";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";

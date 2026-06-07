@@ -1,5 +1,5 @@
 import { View, Text, Image, StyleSheet, Alert } from "react-native"
-import { Service } from "../../../../domain/models/Service";
+import { Service } from "../../../../domain/models/service/Service";
 import { useTheme } from "../../../../data/provider/ThemeProvider";
 import { createAdminAppointmentStyles } from "../../../../theme/adminAppointmentStyles";
 import { Ionicons } from "@expo/vector-icons";

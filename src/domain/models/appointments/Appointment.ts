@@ -1,6 +1,6 @@
-import { AppointmentStatus } from "../../data/remote/response/AppointmentResponse";
-import { AuthUser } from "../../domain/models/AuthUser";
-import { Employee, Service } from "./Service";
+import { AppointmentStatus } from "../../../data/remote/response/AppointmentResponse";
+import { AuthUser } from "../auth/AuthUser";
+import { Employee, Service } from "../service/Service";
 
 export interface Appointment {
     id: string,

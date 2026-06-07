@@ -2,7 +2,7 @@
 import { Text, FlatList, ListRenderItem, View, StyleSheet, RefreshControl } from "react-native";
 import { useServices } from "./useSelectService";
 import { ServiceCard } from "./ServiceCard";
-import { Service } from "../../../domain/models/Service";
+import { Service } from "../../../domain/models/service/Service";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { lightColors, darkColors } from "../../../theme/colors";
 import { router } from "expo-router";

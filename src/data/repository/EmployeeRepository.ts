@@ -1,10 +1,10 @@
-import { Employee } from "../../domain/models/Service"
+import { Employee } from "../../domain/models/service/Service"
 import { Result } from "../../shared/types/result"
 import { employeeToDomain } from "../remote/response/EmployeeResponse"
 import { FirebaseError } from "firebase/app"
 import { EmployeeError } from "../../errors/employeeError"
 import { supabase } from "../../config/Supabase"
-import { CreateEmployeeRequest } from "../../domain/models/CreateEmployeeRequest"
+import { CreateEmployeeRequest } from "../../domain/models/employee/CreateEmployeeRequest"
 import { EditEmployeeInput } from "../../domain/models/employee/EditEmployeeInput"
 
 const TABLE_EMPLEADOS = "empleados"

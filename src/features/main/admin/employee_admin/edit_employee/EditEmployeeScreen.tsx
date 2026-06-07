@@ -7,7 +7,7 @@ import { createGlobalStyles } from "../../../../../theme/globalStyles";
 import { darkColors, lightColors } from "../../../../../theme/colors";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useEffect } from "react";
-import { EmployeeStatus, employeeStatuses, Role } from "../../../../../domain/models/Service";
+import { EmployeeStatus, employeeStatuses, Role } from "../../../../../domain/models/service/Service";
 import { Ionicons } from "@expo/vector-icons";
 import { capitalizeFirstLetter } from "../../../../../utils/capitalizeFirstLetter";
 import LoadingButton from "../../../../../shared/LoadingButton";

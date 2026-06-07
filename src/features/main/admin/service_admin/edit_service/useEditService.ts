@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Day, Service } from "../../../../../domain/models/Service";
+import { Day, Service } from "../../../../../domain/models/service/Service";
 import { mapServiceErrorToMessage } from "../../../../../errors/serviceErrors";
 import { mapEmployeeErrorToMessage } from "../../../../../errors/employeeError";
 import { employeeRepository } from "../../../../../data/repository/EmployeeRepository";

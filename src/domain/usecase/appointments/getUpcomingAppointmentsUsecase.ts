@@ -2,7 +2,7 @@ import { appointmentRepository } from "../../../data/repository/AppointmentRepos
 import { authRepository } from "../../../data/repository/AuthRepository"
 import { AppointmentError } from "../../../errors/appointmentErrors"
 import { Result } from "../../../shared/types/result"
-import { Appointment } from "../../models/Appointment"
+import { Appointment } from "../../models/appointments/Appointment"
 
 export const getUpcomingAppointmentsUsecase = async (
 ): Promise<Result<Appointment[], AppointmentError>> => {

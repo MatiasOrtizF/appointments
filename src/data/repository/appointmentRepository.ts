@@ -1,17 +1,14 @@
-import { collection, doc, getDoc, getDocs, limit, query, setDoc, Timestamp, where } from 'firebase/firestore';
-import { Appointment } from '../../domain/models/Appointment'
-import { AppointmentResponse, appointmentToDomain } from '../remote/response/AppointmentResponse';
-import { db } from '../../config/Firebase';
+import { Appointment } from '../../domain/models/appointments/Appointment'
+import { appointmentToDomain } from '../remote/response/AppointmentResponse';
 import { Result } from '../../shared/types/result';
 import { AppointmentError } from '../../errors/appointmentErrors';
 import { FirebaseError } from 'firebase/app';
-import { CreateAppointmentRequest } from '../../domain/models/CreateAppointmentRequest';
+import { CreateAppointmentRequest } from '../../domain/models/appointments/CreateAppointmentRequest';
 import { supabase } from '../../config/Supabase';
 import { employeeToDomain } from '../remote/response/EmployeeResponse';
 import { serviceToDomain } from '../remote/response/ServiceResponse';
 import { authUserToDomain } from '../remote/response/AuthUserResponse';
 
-const COLLECTION_APPOINTMENT = "appointment"
 const TABLE_TURNOS = "turnos"
 
 export class AppointmentRepository {

@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { Service } from "../../../../../domain/models/Service";
+import { Service } from "../../../../../domain/models/service/Service";
 import { mapServiceErrorToMessage } from "../../../../../errors/serviceErrors";
 import { mapEmployeeErrorToMessage } from "../../../../../errors/employeeError";
 import { employeeRepository } from "../../../../../data/repository/EmployeeRepository";
-import { CreateServiceInput } from "../../../../../domain/models/CreateServiceInput";
+import { CreateServiceInput } from "../../../../../domain/models/service/CreateServiceInput";
 import { addServiceUsecase } from "../../../../../domain/usecase/service/addServiceUsecase";
 
 export const useAddService = () => {

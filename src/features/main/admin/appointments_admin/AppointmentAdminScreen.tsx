@@ -4,7 +4,7 @@ import LoadingScreen from "../../../../shared/LoadingScreen";
 import { useTheme } from "../../../../data/provider/ThemeProvider";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { darkColors, lightColors } from "../../../../theme/colors";
-import { Appointment } from "../../../../domain/models/Appointment";
+import { Appointment } from "../../../../domain/models/appointments/Appointment";
 import { AppointmentAdminCard } from "./AppointmentAdminCard";
 import { useEffect } from "react";
 import { ALERT_TYPE, Dialog, Toast } from "react-native-alert-notification";

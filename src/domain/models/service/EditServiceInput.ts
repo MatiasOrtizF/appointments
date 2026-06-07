@@ -1,4 +1,4 @@
-import { Day } from "../Service"
+import { Day } from "./Service"
 
 export interface EditServiceInput {
     id: string

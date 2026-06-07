@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Employee } from "../../../../domain/models/Service"
+import { Employee } from "../../../../domain/models/service/Service"
 import { getUserInfoUsecase } from "../../../../domain/usecase/admin/getUserInfoUsecase"
 import { authRepository } from "../../../../data/repository/AuthRepository"
 import { mapSignOutErrorToMessage } from "../../../../errors/auth/signOutError"
