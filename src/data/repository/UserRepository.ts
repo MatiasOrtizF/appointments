@@ -1,5 +1,4 @@
 import { doc, setDoc, deleteDoc, getDoc, updateDoc, Timestamp, collection, getDocs, query, where } from "firebase/firestore"
-import { db } from "../../config/Firebase"
 import { AuthUser } from "../../domain/models/auth/AuthUser"
 import { AuthUserResponse } from "../remote/response/AuthUserResponse"
 import { toDomain } from "../remote/response/AuthUserResponse"

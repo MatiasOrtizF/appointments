@@ -1,11 +1,7 @@
 import { useState } from "react";
-import { mapUserErrorToMessage } from "../../../errors/userError";
-import { signUpUsecase } from "../../../domain/usecase/auth/signUpUsecase";
+import { mapRegisterErrorToMessage } from "../../../errors/auth/registerError";
 import { SignUpRequest } from "../../../domain/models/auth/SignUpRequest";
 import { authRepository } from "../../../data/repository/AuthRepository";
-import { CreateUserRequest } from "../../../domain/models/auth/CreateUserRequest";
-import { employeeStatuses, roles } from "../../../domain/models/service/Service";
-import { mapRegisterErrorToMessage } from "../../../errors/auth/registerError";
 
 export const useRegister = () => {
 
@@ -56,7 +52,7 @@ export const useRegister = () => {
       return
     }
 
-    const input: CreateUserRequest = {
+    const input: SignUpRequest = {
       email: email,
       password: password,
       name: name,

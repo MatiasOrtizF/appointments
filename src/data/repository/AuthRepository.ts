@@ -9,6 +9,8 @@ import { SignOutError } from "../../errors/auth/signOutError"
 import { supabase } from "../../config/Supabase"
 import { User } from "@supabase/supabase-js"
 import { CreateUserRequest } from "../../domain/models/auth/CreateUserRequest"
+import { SignUpRequest } from "../../domain/models/auth/SignUpRequest"
+import { WeekCalendar } from "react-native-calendars"
 
 export class AuthRepository {
   async login(
@@ -41,12 +43,11 @@ export class AuthRepository {
       }
 
     } catch (error) {
-
       return handleAuthError(error)
     }
   }
 
-  async signUp(request: CreateUserRequest): Promise<Result<User, RegisterError>> {
+  async signUp(request: SignUpRequest): Promise<Result<User, RegisterError>> {
 
     try {
       const { data, error } =
@@ -211,7 +212,7 @@ export class AuthRepository {
   ): Promise<Result<void, UpdatePasswordError>> {
 
     try {
-    console.log("ANTES UPDATE USER");
+      console.log("ANTES UPDATE USER");
 
       const { error } =
         await supabase.auth.updateUser({
@@ -228,7 +229,7 @@ export class AuthRepository {
       }
 
     } catch (error) {
-    console.log("CATCH UPDATE PASSWORD");
+      console.log("CATCH UPDATE PASSWORD");
 
       return handleAuthError(error)
     }
@@ -240,7 +241,7 @@ export class AuthRepository {
   ): Promise<Result<void, UpdatePasswordError>> {
 
     try {
-console.log("ANTES SIGN IN");
+      console.log("ANTES SIGN IN");
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password: currentPassword

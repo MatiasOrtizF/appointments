@@ -6,7 +6,7 @@ import { useRegister } from "./useRegister";
 import { lightColors, darkColors } from "../../../theme/colors";
 import { createGlobalStyles } from "../../../theme/globalStyles";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { router, useNavigation } from "expo-router";
+import { router } from "expo-router";
 import { useTheme } from "../../../data/provider/ThemeProvider";
 import LoadingButton from "../../../shared/LoadingButton";
 import { ALERT_TYPE, Dialog } from "react-native-alert-notification";
@@ -17,7 +17,6 @@ export default function RegisterScreen() {
     const { isDarkMode } = useTheme();
     const globalStyles = createGlobalStyles(isDarkMode)
     const colors = isDarkMode ? darkColors : lightColors
-    const navigation = useNavigation()
 
     const {
         name,
@@ -41,12 +40,12 @@ export default function RegisterScreen() {
             Dialog.show({
                 type: ALERT_TYPE.SUCCESS,
                 title: 'Usuario creado',
-                textBody: 'Te enviamos un enlace de verificación. Si no lo encuentras, revisa spam o promociones.',
+                textBody: 'Si el correo es válido, recibirás un enlace de verificación. Si no lo encuentras, revisa spam o promociones.',
                 button: 'Continuar',
                 closeOnOverlayTap: false,
                 onPressButton: () => {
                     Dialog.hide();
-                    navigation.goBack();
+                    router.push("/auth/login")
                 },
             });
         }
