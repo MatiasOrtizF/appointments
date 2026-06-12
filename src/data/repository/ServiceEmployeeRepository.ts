@@ -1,13 +1,12 @@
-import { ServiceError } from "../../errors/serviceErrors"
 import { Result } from "../../shared/types/result"
 import { supabase } from "../../config/Supabase"
-import { ServiceEmployeeError } from "../../errors/ServiceEmployeeError"
+import { DatabaseError, handleDatabaseError } from "../../errors/databaseError"
 
 const TABLE_SERVICIOS_EMPLEADOS = "servicios_empleados"
 
 export class ServiceEmployeeRepository {
 
-  async addEmployeeToService(serviceId: string, employeeIds: number[]): Promise<Result<void, ServiceEmployeeError>> {
+  async addEmployeeToService(serviceId: string, employeeIds: number[]): Promise<Result<void, DatabaseError>> {
     try {
 
       const relations = employeeIds.map(employeeId => ({
@@ -18,9 +17,9 @@ export class ServiceEmployeeRepository {
       const { error } = await supabase
         .from(TABLE_SERVICIOS_EMPLEADOS)
         .insert(relations);
-
+        
       if (error) {
-        throw error;
+        return handleDatabaseError(error);
       }
 
       return {
@@ -29,11 +28,11 @@ export class ServiceEmployeeRepository {
       };
 
     } catch (error) {
-      return handleServiceEmployeeError(error)
+      return handleDatabaseError(error)
     }
   }
 
-  async deleteEmployeesByService(serviceId: string): Promise<Result<void, ServiceError>> {
+  async deleteEmployeesByService(serviceId: string): Promise<Result<void, DatabaseError>> {
     try {
 
       const { error } = await supabase
@@ -42,7 +41,7 @@ export class ServiceEmployeeRepository {
         .eq("servicio_id", serviceId);
 
       if (error) {
-        throw error
+        return handleDatabaseError(error)
       }
       return {
         ok: true,
@@ -50,41 +49,9 @@ export class ServiceEmployeeRepository {
       };
 
     } catch (error) {
-      return handleServiceEmployeeError(error)
+      return handleDatabaseError(error)
     }
   }
 }
-
-export const handleServiceEmployeeError = (
-  error: any
-): Result<never, ServiceEmployeeError> => {
-
-  console.log("SERVICE ERROR:", error)
-
-  switch (error?.code) {
-
-    // RLS / permisos
-    case "42501":
-      return { ok: false, error: "permission" }
-
-    // no encontrado
-    case "PGRST116":
-      return { ok: false, error: "not-found" }
-
-    // timeout/network
-    case "57014":
-      return { ok: false, error: "timeout" }
-
-    // postgres connection
-    case "08006":
-    case "08001":
-      return { ok: false, error: "network" }
-
-    default:
-      return { ok: false, error: "unknown" }
-  }
-
-  return { ok: false, error: "unknown" };
-};
 
 export const serviceEmployeeRepository = new ServiceEmployeeRepository();

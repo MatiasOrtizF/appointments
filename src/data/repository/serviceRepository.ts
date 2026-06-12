@@ -1,17 +1,17 @@
 import { Employee, Service } from "../../domain/models/service/Service"
-import { ServiceError } from "../../errors/serviceErrors"
 import { Result } from "../../shared/types/result"
 import { serviceToDomain } from "../remote/response/ServiceResponse"
 import { employeeToDomain } from "../remote/response/EmployeeResponse"
 import { CreateServiceRequest } from "../../domain/models/service/CreateServiceRequest"
 import { supabase } from "../../config/Supabase"
 import { EditServiceInput } from "../../domain/models/service/EditServiceInput"
+import { DatabaseError, handleDatabaseError } from "../../errors/databaseError"
 
 const TABLE_SERVICIOS = "servicios"
 
 export class ServiceRepository {
 
-  async getServices(): Promise<Result<Service[], ServiceError>> {
+  async getServices(): Promise<Result<Service[], DatabaseError>> {
     try {
       const { data, error } = await supabase
         .from(TABLE_SERVICIOS)
@@ -33,7 +33,9 @@ export class ServiceRepository {
       )
     )
   `)
-      if (error) throw error
+      if (error) {
+        return handleDatabaseError(error)
+      }
 
       const services: Service[] = (data ?? []).map((service) => {
         const employees =
@@ -55,12 +57,11 @@ export class ServiceRepository {
 
       return { ok: true, data: services }
     } catch (error) {
-      console.log("otro error", error)
-      return handleServiceError(error)
+      return handleDatabaseError(error)
     }
   }
 
-  async getService(id: string): Promise<Result<Service, ServiceError>> {
+  async getService(id: string): Promise<Result<Service, DatabaseError>> {
     try {
 
       const { data, error } = await supabase
@@ -86,8 +87,9 @@ export class ServiceRepository {
         .eq("id", id)
         .single()
 
-      if (error) throw error
-      console.log("data", data)
+      if (error) {
+        return handleDatabaseError(error)
+      }
       const employees: Employee[] =
         data.servicios_empleados?.map((se: any) =>
           employeeToDomain(se.empleado)
@@ -112,11 +114,11 @@ export class ServiceRepository {
       }
 
     } catch (error) {
-      return handleServiceError(error)
+      return handleDatabaseError(error)
     }
   }
 
-  async addService(request: CreateServiceRequest): Promise<Result<string, ServiceError>> {
+  async addService(request: CreateServiceRequest): Promise<Result<string, DatabaseError>> {
     try {
 
       const { data, error } = await supabase
@@ -135,25 +137,20 @@ export class ServiceRepository {
         .single()
 
       if (error) {
-        console.log("error addAppointment", error);
-        throw error;
+        return handleDatabaseError(error)
       }
-
-      console.log("service id creado ", data.id)
-
       return {
         ok: true,
         data: data.id
       };
 
     } catch (error) {
-      return handleServiceError(error)
+      return handleDatabaseError(error)
     }
   }
 
-  async editService(service: EditServiceInput): Promise<Result<void, ServiceError>> {
+  async editService(service: EditServiceInput): Promise<Result<void, DatabaseError>> {
     try {
-      console.log("llame a edtiar servicio")
       const { error } = await supabase
         .from(TABLE_SERVICIOS)
         .update({
@@ -169,8 +166,7 @@ export class ServiceRepository {
         .eq("id", service.id)
 
       if (error) {
-        console.log("error 1", error)
-        throw error
+        return handleDatabaseError(error)
       }
 
       return {
@@ -179,13 +175,11 @@ export class ServiceRepository {
       }
 
     } catch (error) {
-      console.log("error 2", error)
-
-      return handleServiceError(error)
+      return handleDatabaseError(error)
     }
   }
 
-  async deleteService(serviceId: string): Promise<Result<void, ServiceError>> {
+  async deleteService(serviceId: string): Promise<Result<void, DatabaseError>> {
     try {
 
       const { error } = await supabase
@@ -194,7 +188,7 @@ export class ServiceRepository {
         .eq("id", serviceId);
 
       if (error) {
-        throw error
+        return handleDatabaseError(error)
       }
       return {
         ok: true,
@@ -202,41 +196,9 @@ export class ServiceRepository {
       };
 
     } catch (error) {
-      return handleServiceError(error)
+      return handleDatabaseError(error)
     }
   }
 }
-
-export const handleServiceError = (
-  error: any
-): Result<never, ServiceError> => {
-
-  console.log("SERVICE ERROR:", error)
-
-  switch (error?.code) {
-
-    // RLS / permisos
-    case "42501":
-      return { ok: false, error: "permission" }
-
-    // no encontrado
-    case "PGRST116":
-      return { ok: false, error: "not-found" }
-
-    // timeout/network
-    case "57014":
-      return { ok: false, error: "timeout" }
-
-    // postgres connection
-    case "08006":
-    case "08001":
-      return { ok: false, error: "network" }
-
-    default:
-      return { ok: false, error: "unknown" }
-  }
-
-  return { ok: false, error: "unknown" };
-};
 
 export const serviceRepository = new ServiceRepository();

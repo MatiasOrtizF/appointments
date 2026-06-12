@@ -4,7 +4,7 @@ import { lightColors, darkColors } from "../../../theme/colors";
 import { useState } from "react";
 import { useTheme } from "../../../data/provider/ThemeProvider";
 import { createGlobalStyles } from "../../../theme/globalStyles";
-import LoadingScreen from "../../../shared/LoadingScreen";
+import LoadingScreen from "../../../shared/components/LoadingScreen";
 
 export default function VerifyEmailScreen() {
   const [seconds, setSeconds] = useState(0);

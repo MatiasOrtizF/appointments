@@ -4,8 +4,8 @@ import { View, Text, ScrollView, Pressable, Image, TextInput, FlatList, Touchabl
 import { Day, Employee } from "../../../../../domain/models/service/Service";
 import TimeSelector from "../add_service/TimeSelector";
 import { Ionicons } from "@expo/vector-icons";
-import Divider from "../../../../../shared/Divider";
-import LoadingButton from "../../../../../shared/LoadingButton";
+import Divider from "../../../../../shared/components/Divider";
+import LoadingButton from "../../../../../shared/components/LoadingButton";
 import TimePickerModal from "../add_service/TimePickerModal";
 import { useTheme } from "../../../../../data/provider/ThemeProvider";
 import { createGlobalStyles } from "../../../../../theme/globalStyles";

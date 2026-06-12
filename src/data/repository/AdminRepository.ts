@@ -1,17 +1,16 @@
 import { Appointment } from '../../domain/models/appointments/Appointment'
 import { appointmentToDomain } from '../remote/response/AppointmentResponse';
 import { Result } from '../../shared/types/result';
-import { AppointmentError } from '../../errors/appointmentErrors';
-import { FirebaseError } from 'firebase/app';
 import { supabase } from '../../config/Supabase';
 import { employeeToDomain } from '../remote/response/EmployeeResponse';
 import { serviceToDomain } from '../remote/response/ServiceResponse';
 import { authUserToDomain } from '../remote/response/AuthUserResponse';
+import { DatabaseError, handleDatabaseError } from '../../errors/databaseError';
 
 const TABLE_TURNOS = "turnos"
 
 export class AdminRepository {
-  async getUpcomingTodayAppointments(): Promise<Result<Appointment[], AppointmentError>> {
+  async getUpcomingTodayAppointments(): Promise<Result<Appointment[], DatabaseError>> {
     try {
 
       const { now, startOfTomorrow } = getTodayRange()
@@ -31,8 +30,7 @@ export class AdminRepository {
         .limit(3)
 
       if (error) {
-        console.log("error de admin", error)
-        throw error
+        handleDatabaseError(error)
       }
 
       const appointments: Appointment[] = (data ?? []).map((appointment) => {
@@ -59,12 +57,11 @@ export class AdminRepository {
       }
 
     } catch (error) {
-      console.log("error desde admin", error)
-      return handleAdminAppointmentError(error)
+      return handleDatabaseError(error)
     }
   };
 
-  async getAdminAppointments(): Promise<Result<Appointment[], AppointmentError>> {
+  async getAdminAppointments(): Promise<Result<Appointment[], DatabaseError>> {
      try {
 
       const { now, startOfTomorrow } = getTodayRange()
@@ -82,8 +79,7 @@ export class AdminRepository {
         .limit(10)
 
       if (error) {
-        console.log("error de admin", error)
-        throw error
+            return handleDatabaseError(error)
       }
 
       const appointments: Appointment[] = (data ?? []).map((appointment) => {
@@ -110,8 +106,7 @@ export class AdminRepository {
       }
 
     } catch (error) {
-      console.log("error desde admin", error)
-      return handleAdminAppointmentError(error)
+      return handleDatabaseError(error)
     }
   };
 }
@@ -130,39 +125,5 @@ const getTodayRange = () => {
     startOfTomorrow: tomorrow
   }
 }
-const handleAdminAppointmentError = (
-  error: unknown
-): Result<never, AppointmentError> => {
-
-  if (error instanceof FirebaseError) {
-    switch (error.code) {
-      case "permission-denied":
-        return { ok: false, error: "permission" };
-
-      case "unauthenticated":
-      case "auth/unauthenticated":
-        return { ok: false, error: "unauthenticated" };
-
-      case "unavailable":
-      case "failed-precondition":
-        return { ok: false, error: "network" };
-
-      case "deadline-exceeded":
-        return { ok: false, error: "timeout" };
-
-      case "not-found":
-        return { ok: false, error: "not-found" };
-
-      case "already-exists":
-      case "aborted":
-        return { ok: false, error: "slot_taken" };
-
-      default:
-        return { ok: false, error: "unknown" };
-    }
-  }
-
-  return { ok: false, error: "unknown" };
-};
 
 export const adminRepository = new AdminRepository();

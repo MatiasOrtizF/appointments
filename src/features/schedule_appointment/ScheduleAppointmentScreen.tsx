@@ -11,12 +11,12 @@ import { Calendar } from "react-native-calendars";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useScheduleAppointment } from "./useScheduleAppointment";
-import LoadingScreen from "../../shared/LoadingScreen";
+import LoadingScreen from "../../shared/components/LoadingScreen";
 import { ALERT_TYPE, Dialog } from "react-native-alert-notification";
 import { useTheme } from "../../data/provider/ThemeProvider";
 import { createGlobalStyles } from "../../theme/globalStyles";
 import { darkColors, lightColors } from "../../theme/colors";
-import Divider from "../../shared/Divider";
+import Divider from "../../shared/components/Divider";
 
 /* ======================
    TYPES & CONSTANTS

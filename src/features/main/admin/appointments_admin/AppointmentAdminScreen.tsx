@@ -1,6 +1,6 @@
 import { FlatList, ListRenderItem, RefreshControl, Text, View } from "react-native";
 import { useAppointmentAdmin } from "./useAppointmentAdmin";
-import LoadingScreen from "../../../../shared/LoadingScreen";
+import LoadingScreen from "../../../../shared/components/LoadingScreen";
 import { useTheme } from "../../../../data/provider/ThemeProvider";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { darkColors, lightColors } from "../../../../theme/colors";

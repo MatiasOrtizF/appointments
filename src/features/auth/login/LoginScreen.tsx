@@ -8,7 +8,7 @@ import { createGlobalStyles } from "../../../theme/globalStyles";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { useTheme } from "../../../data/provider/ThemeProvider";
-import LoadingButton from "../../../shared/LoadingButton";
+import LoadingButton from "../../../shared/components/LoadingButton";
 
 
 export const LoginScreen = () => {

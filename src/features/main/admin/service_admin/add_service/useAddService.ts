@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import { Service } from "../../../../../domain/models/service/Service";
-import { mapServiceErrorToMessage } from "../../../../../errors/serviceErrors";
-import { mapEmployeeErrorToMessage } from "../../../../../errors/employeeError";
 import { employeeRepository } from "../../../../../data/repository/EmployeeRepository";
 import { CreateServiceInput } from "../../../../../domain/models/service/CreateServiceInput";
 import { addServiceUsecase } from "../../../../../domain/usecase/service/addServiceUsecase";
+import { mapDatabaseErrorToMessage } from "../../../../../errors/databaseErrorMessages";
 
 export const useAddService = () => {
     const [previewService, setPreviewService] = useState<Service>()
@@ -33,7 +32,7 @@ export const useAddService = () => {
             if (result.ok) {
                 setEmployees(result.data)
             } else {
-                setError(mapEmployeeErrorToMessage(result.error))
+                setError(mapDatabaseErrorToMessage(result.error))
             }
 
         } finally {
@@ -65,7 +64,7 @@ export const useAddService = () => {
                 if (result.ok) {
                     setSuccess(true)
                 } else {
-                    setError(mapServiceErrorToMessage(result.error))
+                    setError(mapDatabaseErrorToMessage(result.error))
                     setCreatingService(false)
                 }
             } finally {

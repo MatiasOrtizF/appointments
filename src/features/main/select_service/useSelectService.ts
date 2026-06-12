@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { Service } from "../../../domain/models/service/Service"
 import { serviceRepository } from "../../../data/repository/ServiceRepository"
-import { mapServiceErrorToMessage } from "../../../errors/serviceErrors"
+import { mapDatabaseErrorToMessage } from "../../../errors/databaseErrorMessages"
 
 export const useServices = () => {
   const [services, setServices] = useState<Service[]>([])
@@ -28,7 +28,7 @@ export const useServices = () => {
       if (result.ok) {
         setServices(result.data)
       } else {
-        setError(mapServiceErrorToMessage(result.error))
+        setError(mapDatabaseErrorToMessage(result.error))
       }
 
     } finally {

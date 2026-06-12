@@ -8,7 +8,7 @@ import { createGlobalStyles } from "../../../theme/globalStyles";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import { useTheme } from "../../../data/provider/ThemeProvider";
-import LoadingButton from "../../../shared/LoadingButton";
+import LoadingButton from "../../../shared/components/LoadingButton";
 import { ALERT_TYPE, Dialog } from "react-native-alert-notification";
 
 export default function RegisterScreen() {

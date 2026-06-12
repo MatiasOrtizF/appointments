@@ -9,7 +9,7 @@ import { lightColors, darkColors } from "../../../theme/colors";
 import { createGlobalStyles } from "../../../theme/globalStyles";
 import { useTheme } from "../../../data/provider/ThemeProvider";
 import { Colors } from "../../../theme/types";
-import LoadingScreen from "../../../shared/LoadingScreen";
+import LoadingScreen from "../../../shared/components/LoadingScreen";
 import { ALERT_TYPE, Dialog, Toast } from "react-native-alert-notification";
 
 type Props = {

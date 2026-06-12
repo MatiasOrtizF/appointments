@@ -1,14 +1,14 @@
 import { serviceEmployeeRepository } from "../../../data/repository/ServiceEmployeeRepository"
 import { serviceRepository } from "../../../data/repository/ServiceRepository"
 import { storageRepository } from "../../../data/repository/StorageRepository"
-import { ServiceError } from "../../../errors/serviceErrors"
+import { DatabaseError } from "../../../errors/databaseError"
 import { Result } from "../../../shared/types/result"
 import { CreateServiceInput } from "../../models/service/CreateServiceInput"
 import { CreateServiceRequest } from "../../models/service/CreateServiceRequest"
 
 export const addServiceUsecase = async (
     input: CreateServiceInput
-): Promise<Result<void, ServiceError>> => {
+): Promise<Result<void, DatabaseError>> => {
 
     const resultImageUrl = await storageRepository.uploadImage(input.img, "servicios")
 
@@ -36,7 +36,7 @@ export const addServiceUsecase = async (
         )
 
     if (!addEmployeesResult.ok) {
-        return { ok: false, error: "unknown" }
+        return addEmployeesResult
     }
 
     return {

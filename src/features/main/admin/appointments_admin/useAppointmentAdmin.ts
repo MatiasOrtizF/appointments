@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react"
 import { Appointment } from "../../../../domain/models/appointments/Appointment"
-import { mapAppointmentErrorToMessage } from "../../../../errors/appointmentErrors"
 import { adminRepository } from "../../../../data/repository/AdminRepository"
 import { appointmentRepository } from "../../../../data/repository/AppointmentRepository"
+import { mapDatabaseErrorToMessage } from "../../../../errors/databaseErrorMessages"
 
 export const useAppointmentAdmin = () => {
   const [adminAppointments, setAdminAppointments] = useState<Appointment[] | null>(null)
@@ -27,7 +27,7 @@ export const useAppointmentAdmin = () => {
       if (result.ok) {
         setAdminAppointments(result.data)
       } else {
-        setError(mapAppointmentErrorToMessage(result.error))
+        setError(mapDatabaseErrorToMessage(result.error))
       }
 
     } finally {
@@ -53,7 +53,7 @@ export const useAppointmentAdmin = () => {
         })
         setSuccess(true)
       } else {
-        setError(mapAppointmentErrorToMessage(result.error))
+        setError(mapDatabaseErrorToMessage(result.error))
       }
 
     } finally {

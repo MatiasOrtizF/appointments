@@ -1,19 +1,19 @@
 import { Appointment } from '../../domain/models/appointments/Appointment'
 import { appointmentToDomain } from '../remote/response/AppointmentResponse';
 import { Result } from '../../shared/types/result';
-import { AppointmentError } from '../../errors/appointmentErrors';
-import { FirebaseError } from 'firebase/app';
 import { CreateAppointmentRequest } from '../../domain/models/appointments/CreateAppointmentRequest';
 import { supabase } from '../../config/Supabase';
 import { employeeToDomain } from '../remote/response/EmployeeResponse';
 import { serviceToDomain } from '../remote/response/ServiceResponse';
 import { authUserToDomain } from '../remote/response/AuthUserResponse';
+import { DatabaseError, handleDatabaseError } from '../../errors/databaseError';
+import { AddAppointmentError } from '../../errors/addAppointmentErrors';
 
 const TABLE_TURNOS = "turnos"
 
 export class AppointmentRepository {
 
-  async getUpcomingAppointments(uid: string): Promise<Result<Appointment[], AppointmentError>> {
+  async getUpcomingAppointments(uid: string): Promise<Result<Appointment[], DatabaseError>> {
     try {
 
       const now = new Date().toISOString();
@@ -32,7 +32,9 @@ export class AppointmentRepository {
         .order("appointment_at", { ascending: true })
         .limit(10);
 
-      if (error) throw error;
+      if (error) {
+        return handleDatabaseError(error)
+      }
 
       const appointments: Appointment[] = (data ?? []).map((appointment) => {
         return appointmentToDomain({
@@ -52,11 +54,11 @@ export class AppointmentRepository {
       };
 
     } catch (error) {
-      return handleAppointmentError(error);
+      return handleDatabaseError(error);
     }
   };
 
-  async getPastAppointments(uid: string): Promise<Result<Appointment[], AppointmentError>> {
+  async getPastAppointments(uid: string): Promise<Result<Appointment[], DatabaseError>> {
     try {
 
       const now = new Date().toISOString();
@@ -75,7 +77,9 @@ export class AppointmentRepository {
         .order("appointment_at", { ascending: false })
         .limit(10);
 
-      if (error) throw error;
+      if (error) {
+        return handleDatabaseError(error)
+      }
 
       const appointments: Appointment[] = (data ?? []).map((appointment) => {
         return appointmentToDomain({
@@ -92,13 +96,11 @@ export class AppointmentRepository {
       return { ok: true, data: appointments }
 
     } catch (error) {
-      return handleAppointmentError(error);
+      return handleDatabaseError(error);
     }
   };
 
-  async cancelAppointment(
-    appointmentId: string
-  ): Promise<Result<void, AppointmentError>> {
+  async cancelAppointment(appointmentId: string): Promise<Result<void, DatabaseError>> {
     try {
 
       const { error } = await supabase
@@ -107,8 +109,7 @@ export class AppointmentRepository {
         .eq("id", appointmentId);
 
       if (error) {
-        console.log("error al borrar turnos ", error)
-        throw error
+        return handleDatabaseError(error)
       }
       return {
         ok: true,
@@ -116,14 +117,12 @@ export class AppointmentRepository {
       };
 
     } catch (error) {
-      return handleAppointmentError(error);
+      return handleDatabaseError(error);
     }
   }
 
-  async addAppointment(request: CreateAppointmentRequest): Promise<Result<void, AppointmentError>> {
+  async addAppointment(request: CreateAppointmentRequest): Promise<Result<void, AddAppointmentError>> {
     try {
-
-      console.log("important!! ", request.appointmentAt)
       const { error } = await supabase
         .from(TABLE_TURNOS)
         .insert({
@@ -134,13 +133,14 @@ export class AppointmentRepository {
         });
 
       if (error) {
-        console.log("error addAppointment", error);
-
-        if (error.code === "23505") {
+        if (
+          error.code === "23505" &&
+          error.message.includes("unique_employee_slot")
+        ) {
           return { ok: false, error: "slot_taken" };
         }
 
-        throw error;
+        return handleDatabaseError(error)
       }
 
       return {
@@ -149,11 +149,11 @@ export class AppointmentRepository {
       };
 
     } catch (error) {
-      return handleAppointmentError(error);
+      return handleDatabaseError(error);
     }
   };
 
-  async getHoursAvailable(serviceId: string, employeeId: string, day: string): Promise<Result<string[], AppointmentError>> {
+  async getHoursAvailable(serviceId: string, employeeId: string, day: string): Promise<Result<string[], DatabaseError>> {
     try {
       const startDate = `${day}T00:00:00-03:00`;
       const endDate = `${day}T23:59:59-03:00`;
@@ -166,7 +166,9 @@ export class AppointmentRepository {
         .gte("appointment_at", startDate)
         .lte("appointment_at", endDate);
 
-      if (error) throw error
+      if (error) {
+        return handleDatabaseError(error)
+      }
 
       const appointments = data.map(item =>
         new Date(item.appointment_at)
@@ -178,50 +180,12 @@ export class AppointmentRepository {
           })
       );
 
-      console.log("horarios ocupados", appointments)
-
       return { ok: true, data: appointments }
     } catch (error) {
-      console.log("otro error", error)
-      return handleAppointmentError(error)
+      return handleDatabaseError(error)
     }
   };
 
 }
-
-const handleAppointmentError = (
-  error: unknown
-): Result<never, AppointmentError> => {
-
-  if (error instanceof FirebaseError) {
-    switch (error.code) {
-      case "permission-denied":
-        return { ok: false, error: "permission" };
-
-      case "unauthenticated":
-      case "auth/unauthenticated":
-        return { ok: false, error: "unauthenticated" };
-
-      case "unavailable":
-      case "failed-precondition":
-        return { ok: false, error: "network" };
-
-      case "deadline-exceeded":
-        return { ok: false, error: "timeout" };
-
-      case "not-found":
-        return { ok: false, error: "not-found" };
-
-      case "already-exists":
-      case "aborted":
-        return { ok: false, error: "slot_taken" };
-
-      default:
-        return { ok: false, error: "unknown" };
-    }
-  }
-
-  return { ok: false, error: "unknown" };
-};
 
 export const appointmentRepository = new AppointmentRepository();

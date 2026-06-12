@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { Appointment } from "../../../domain/models/appointments/Appointment"
-import { mapAppointmentErrorToMessage } from "../../../errors/appointmentErrors"
 import { adminRepository } from "../../../data/repository/AdminRepository"
+import { mapDatabaseErrorToMessage } from "../../../errors/databaseErrorMessages"
 
 export const useAdmin = () => {
   const [upcommingAdminAppointments, setUpcommingAdminAppointments] = useState<Appointment[]>([])
@@ -26,7 +26,7 @@ export const useAdmin = () => {
       if (result.ok) {
         setUpcommingAdminAppointments(result.data)
       } else {
-        setError(mapAppointmentErrorToMessage(result.error))
+        setError(mapDatabaseErrorToMessage(result.error))
       }
 
     } finally {

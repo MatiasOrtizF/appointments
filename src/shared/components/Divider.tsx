@@ -1,6 +1,6 @@
 import { View } from "react-native";
-import { useTheme } from "../data/provider/ThemeProvider";
-import { darkColors, lightColors } from "../theme/colors";
+import { useTheme } from "../../data/provider/ThemeProvider";
+import { darkColors, lightColors } from "../../theme/colors";
 
 export default function Divider() {
 

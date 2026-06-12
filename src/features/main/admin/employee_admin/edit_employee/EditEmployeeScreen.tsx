@@ -10,7 +10,7 @@ import { useEffect } from "react";
 import { EmployeeStatus, employeeStatuses, Role } from "../../../../../domain/models/service/Service";
 import { Ionicons } from "@expo/vector-icons";
 import { capitalizeFirstLetter } from "../../../../../utils/capitalizeFirstLetter";
-import LoadingButton from "../../../../../shared/LoadingButton";
+import LoadingButton from "../../../../../shared/components/LoadingButton";
 import { ALERT_TYPE, Dialog } from "react-native-alert-notification";
 
 type Params = {

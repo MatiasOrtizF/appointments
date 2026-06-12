@@ -1,13 +1,13 @@
 import { appointmentRepository } from "../../../data/repository/AppointmentRepository"
 import { authRepository } from "../../../data/repository/AuthRepository"
-import { AppointmentError } from "../../../errors/appointmentErrors"
+import { AddAppointmentError } from "../../../errors/addAppointmentErrors"
 import { Result } from "../../../shared/types/result"
 import { CreateAppointmentInput } from "../../models/appointments/CreateAppointmentInput"
 import { CreateAppointmentRequest } from "../../models/appointments/CreateAppointmentRequest"
 
 export const addAppointmentUsecase = async (
     input: CreateAppointmentInput
-): Promise<Result<void, AppointmentError>> => {
+): Promise<Result<void, AddAppointmentError>> => {
 
     const user = await authRepository.getCurrentUser()
 

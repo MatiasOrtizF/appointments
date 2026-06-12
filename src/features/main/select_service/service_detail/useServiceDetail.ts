@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { Employee, Service } from "../../../../domain/models/service/Service";
 import { serviceRepository } from "../../../../data/repository/ServiceRepository";
-import { mapServiceErrorToMessage } from "../../../../errors/serviceErrors";
+import { mapDatabaseErrorToMessage } from "../../../../errors/databaseErrorMessages";
 
 export const useServiceDetail = () => {
   const [service, setService] = useState<Service>();
@@ -20,7 +20,7 @@ export const useServiceDetail = () => {
         console.log("empleados???", result.data)
         setService(result.data)
       } else {
-        setError(mapServiceErrorToMessage(result.error))
+        setError(mapDatabaseErrorToMessage(result.error))
       }
 
     } finally {

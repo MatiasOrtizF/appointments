@@ -2,7 +2,7 @@ import { Redirect, Stack } from 'expo-router';
 import { darkColors, lightColors } from '../../../src/theme/colors';
 import { useTheme } from '../../../src/data/provider/ThemeProvider';
 import { useAuth } from '../../../src/data/provider/AuthProvider';
-import LoadingScreen from '../../../src/shared/LoadingScreen';
+import LoadingScreen from '../../../src/shared/components/LoadingScreen';
 
 export default function AdminLayout() {
   const { isDarkMode } = useTheme();

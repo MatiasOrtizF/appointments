@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import { Day, Service } from "../../../../../domain/models/service/Service";
-import { mapServiceErrorToMessage } from "../../../../../errors/serviceErrors";
-import { mapEmployeeErrorToMessage } from "../../../../../errors/employeeError";
 import { employeeRepository } from "../../../../../data/repository/EmployeeRepository";
 import { EditServiceInput } from "../../../../../domain/models/service/EditServiceInput";
 import { editServiceUsecase } from "../../../../../domain/usecase/service/editserviceUsecase";
+import { mapDatabaseErrorToMessage } from "../../../../../errors/databaseErrorMessages";
 
 export const useEditService = () => {
     const [previewService, setPreviewService] = useState<Service>()
@@ -45,7 +44,7 @@ export const useEditService = () => {
                 console.log("empleados: ", result.data)
                 setEmployees(result.data)
             } else {
-                setError(mapEmployeeErrorToMessage(result.error))
+                setError(mapDatabaseErrorToMessage(result.error))
             }
 
         } finally {
@@ -79,7 +78,7 @@ export const useEditService = () => {
                     if (result.ok) {
                         setSuccess(true)
                     } else {
-                        setError(mapServiceErrorToMessage(result.error))
+                        setError(mapDatabaseErrorToMessage(result.error))
                         setEditingService(false)
                     }
                 } finally {

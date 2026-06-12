@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react"
 import { Service } from "../../../../domain/models/service/Service"
 import { serviceRepository } from "../../../../data/repository/ServiceRepository"
-import { mapServiceErrorToMessage } from "../../../../errors/serviceErrors"
 import { deleteServiceUsecase } from "../../../../domain/usecase/service/deleteServiceUsecase"
+import { mapDatabaseErrorToMessage } from "../../../../errors/databaseErrorMessages"
 
 export const useServiceAdmin = () => {
     const [services, setServices] = useState<Service[] | null>(null)
@@ -30,7 +30,7 @@ export const useServiceAdmin = () => {
             if (result.ok) {
                 setServices(result.data)
             } else {
-                setError(mapServiceErrorToMessage(result.error))
+                setError(mapDatabaseErrorToMessage(result.error))
             }
 
         } finally {
@@ -48,7 +48,7 @@ export const useServiceAdmin = () => {
                 )
                 setSuccess(true)
             } else {
-                setError(mapServiceErrorToMessage(result.error))
+                setError(mapDatabaseErrorToMessage(result.error))
             }
 
         } finally {

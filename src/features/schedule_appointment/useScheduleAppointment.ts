@@ -2,12 +2,13 @@ import { useState } from "react"
 import { CreateAppointmentInput } from "../../domain/models/appointments/CreateAppointmentInput"
 import { Service } from "../../domain/models/service/Service"
 import { serviceRepository } from "../../data/repository/ServiceRepository"
-import { mapServiceErrorToMessage } from "../../errors/serviceErrors"
 import { generateHours, Hour } from "../../utils/generateHours"
 import { getMissingDaysIndexes } from "../../utils/getMissingDaysIndexes"
 import { addAppointmentUsecase } from "../../domain/usecase/appointments/addAppointmentUsecase"
-import { mapAppointmentErrorToMessage } from "../../errors/appointmentErrors"
 import { appointmentRepository } from "../../data/repository/AppointmentRepository"
+import { mapDatabaseErrorToMessage } from "../../errors/databaseErrorMessages"
+import { authRepository } from "../../data/repository/AuthRepository"
+import { mapSignOutErrorToMessage } from "../../errors/auth/signOutError"
 
 export const useScheduleAppointment = () => {
   const [service, setService] = useState<Service>()
@@ -31,7 +32,7 @@ export const useScheduleAppointment = () => {
         const hoursNotAvailable = result.data
         fetchService(serviceId, hoursNotAvailable, selectedDate)
       } else {
-        setError(mapAppointmentErrorToMessage(result.error))
+        setError(mapDatabaseErrorToMessage(result.error))
       }
     } finally {
     }
@@ -49,7 +50,7 @@ export const useScheduleAppointment = () => {
         const missingDays = getMissingDaysIndexes(result.data.days)
         setDaysNotAvailable(missingDays)
       } else {
-        setError(mapServiceErrorToMessage(result.error))
+        setError(mapDatabaseErrorToMessage(result.error))
       }
 
     } finally {
@@ -75,7 +76,19 @@ export const useScheduleAppointment = () => {
         if (result.ok) {
           setSuccess(true)
         } else {
-          setError(mapAppointmentErrorToMessage(result.error))
+          switch (result.error) {
+            case "slot_taken":
+              setError("Ese horario ya fue reservado");
+              break;
+
+            case "unauthenticated":
+              logOut();
+              break;
+
+              default: 
+              setError(mapDatabaseErrorToMessage(result.error))
+              break;
+          }
         }
 
       } finally {
@@ -85,6 +98,23 @@ export const useScheduleAppointment = () => {
       setError("elegir un horario")
     }
   }
+
+  const logOut = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const result = await authRepository.signOut()
+      console.log("salio bien? " + result.ok)
+      if (!result.ok) {
+        setError(mapSignOutErrorToMessage(result.error))
+      }
+
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return {
     service,
     hours,

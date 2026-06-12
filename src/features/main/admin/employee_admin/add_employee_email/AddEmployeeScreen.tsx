@@ -4,7 +4,7 @@ import { createGlobalStyles } from "../../../../../theme/globalStyles";
 import { darkColors, lightColors } from "../../../../../theme/colors";
 import { useNavigation, useRouter } from "expo-router";
 import { useAddEmployee } from "./useAddEmployee";
-import LoadingButton from "../../../../../shared/LoadingButton";
+import LoadingButton from "../../../../../shared/components/LoadingButton";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { roles } from "../../../../../domain/models/service/Service";
 import React, { useEffect } from "react";

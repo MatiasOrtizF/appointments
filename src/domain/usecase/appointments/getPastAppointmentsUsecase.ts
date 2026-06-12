@@ -1,11 +1,11 @@
 import { appointmentRepository } from "../../../data/repository/AppointmentRepository"
 import { authRepository } from "../../../data/repository/AuthRepository"
-import { AppointmentError } from "../../../errors/appointmentErrors"
+import { DatabaseError } from "../../../errors/databaseError"
 import { Result } from "../../../shared/types/result"
 import { Appointment } from "../../models/appointments/Appointment"
 
 export const getPastAppointmentsUsecase = async (
-): Promise<Result<Appointment[], AppointmentError>> => {
+): Promise<Result<Appointment[], DatabaseError>> => {
 
   const user = await authRepository.getCurrentUser()
 

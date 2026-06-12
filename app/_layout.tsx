@@ -20,7 +20,7 @@ import {
 } from "../src/data/provider/AuthProvider"
 
 import LoadingScreen
-  from "../src/shared/LoadingScreen"
+  from "../src/shared/components/LoadingScreen"
 
 export default function RootLayout() {
 

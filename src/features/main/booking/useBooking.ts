@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react"
 import { Appointment } from "../../../domain/models/appointments/Appointment"
-import { mapAppointmentErrorToMessage } from "../../../errors/appointmentErrors"
 import { getUpcomingAppointmentsUsecase } from "../../../domain/usecase/appointments/getUpcomingAppointmentsUsecase"
 import { getPastAppointmentsUsecase } from "../../../domain/usecase/appointments/getPastAppointmentsUsecase"
 import { appointmentRepository } from "../../../data/repository/AppointmentRepository"
+import { mapDatabaseErrorToMessage } from "../../../errors/databaseErrorMessages"
 
 export const useBooking = () => {
   const [pastAppointments, setPastAppointments] = useState<Appointment[]>([])
@@ -46,7 +46,7 @@ export const useBooking = () => {
         })
         setSuccess(true)
       } else {
-        setError(mapAppointmentErrorToMessage(result.error))
+        setError(mapDatabaseErrorToMessage(result.error))
       }
 
     } finally {
@@ -64,7 +64,7 @@ export const useBooking = () => {
       if (result.ok) {
         setUpcommingAppointments(result.data)
       } else {
-        setError(mapAppointmentErrorToMessage(result.error))
+        setError(mapDatabaseErrorToMessage(result.error))
       }
 
     } finally {
@@ -82,7 +82,7 @@ export const useBooking = () => {
       if (result.ok) {
         setPastAppointments(result.data)
       } else {
-        setError(mapAppointmentErrorToMessage(result.error))
+        setError(mapDatabaseErrorToMessage(result.error))
       }
 
     } finally {

@@ -1,13 +1,9 @@
 import { useEffect, useState } from "react"
 import { Employee } from "../../../../domain/models/service/Service"
-import { getUserInfoUsecase } from "../../../../domain/usecase/admin/getUserInfoUsecase"
 import { authRepository } from "../../../../data/repository/AuthRepository"
 import { mapSignOutErrorToMessage } from "../../../../errors/auth/signOutError"
-import { getEmployeesUsecase } from "../../../../domain/usecase/admin/employee/getEmployeesUsecase"
-import { mapUserErrorToMessage } from "../../../../errors/userError"
-import { deleteEmployeeUsecase } from "../../../../domain/usecase/admin/employee/deleteEmployeeUsecase"
 import { employeeRepository } from "../../../../data/repository/EmployeeRepository"
-import { mapEmployeeErrorToMessage } from "../../../../errors/employeeError"
+import { mapDatabaseErrorToMessage } from "../../../../errors/databaseErrorMessages"
 
 export const useEmployeeAdmin = () => {
     const [employees, setEmployees] = useState<Employee[] | null>(null)
@@ -36,7 +32,7 @@ export const useEmployeeAdmin = () => {
             if (result.ok) {
                 setEmployees(result.data)
             } else {
-                setError(mapEmployeeErrorToMessage(result.error))
+                setError(mapDatabaseErrorToMessage(result.error))
             }
 
         } finally {
@@ -54,7 +50,7 @@ export const useEmployeeAdmin = () => {
                 )
                 setSuccess(true)
             } else {
-                setError(mapEmployeeErrorToMessage(result.error))
+                setError(mapDatabaseErrorToMessage(result.error))
             }
 
         } finally {

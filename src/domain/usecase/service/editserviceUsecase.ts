@@ -1,13 +1,13 @@
 import { serviceEmployeeRepository, ServiceEmployeeRepository } from "../../../data/repository/ServiceEmployeeRepository"
 import { serviceRepository } from "../../../data/repository/ServiceRepository"
 import { storageRepository } from "../../../data/repository/StorageRepository"
-import { ServiceError } from "../../../errors/serviceErrors"
+import { DatabaseError } from "../../../errors/databaseError"
 import { Result } from "../../../shared/types/result"
 import { EditServiceInput } from "../../models/service/EditServiceInput"
 
 export const editServiceUsecase = async (
     input: EditServiceInput
-): Promise<Result<void, ServiceError>> => {
+): Promise<Result<void, DatabaseError>> => {
     let imageUrl = input.oldImageUrl
 
     if(input.imageChanged) {

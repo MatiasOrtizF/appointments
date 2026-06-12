@@ -4,7 +4,7 @@ import { mapSignOutErrorToMessage } from "../../../../../errors/auth/signOutErro
 import { Employee } from "../../../../../domain/models/service/Service"
 import { editEmployeeUsecase } from "../../../../../domain/usecase/employee/editEmployeeUsecase"
 import { EditEmployeeInput } from "../../../../../domain/models/employee/EditEmployeeInput"
-import { mapEmployeeErrorToMessage } from "../../../../../errors/employeeError"
+import { mapDatabaseErrorToMessage } from "../../../../../errors/databaseErrorMessages"
 
 export const useEditEmployee = () => {
     const [employeeId, setEmployeeId] = useState<Employee["id"]>(0)
@@ -43,7 +43,7 @@ export const useEditEmployee = () => {
                     if (result.ok) {
                         setSuccess(true)
                     } else {
-                        setError(mapEmployeeErrorToMessage(result.error))
+                        setError(mapDatabaseErrorToMessage(result.error))
                         setEditingEmployee(false)
                     }
                 } finally {

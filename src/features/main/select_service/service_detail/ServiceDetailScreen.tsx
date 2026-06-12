@@ -5,7 +5,7 @@ import { createGlobalStyles } from "../../../../theme/globalStyles";
 import { darkColors, lightColors } from "../../../../theme/colors";
 import { useEffect } from "react";
 import { useServiceDetail } from "./useServiceDetail";
-import LoadingScreen from "../../../../shared/LoadingScreen";
+import LoadingScreen from "../../../../shared/components/LoadingScreen";
 import { Ionicons } from "@expo/vector-icons";
 import { Employee } from "../../../../domain/models/service/Service";
 

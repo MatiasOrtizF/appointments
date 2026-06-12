@@ -5,7 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { lightColors, darkColors } from "../../../theme/colors";
 import { createGlobalStyles } from "../../../theme/globalStyles";
 import { useTheme } from "../../../data/provider/ThemeProvider";
-import LoadingScreen from "../../../shared/LoadingScreen";
+import LoadingScreen from "../../../shared/components/LoadingScreen";
 import { useRouter } from "expo-router";
 import { Colors } from "../../../theme/types";
 

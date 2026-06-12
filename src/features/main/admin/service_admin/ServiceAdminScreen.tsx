@@ -4,7 +4,7 @@ import { createGlobalStyles } from "../../../../theme/globalStyles";
 import { useTheme } from "../../../../data/provider/ThemeProvider";
 import { darkColors, lightColors } from "../../../../theme/colors";
 import { ALERT_TYPE, Dialog, Toast } from "react-native-alert-notification";
-import LoadingScreen from "../../../../shared/LoadingScreen";
+import LoadingScreen from "../../../../shared/components/LoadingScreen";
 import { FlatList, View, Text, ListRenderItem, RefreshControl, Pressable } from "react-native";
 import { Service } from "../../../../domain/models/service/Service";
 import { useServiceAdmin } from "./useServiceAdmin";

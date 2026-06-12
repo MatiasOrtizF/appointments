@@ -1,24 +1,25 @@
 import { Employee } from "../../domain/models/service/Service"
 import { Result } from "../../shared/types/result"
 import { employeeToDomain } from "../remote/response/EmployeeResponse"
-import { FirebaseError } from "firebase/app"
-import { EmployeeError } from "../../errors/employeeError"
 import { supabase } from "../../config/Supabase"
 import { CreateEmployeeRequest } from "../../domain/models/employee/CreateEmployeeRequest"
 import { EditEmployeeInput } from "../../domain/models/employee/EditEmployeeInput"
+import { DatabaseError, handleDatabaseError } from "../../errors/databaseError"
 
 const TABLE_EMPLEADOS = "empleados"
 
 export class EmployeeRepository {
 
-  async getEmployees(): Promise<Result<Employee[], EmployeeError>> {
+  async getEmployees(): Promise<Result<Employee[], DatabaseError>> {
     try {
 
       const { data, error } = await supabase
         .from(TABLE_EMPLEADOS)
         .select("*")
 
-      if (error) throw error;
+      if (error) {
+        return handleDatabaseError(error)
+      }
 
       const employees: Employee[] = (data ?? []).map((employee) => {
         return employeeToDomain({
@@ -37,11 +38,11 @@ export class EmployeeRepository {
       };
 
     } catch (error) {
-      return handleEmployeeError(error)
+      return handleDatabaseError(error)
     }
   }
 
-  async deleteEmployee(employeeId: number): Promise<Result<void, EmployeeError>> {
+  async deleteEmployee(employeeId: number): Promise<Result<void, DatabaseError>> {
     try {
 
       const { error } = await supabase
@@ -50,8 +51,7 @@ export class EmployeeRepository {
         .eq("id", employeeId);
 
       if (error) {
-        console.log("error al borrar empleado ", error)
-        throw error
+        return handleDatabaseError(error)
       }
       return {
         ok: true,
@@ -60,11 +60,11 @@ export class EmployeeRepository {
 
 
     } catch (error) {
-      return handleEmployeeError(error)
+      return handleDatabaseError(error)
     }
   }
 
-  async addEmployee(request: CreateEmployeeRequest): Promise<Result<void, EmployeeError>> {
+  async addEmployee(request: CreateEmployeeRequest): Promise<Result<void, DatabaseError>> {
     try {
 
       const { error } = await supabase
@@ -77,8 +77,7 @@ export class EmployeeRepository {
         });
 
       if (error) {
-        console.log("error addEmployee", error);
-        throw error;
+        return handleDatabaseError(error)
       }
 
       return {
@@ -87,13 +86,12 @@ export class EmployeeRepository {
       };
 
     } catch (error) {
-      return handleEmployeeError(error)
+      return handleDatabaseError(error)
     }
   }
 
-  async editEmployee(request: EditEmployeeInput): Promise<Result<void, EmployeeError>> {
+  async editEmployee(request: EditEmployeeInput): Promise<Result<void, DatabaseError>> {
     try {
-      console.log("llame a editar empleado")
       const { error } = await supabase
         .from(TABLE_EMPLEADOS)
         .update({
@@ -105,8 +103,7 @@ export class EmployeeRepository {
         .eq("id", request.id)
 
       if (error) {
-        console.log("error 1", error)
-        throw error
+        return handleDatabaseError(error)
       }
 
       return {
@@ -115,47 +112,10 @@ export class EmployeeRepository {
       }
 
     } catch (error) {
-      console.log("error 2", error)
-
-      return handleEmployeeError(error)
+      return handleDatabaseError(error)
     }
   }
 
 }
-
-const handleEmployeeError = (
-  error: unknown
-): Result<never, EmployeeError> => {
-
-  if (error instanceof FirebaseError) {
-    switch (error.code) {
-      case "permission-denied":
-        return { ok: false, error: "permission" };
-
-      case "unauthenticated":
-      case "auth/unauthenticated":
-        return { ok: false, error: "unauthenticated" };
-
-      case "unavailable":
-      case "failed-precondition":
-        return { ok: false, error: "network" };
-
-      case "deadline-exceeded":
-        return { ok: false, error: "timeout" };
-
-      case "not-found":
-        return { ok: false, error: "not-found" };
-
-      case "already-exists":
-      case "aborted":
-        return { ok: false, error: "slot_taken" };
-
-      default:
-        return { ok: false, error: "unknown" };
-    }
-  }
-
-  return { ok: false, error: "unknown" };
-};
 
 export const employeeRepository = new EmployeeRepository();

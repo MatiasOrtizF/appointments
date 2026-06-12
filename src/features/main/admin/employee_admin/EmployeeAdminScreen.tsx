@@ -6,7 +6,7 @@ import { useEmployeeAdmin } from "./useEmployeeAdmin";
 import { FlatList, ListRenderItem, Pressable, RefreshControl, Text, View } from "react-native";
 import { useEffect } from "react";
 import { ALERT_TYPE, Dialog, Toast } from "react-native-alert-notification";
-import LoadingScreen from "../../../../shared/LoadingScreen";
+import LoadingScreen from "../../../../shared/components/LoadingScreen";
 import { Employee } from "../../../../domain/models/service/Service";
 import { EmployeeAdminCard } from "./EmployeeAdminCard";
 import { Ionicons } from "@expo/vector-icons";

@@ -3,8 +3,8 @@ import { mapSignOutErrorToMessage } from "../../../../../errors/auth/signOutErro
 import { authRepository } from "../../../../../data/repository/AuthRepository"
 import { Employee, employeeStatuses, Role, } from "../../../../../domain/models/service/Service"
 import { addEmployeeUsecase } from "../../../../../domain/usecase/employee/addEmployeeUsecase"
-import { mapEmployeeErrorToMessage } from "../../../../../errors/employeeError"
 import { CreateEmployeeInput } from "../../../../../domain/models/employee/CreateEmployeeInput"
+import { mapDatabaseErrorToMessage } from "../../../../../errors/databaseErrorMessages"
 
 export const useAddEmployee = () => {
     const [image, setImage] = useState<Employee["img"]>("")
@@ -38,7 +38,7 @@ export const useAddEmployee = () => {
             if (result.ok) {
                 setSuccess(true)
             } else {
-                setError(mapEmployeeErrorToMessage(result.error))
+                setError(mapDatabaseErrorToMessage(result.error))
             }
         } finally {
             setAddingEmployee(false)

@@ -1,12 +1,12 @@
 import { employeeRepository } from "../../../data/repository/EmployeeRepository"
 import { storageRepository } from "../../../data/repository/StorageRepository"
-import { EmployeeError } from "../../../errors/employeeError"
+import { DatabaseError } from "../../../errors/databaseError"
 import { Result } from "../../../shared/types/result"
 import { EditEmployeeInput } from "../../models/employee/EditEmployeeInput"
 
 export const editEmployeeUsecase = async (
     input: EditEmployeeInput
-): Promise<Result<void, EmployeeError>> => {
+): Promise<Result<void, DatabaseError>> => {
     let imageUrl = input.oldImageUrl
 
     if(input.imageChanged) {
