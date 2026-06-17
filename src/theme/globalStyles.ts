@@ -111,6 +111,11 @@ export const createGlobalStyles = (isDarkMode: boolean) => {
             flex: 1,
             flexDirection: "row",
             gap: 7
+        },
+
+        hourText: {
+            color: colors.textPrimary,
+            fontWeight: '400'
         }
     });
 };

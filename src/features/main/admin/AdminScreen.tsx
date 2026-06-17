@@ -112,6 +112,10 @@ export default function AdminScreen() {
                         <Ionicons name="people-outline" size={22} color={colors.textPrimary} />
                     </Pressable>
 
+                    <Pressable style={[styles.iconButton, { backgroundColor: colors.bgCard }]} onPress={() => router.push("/bottom/admin/info-admin")}>
+                        <Ionicons name="settings-outline" size={22} color={colors.textPrimary} />
+                    </Pressable>
+
                 </View>
 
             </View>

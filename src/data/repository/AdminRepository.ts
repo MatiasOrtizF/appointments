@@ -6,8 +6,13 @@ import { employeeToDomain } from '../remote/response/EmployeeResponse';
 import { serviceToDomain } from '../remote/response/ServiceResponse';
 import { authUserToDomain } from '../remote/response/AuthUserResponse';
 import { DatabaseError, handleDatabaseError } from '../../errors/databaseError';
+import { BusinessInfo } from '../../domain/models/business_info/BusinessInfo';
+import { businessInfoToDomain } from '../remote/response/BusinessInfoResponse';
+import { CreateBusinessInfo } from '../../domain/models/business_info/CreateBusinessInfo';
 
 const TABLE_TURNOS = "turnos"
+const TABLE_BUSINESS_INFO = "business_info"
+const TABLE_BUSINESS_HOURS = "business_hours"
 
 export class AdminRepository {
   async getUpcomingTodayAppointments(): Promise<Result<Appointment[], DatabaseError>> {
@@ -35,11 +40,6 @@ export class AdminRepository {
 
       const appointments: Appointment[] = (data ?? []).map((appointment) => {
 
-        (data ?? []).forEach((appointment) => {
-          console.log("USUARIO", appointment.usuarios)
-          console.log("EMPLEADO", appointment.empleados)
-          console.log("SERVICIO", appointment.servicios)
-        })
         return appointmentToDomain({
           id: appointment.id,
           created_at: appointment.created_at,
@@ -62,7 +62,7 @@ export class AdminRepository {
   };
 
   async getAdminAppointments(): Promise<Result<Appointment[], DatabaseError>> {
-     try {
+    try {
 
       const { now, startOfTomorrow } = getTodayRange()
 
@@ -79,16 +79,11 @@ export class AdminRepository {
         .limit(10)
 
       if (error) {
-            return handleDatabaseError(error)
+        return handleDatabaseError(error)
       }
 
       const appointments: Appointment[] = (data ?? []).map((appointment) => {
 
-        (data ?? []).forEach((appointment) => {
-          console.log("USUARIO", appointment.usuarios)
-          console.log("EMPLEADO", appointment.empleados)
-          console.log("SERVICIO", appointment.servicios)
-        })
         return appointmentToDomain({
           id: appointment.id,
           created_at: appointment.created_at,
@@ -109,6 +104,116 @@ export class AdminRepository {
       return handleDatabaseError(error)
     }
   };
+
+  async getBusinessInfo(): Promise<Result<BusinessInfo, DatabaseError>> {
+    try {
+
+      const { data, error } = await supabase
+        .from(TABLE_BUSINESS_INFO)
+        .select(`
+        business_id,
+        payment_methods,
+        cancellation_policy,
+        chatbot_context,
+        business_hours (
+          day_of_week,
+          open_time,
+          close_time
+        )
+      `)
+        .single()
+
+      if (error) {
+        return handleDatabaseError(error)
+      }
+
+      const businessInfo = businessInfoToDomain(data)
+
+      return {
+        ok: true,
+        data: businessInfo
+      }
+
+    } catch (error) {
+      return handleDatabaseError(error)
+    }
+  }
+
+  async saveBusinessInfo(
+    request: CreateBusinessInfo
+  ): Promise<Result<void, DatabaseError>> {
+
+    try {
+
+      let businessId = request.id;
+
+      if (!businessId) {
+      
+        const { data, error } = await supabase
+          .from(TABLE_BUSINESS_INFO)
+          .insert({
+            payment_methods: request.paymentMethods,
+            cancellation_policy: request.cancellationPolicy,
+            chatbot_context: request.chatbotContext,
+          })
+          .select("business_id")
+          .single();
+
+        if (error) {
+          return handleDatabaseError(error);
+        }
+
+        businessId = data.business_id;
+
+      } else {
+
+        const { error } = await supabase
+          .from(TABLE_BUSINESS_INFO)
+          .update({
+            payment_methods: request.paymentMethods,
+            cancellation_policy: request.cancellationPolicy,
+            chatbot_context: request.chatbotContext,
+          })
+          .eq("business_id", businessId);
+
+        if (error) {
+          return handleDatabaseError(error);
+        }
+      }
+
+      const { error: deleteError } = await supabase
+        .from(TABLE_BUSINESS_HOURS)
+        .delete()
+        .eq("business_id", businessId);
+
+      if (deleteError) {
+        return handleDatabaseError(deleteError);
+      }
+
+      const hours = request.businessHours.map(hour => ({
+        business_id: businessId,
+        day_of_week: hour.dayOfWeek,
+        open_time: hour.openTime,
+        close_time: hour.closeTime,
+      }));
+
+      const { error: insertHoursError } = await supabase
+        .from(TABLE_BUSINESS_HOURS)
+        .insert(hours);
+
+      if (insertHoursError) {
+        return handleDatabaseError(insertHoursError);
+      }
+
+      return {
+        ok: true,
+        data: undefined,
+      };
+
+    } catch (error) {
+      return handleDatabaseError(error);
+    }
+  }
 }
 
 const getTodayRange = () => {
