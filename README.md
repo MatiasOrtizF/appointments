@@ -45,13 +45,17 @@ El proyecto utiliza una arquitectura modular basada en **separación de responsa
 
 ```text
 app/
-├── screens/
-├── components/
-├── services/
-├── hooks/
-├── contexts/
-├── utils/
-└── ...
+├── config/       # Configuración de la aplicación
+├── constants/    # Constantes y valores globales
+├── data/         # Acceso y gestión de datos
+├── domain/       # Modelos y lógica de dominio
+├── errors/       # Manejo y definición de errores
+├── features/     # Funcionalidades principales de la aplicación
+├── hooks/        # Hooks reutilizables
+├── navigation/   # Configuración de la navegación
+├── theme/        # Tema, estilos y configuración visual
+├── shared/       # Componentes y recursos compartidos
+└── utils/        # Funciones y utilidades generales
 ```
 
 La aplicación utiliza **Expo Router** para la navegación y separa la lógica de presentación, acceso a datos y funcionalidades reutilizables.
@@ -81,19 +85,9 @@ La aplicación utiliza **Expo Router** para la navegación y separa la lógica d
 
 La aplicación utiliza **PostgreSQL mediante Supabase**.
 
-Entre las principales entidades se encuentran:
+La base de datos gestiona usuarios, empleados, servicios y turnos, utilizando relaciones entre las entidades para determinar la disponibilidad de horarios y controlar las reservas.
 
-```text
-Usuarios
-   │
-   └── Turnos
-          │
-          ├── Empleado
-          │
-          └── Servicio
-```
-
-Las políticas de **Row Level Security** permiten controlar qué información puede consultar o modificar cada usuario según su autenticación y rol.
+El acceso a los datos está protegido mediante **Row Level Security (RLS)**, permitiendo aplicar políticas de acceso según el usuario autenticado y su rol.
 
 ## 🚀 Instalación
 
